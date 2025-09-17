@@ -95,3 +95,11 @@ footer {
   font-size: 1.2rem;
 }
 
+/* Make videos behave like images */
+video {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 8px; /* optional */
+    margin: 1rem 0;     /* optional spacing */
+}
