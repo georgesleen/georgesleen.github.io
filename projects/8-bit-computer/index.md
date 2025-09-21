@@ -1,20 +1,23 @@
 ---
 title: "8-Bit Computer"
 layout: base.njk
-description: "Turing complete computer, built from 7400 series logic"
+description: "Turing complete computer, built from discrete components"
 thumbnail: "images/thumbnail.png"
-date: 2023-10-01T12:00:00+08:00
+date: 2024-08-01T12:00:00+08:00
+status: "complete"
 ---
 
 # 8-Bit Computer
 
+# UNDER CONSTRUCTION
+
 ## Overview
 
-This project was a hands-on exploration of computer architecture, and answered my question of what exactly happens at the lowest level  of a computer.
+A deep dive into the fundamentals of modern computers. Inspired by [Ben Eater's breadboard computer](https://eater.net/).
 
 ## Media
 
-### GitHub Repository
+### GitHub repository
 
 [github.com/georgesleen/8-BitComputer](https://github.com/georgesleen/8-BitComputer)
 
@@ -41,7 +44,3 @@ This project was a hands-on exploration of computer architecture, and answered m
 3. *Output register A to the output register*
 
 <video src="videos/simple-program.mp4" controls style="width:100%; height:auto; display:block;"></video>
-
-## Motivation
-
-Black boxes 

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>&#39;M.O.&#39; - Autonomous Pet Retrieval Robot</title>
+  <link rel="stylesheet" href="/styles/main.css" />
+</head>
+<body>
+  <nav>
+    <a href="/">Home</a> |
+<a href="/projects/">Projects</a> |
+<a href="/blog/">Blog</a> |
+<a href="/courses/">Courses</a> |
+<a href="https://github.com/georgesleen/">GitHub</a>
+
+  </nav>
+  <main>
+    <h1>'M.O.' - Autonomous Pet Retrieval</h1>
+<h1>UNDER CONSTRUCTION</h1>
+<h2>Overview</h2>
+<p>ENPH 253, colloquially known as 'Robot Summer' is all about bringing a robot to life in the span of six weeks.</p>
+<p>This year's challenge was to rescue seven pets (stuffies) from a burning building (obstacle course) and return them to
+safety. Our robot needed to be able to do this completely autonomously.</p>
+<p>Our robot 'M.O.' (named after the cleaning robot in Wall-E) used LiDAR to detect pets, toilet brushes to grab them, and
+a basket that attached to the zipline to return them to safety.</p>
+<p>I was the electrical lead on the team, designing most circuits for our robot, as well as a contributor to much of the
+control firmware.</p>
+<p><em>Electrical Contributions</em></p>
+<ul>
+<li>Designed the h-bridge for electrical control of our drive system</li>
+<li>Managed PCB design, assembly, and troubleshooting</li>
+<li>Designed around limited pin constraints of an ESP32 with multiplexing and multi-drop buses</li>
+</ul>
+<p><em>Firmware contributions</em></p>
+<ul>
+<li>Solved concurrent access to I2C buses with freeRTOS</li>
+<li>Implemented PID control to close the control loop on all motors</li>
+<li>Managed codebase complexity by ensuring adequate documentation in all code</li>
+</ul>
+<h3>GitHub Organization</h3>
+<p><a href="https://github.com/enph253-2025-team5">github.com/enph253-2025-team5</a></p>
+<h2>Media</h2>
+<h3>Final Robot</h3>
+<p><img src="media/final-robot-hook-visible.png" alt="final-robot-hook-visible"><br>
+<img src="media/final-robot-side.png" alt="final-robot-side"><br>
+<img src="media/final-robot-side-profile.png" alt="final-robot-side-profile"><br>
+<img src="media/final-robot-with-basket.png" alt="final-robot-with-basket"></p>
+<h3>Electronics &amp; Assembly</h3>
+<p><img src="media/complete-electronics.png" alt="complete-electronics"><br>
+<img src="media/dc-motor-with-mount.png" alt="dc-motor-with-mount"><br>
+<img src="media/detection-wings.png" alt="detection-wings"><br>
+<img src="media/george-soldering.jpg" alt="george-soldering"><br>
+<img src="media/robot-building.png" alt="robot-building"><br>
+<img src="media/robot-motherboard-assembled.png" alt="robot-motherboard-assembled"><br>
+<img src="media/robot-rev-0.jpg" alt="robot-rev-0"><br>
+<img src="media/servo-release-mechanism.png" alt="servo-release-mechanism"><br>
+<img src="media/wheels-revision-2.png" alt="wheels-revision-2"></p>
+<h3>Trials &amp; Demos</h3>
+<p><video src="media/debris-traversal.mp4" controls style="width:100%; height:auto; display:block;"></video><br>
+<video src="media/failed-detection-wing-pickup.mp4" controls style="width:100%; height:auto; display:block;"></video><br>
+<video src="media/first-line-following.mp4" controls style="width:100%; height:auto; display:block;"></video><br>
+<video src="media/jank-pet-pickup-with-voiceover.mp4" controls style="width:100%; height:auto; display:block;"></video><br>
+<video src="media/magnetic-pet-tracking.mp4" controls style="width:100%; height:auto; display:block;"></video><br>
+<video src="media/simple-pet-pickup.mp4" controls style="width:100%; height:auto; display:block;"></video><br>
+<video src="media/time-trials.mp4" controls style="width:100%; height:auto; display:block;"></video><br>
+<video src="media/very-first-pet-pickup-with-voiceover.mp4" controls style="width:100%; height:auto; display:block;"></video><br>
+<video src="media/zipline-basket.mp4" controls style="width:100%; height:auto; display:block;"></video></p>
+
+  </main>
+</body>
+</html>
+
