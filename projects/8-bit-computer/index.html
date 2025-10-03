@@ -17,29 +17,73 @@
   </nav>
   <main>
     <h1>8-Bit Computer</h1>
-<h1>UNDER CONSTRUCTION</h1>
 <h2>Overview</h2>
-<p>A deep dive into the fundamentals of modern computers. Inspired by <a href="https://eater.net/">Ben Eater's breadboard computer</a>.</p>
+<p>This project was a ground-up implementation of a fully custom <strong>8-bit computer</strong>, built from discrete logic components and custom PCB modules.<br>
+The system is <strong>Turing-complete</strong>, capable of executing a minimal instruction set, and was developed as a way to explore computer architecture at the gate and register-transfer level.</p>
+<p>The design takes inspiration from <a href="https://eater.net/">Ben Eater’s breadboard computer</a>, but expands it with a modular PCB-based implementation, Logisim simulations, and a structured hardware layout.</p>
+<hr>
+<h2>Contributions</h2>
+<ul>
+<li><strong>Architecture Definition</strong>: Designed a simple but complete 8-bit instruction set and system architecture (registers, ALU, program counter, memory, control logic).</li>
+<li><strong>Schematic &amp; PCB Design</strong>: Created KiCad schematics and PCB layouts for the computer’s core subsystems (general registers, ALU, program memory).</li>
+<li><strong>Simulation &amp; Verification</strong>: Validated the instruction set and control logic in Logisim before committing to hardware.</li>
+<li><strong>System Integration</strong>: Built and tested each module in isolation, then integrated them onto a shared bus.</li>
+<li><strong>Demonstration</strong>: Successfully ran small programs demonstrating arithmetic operations and data output.</li>
+</ul>
+<hr>
+<h2>Technical Highlights</h2>
+<ul>
+<li><strong>Registers</strong>: Designed custom register boards with tri-state buffer outputs and synchronous load.</li>
+<li><strong>ALU</strong>: Implemented addition, subtraction, and bitwise logic operations with discrete logic gates.</li>
+<li><strong>Memory</strong>: Designed a program ROM PCB and accompanying RAM for instruction storage.</li>
+<li><strong>Control Logic</strong>: Implemented fetch–decode–execute sequencing via microcoded control signals.</li>
+<li><strong>Bus Design</strong>: Shared system bus with tri-state management across modules.</li>
+</ul>
+<hr>
 <h2>Media</h2>
-<h3>GitHub repository</h3>
-<p><a href="https://github.com/georgesleen/8-BitComputer">github.com/georgesleen/8-BitComputer</a></p>
-<h3>KiCad schematics and PCBs</h3>
-<p><em>General register</em>
+<h3>Repository</h3>
+<p><a href="https://github.com/georgesleen/8-BitComputer">GitHub – 8-Bit Computer</a></p>
+<h3>Hardware &amp; Schematics</h3>
+<ul>
+<li>
+<p><em>General Register</em><br>
 <img src="images/general-register-render.png" alt="General register render"></p>
-<p><em>Program memory pcb</em>
+</li>
+<li>
+<p><em>Program Memory PCB</em><br>
 <img src="images/program-memory-pcb.png" alt="Program memory pcb"></p>
-<p><em>ALU schematic</em>
+</li>
+<li>
+<p><em>ALU Schematic</em><br>
 <img src="images/alu-schematic.png" alt="ALU schematic"></p>
-<h3>Simulations</h3>
-<p><em>Simulated computer</em>
+</li>
+</ul>
+<h3>Simulation</h3>
+<ul>
+<li>
+<p><em>Full simulated computer</em><br>
 <img src="images/full-computer.png" alt="Full Simulated Computer"></p>
-<p><em>Simple program running on the computer</em></p>
+</li>
+<li>
+<p><em>Simple program execution:</em></p>
 <ol>
-<li><em>Load 4 into register A</em></li>
-<li><em>Add 13 to register A</em></li>
-<li><em>Output register A to the output register</em></li>
+<li>Load <code>4</code> into Register A</li>
+<li>Add <code>13</code> to Register A</li>
+<li>Output result to output register</li>
 </ol>
 <p><video src="videos/simple-program.mp4" controls style="width:100%; height:auto; display:block;"></video></p>
+</li>
+</ul>
+<hr>
+<h2>Reflection</h2>
+<p>This project provided a first-principles understanding of how digital computers operate at the logic level.<br>
+Key takeaways included:</p>
+<ul>
+<li>How simple bit manipulation and storage gives rise to the complex programs run by computers.</li>
+<li>Using simulation to de-risk hardware design.</li>
+<li>Appreciating the tradeoffs between simplicity, expandability, and physical wiring complexity.</li>
+</ul>
+<p>If extended further, this design could support conditional branching, subroutines, or pipelining.</p>
 
   </main>
 </body>

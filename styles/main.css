@@ -103,3 +103,29 @@ video {
     border-radius: 8px; /* optional */
     margin: 1rem 0;     /* optional spacing */
 }
+.project-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr; /* left wide, right narrow */
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.project-text {
+    line-height: 1.6;
+}
+
+.project-media img,
+.project-media video {
+    width: 100%;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+}
+
+.project-header {
+    margin-bottom: 1.5rem;
+}
+
+.project-footer {
+    margin-top: 2rem;
+    font-size: 0.9rem;
+}

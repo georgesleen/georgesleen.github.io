@@ -17,32 +17,77 @@
   </nav>
   <main>
     <h1>Open ESC</h1>
-<h1>IN ACTIVE DEVELOPMENT</h1>
-<h2>Goals</h2>
+<h2>Overview</h2>
+<p>This project is an attempt to build a fully open-source electronic speed controller (ESC) for sensorless brushless DC
+motors.<br>
+The project has two major goals:</p>
+<ol>
+<li><strong>Hardware:</strong> design the power electronics, gate drive, and commutation circuitry from scratch</li>
+<li><strong>Firmware:</strong> implement the ESC logic in embedded Rust using the Embassy async framework for the RP2040</li>
+</ol>
+<p>The long-term vision is to create a minimal, well-documented ESC that others can learn from or extend.</p>
+<hr>
+<h2>GitHub</h2>
 <ul>
-<li>Build an ESC to drive sensorless brusless dc motors.</li>
-<li>Learn embedded Rust.</li>
+<li><a href="https://github.com/georgesleen/open-esc-hardware">Hardware – georgesleen/open-esc-hardware</a></li>
+<li><a href="https://github.com/georgesleen/open-esc-firmware">Firmware – georgesleen/open-esc-firmware</a></li>
 </ul>
-<h2>Media</h2>
-<h3>GitHub repositories</h3>
-<p><a href="https://github.com/georgesleen/open-esc-hardware">github.com/georgesleen/open-esc-hardware</a></p>
-<p><a href="https://github.com/georgesleen/open-esc-firmware">github.com/georgesleen/open-esc-firmware</a></p>
-<h3>Logbook media</h3>
-<h4>Bootstrap &amp; Commutation Tests</h4>
-<p><img src="./media/bootstrap-high-side_2025-09-20.png" alt="Bootstrap High Side">
-<video controls src="./media/bootstrap-led-commutation_2025-09-20.mp4"></video>
-<img src="./media/working-commutation-phase-ab_2025_09-20.png" alt="Working Commutation Phase AB"></p>
-<h4>Circuit / Drive Tests</h4>
-<p><video controls src="./media/drive_2025-09-20.mp4"></video>
-<video controls src="./media/led-inverter_2025-09-20.mp4"></video>
-<img src="./media/phase-a-scoped_2025-09-20.png" alt="Phase A Scoped">
-<video controls src="./media/pwm-drive_2025-09-20.mp4"></video></p>
-<h4>Paper Notes / Diagrams</h4>
-<p><img src="./media/paper-notes-01_2025-09-20.jpg" alt="Paper Notes 01">
-<img src="./media/paper-notes-02_2025-09-20.jpg" alt="Paper Notes 02">
-<img src="./media/paper-notes-03_2025-09-20.jpg" alt="Paper Notes 03"></p>
-<h4>Failures / Debugging</h4>
+<hr>
+<h2>Development Log</h2>
+<h3>September 20, 2025 – First Drive Experiments</h3>
+<ul>
+<li><strong>Initial Plan:</strong> Boost converter circuit to power the high-side MOSFETs.</li>
+<li><strong>Result:</strong> Able to drive LEDs and phases under PWM.</li>
+<li><strong>Problem:</strong> Consistently killed high-side FETs during switching.</li>
+</ul>
 <p><img src="./media/dead-mosfets_2025-09-20.jpg" alt="Dead MOSFETs"></p>
+<ul>
+<li><strong>New Plan:</strong> Switched to a bootstrapped high-side drive.
+<ul>
+<li>Tested with
+simulation (<a href="https://www.falstad.com/circuit/circuitjs.html?ctz=CQAgjCAMB0l3BWcMBMcUHYMGZIA4UA2ATmIxAUgpABZsKBTAWjDACgAXEYwkTFcDRp8MAqhBgIExBGAQY8eIQQwyo0QmBqRZCIpGyFMkcmDggAJgwBmAQwCuAGw5sATt179wn0VGTw2AGVvEQEmbAEvcRA7RwBnBj8UNgAlEHDIhF4MvhRhKiptEGxoegL1BDYAc3SIvkVagVx8qGrBYRQGrWFmv0g2a3q8cGImwxGmgTBoJBhIZPcULIn2lfEAgHdVpd5utbYtvbBR1bBO1vcj873CFrMAgGNiwmGz4cNhndpwWHg--7gYGYpgQM06slYhhQ2AUBnUgNaW2w4zAGF4yN2536SPGaHeuLyiOKuOWHz4y36Fmew1u1PA5wEVjsThcaQxIFp7LAvHKRW5fQqB2JvE5KKxQrJopF+Ta7M6+PRkBa-Xccoacop-mx5N2J3l+xxnkJGp5Epe9OG2nE4q2VottHMBSFdqoXydWzdq3dXtWtP6AHs+BA-Q7iMMYEZZr84GRCFklkkg8U2EA">Falstad link</a>).</li>
+</ul>
+</li>
+</ul>
+<p><img src="./media/bootstrap-high-side_2025-09-20.png" alt="Bootstrap high side"></p>
+<ul>
+<li><strong>Working Commutation:</strong> After adjusting capacitor values (100nF bootstrap instead of 10 µF), achieved clean
+phase-to-phase commutation.</li>
+</ul>
+<p><img src="./media/working-commutation-phase-ab_2025_09-20.png" alt="Working commutation"></p>
+<hr>
+<h3>September 23, 2025 – Complementary PWM</h3>
+<ul>
+<li>Set up complementary PWM with deadtime insertion.</li>
+<li>Scoped waveforms showing expected high-side/low-side switching.</li>
+</ul>
+<p><img src="./media/complementary-pwm.png" alt="Complementary PWM"><br>
+<img src="./media/complementary-pwm-with-deadtime.png" alt="Complementary PWM with deadtime"></p>
+<hr>
+<h2>Firmware Direction</h2>
+<p>The firmware is being developed in Rust using the <a href="https://github.com/embassy-rs/embassy">Embassy</a> async framework
+for the RP2040.</p>
+<ul>
+<li>Embassy provides async task scheduling, which allows clean handling of concurrent operations like commutation
+updates, current sensing, and telemetry.</li>
+<li>Sensorless back-EMF zero-crossing detection will be added as an async task running alongside the commutation driver.</li>
+</ul>
+<p>This approach not only makes the firmware cleaner but also gives me a deeper understanding of async Rust and low-level
+microcontroller peripherals.</p>
+<hr>
+<h2>Next Steps</h2>
+<ol>
+<li>Attach a BLDC motor and test commutation under load</li>
+<li>Build out basic Rust firmware tasks (commutation + PWM sync, back EMF detection)</li>
+<li>Implement back-EMF sensing for sensorless startup</li>
+</ol>
+<hr>
+<h2>Reflection (So Far)</h2>
+<p>Even at this early stage, this project has already reinforced how subtle power electronics design can be. Small
+choices in bootstrap capacitor size, gate resistance, or timing lead to completely different behavior, from “nothing
+works” to “burnt MOSFETs” to “stable commutation.”</p>
+<p>On the firmware side, working with Embassy-RP has been a good forcing function for structuring tasks cleanly rather
+than writing ad-hoc loops. I expect this to pay off once the motor is actually spinning and timing becomes critical.</p>
 
   </main>
 </body>
