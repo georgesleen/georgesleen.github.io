@@ -1,0 +1,122 @@
+---
+title: "'M.O.' – Autonomous Pet Retrieval Robot"
+layout: project.njk
+description: "Autonomous robot built for UBC Engineering Physics' 2025 Pet Rescue competition"
+thumbnail: "media/thumbnail.png"
+date: 2025-08-01
+status: "complete"
+featured: true
+tags: ["robotics", "embedded systems", "pcb design", "firmware"]
+media:
+  - media/final-robot-side.png
+  - media/complete-electronics.png
+  - media/debris-traversal.mp4
+---
+
+# “M.O.” – Autonomous Pet Retrieval Robot
+
+## Overview
+
+M.O. was our robot entry for Engineering Physics robot design course, ENPH 253!
+
+I worked with a group of 3 of my extremely talented friends, and it was one of the most stresful but rewarding times of my life.
+
+Each year, the second year fizzers are divided into teams of four and tasked with designing and building an autonomous robot from scratch over the course of six weeks.
+The 2025 challenge was to rescue "pets" from a burning building, simulated by a bunch of stuffies hidden on an obstacle course, and return them to safety.
+The entire course traversal and pet pickup needed to be done without any human input.
+
+The name of our robot "M.O.", comes from our contra-rotating brush pickup mechanism. It reminded us a lot of the cleaning robot in _Wall-E_ of the same name, and right before competition it stuck.
+
+## Robot overview
+
+Throughout the course of building our robot we stuck to a few key design principles that served us well:
+
+1. The fewer degrees of freedom we had the better
+2. Iterating fast is more important than perfecting it the first time.
+3. Code abstraction is essential
+4. MCU processing power should not be considered unless actual bottlenecks are encountered
+
+You can see many of the direct results of this design philosophy in the physical design and codebase of our robot.
+
+The whole pickup mechanism has only two degrees of freedom, the arm is mechanically linked such that the wrist joint angle is a position of the shoulder angle, and the speed of the pickup brushes.
+We have both a shoulder and wrist joint, but they are mechanically linked such that the wrist angle is only dependant on the shoulder angle, allowing us to only have to control the shoulder joint.
+
+We used FreeRTOS for extremely simple scheduling of the many concurrent tasks we had to run.
+With many control loops going, having dynamic loop times would be extremely difficult to deal with and troubleshoot,
+so it made our final algorithms for detecting and picking up pets that much easier.
+
+Some other notable features are:
+
+- LiDAR depth perception for determining course features and pets
+- IMU and rotary encoders for determining the state of our robot and course
+- A basket to fit all pets and return them via the zipline feature
+- Custom H-bridges for optimal motor control
+- Power electronics and sense electronics have galvanically separated grounds for drastically reduced EMI
+- Custom PCBs for clean wiring and signal integrity
+- PID control for custom servos built from rotary encoders/potentiometers + high power DC motors
+
+
+## My Contributions
+
+As the electrical lead, I took on the design of most 
+
+I was the electrical lead on the team, responsible for circuit design and integration, as well as contributing to
+the robot’s control firmware.
+
+On the electrical side, I designed the custom H-bridge driver board for the drivetrain and handled the PCB design,
+assembly, and troubleshooting for all major subsystems. Because the ESP32 we used had a limited number of pins, I also
+designed around this constraint using multiplexing and multi-drop buses to maximize what we could do with the
+available hardware.
+
+On the firmware side, I worked on the concurrency and control logic of the robot. The ESP32 ran FreeRTOS, so I
+implemented mutexes to safely handle concurrent access to I²C sensors. I also wrote the PID control loops that closed
+the feedback on the drivetrain and actuators, which were essential for smooth navigation and reliable manipulation. As
+the codebase grew, I helped maintain consistency and documentation so the team could continue building quickly without
+things breaking.
+
+---
+
+## Technical Highlights
+
+- **Controller:** ESP32 running FreeRTOS, coordinating sensing, navigation, and actuation
+- **Sensors:** LiDAR for pet detection, IR reflectance sensors for line following
+- **Actuation:** DC motors driven by custom H-bridge, servo release mechanism for the zipline basket
+- **Electronics:** Isolated logic and motor grounds to reduce noise, multiplexed analog inputs to expand sensor capacity
+- **System Design:** Modular PCBs for drivetrain and logic subsystems, enabling independent testing before integration
+
+---
+
+## GitHub
+
+[github.com/enph253-2025-team5](https://github.com/enph253-2025-team5)
+
+---
+
+## Media
+
+- _Final robot – side view_  
+  ![Final robot side](media/final-robot-side.png)
+
+- _Electronics assembly_  
+  ![Complete electronics](media/complete-electronics.png)
+
+- _Pet pickup test_  
+  <video src="media/simple-pet-pickup.mp4" controls style="width:100%; height:auto; display:block;"></video>
+
+- _Zipline basket return_  
+  <video src="media/zipline-basket.mp4" controls style="width:100%; height:auto; display:block;"></video>
+
+- _Line following demo_  
+  <video src="media/first-line-following.mp4" controls style="width:100%; height:auto; display:block;"></video>
+
+---
+
+## Reflection
+
+Building M.O. was an exercise in balancing ambition with reliability. We had only six weeks, which forced the design to
+be simple enough to finish yet complex enough to handle the course.
+
+I came away with a much stronger understanding of how embedded software and hardware interact in practice: ground noise
+and I²C contention were just as real of challenges as line following or object detection. This project also underscored
+how important clear roles, clean code, and documentation are when a team is moving quickly, small amounts of structure
+made a huge difference in what we were able to deliver.

@@ -22,8 +22,8 @@ media:
 M.O. was our robot entry for Engineering Physics' robot design course, ENPH 253!
 
 Each year, the second year fizzers are divided into teams of four and tasked with designing and building an autonomous
-robot from scratch over the course of six weeks. The 2025 challenge was to rescue "pets" from a burning building (
-simulated by a bunch of stuffies hidden on an obstacle course) and then bring them back to safety. The entire course traversal
+robot from scratch over the course of six weeks. The 2025 challenge was to rescue "pets" from a burning building,
+simulated by a bunch of stuffies hidden on an obstacle course, and return them to safety. The entire course traversal
 and pet pickup needed to be done without any human input.
 
 The name of our robot "M.O.", comes from our contra-rotating brush pickup mechanism. It reminded us a lot of the
@@ -105,7 +105,8 @@ things breaking.
 
 _H-bridge PCB_
 
-![H-bridge PCB](media/web/h-bridge-combined.png)
+![H-bridge layout](media/web/h-bridge-electrical.png)
+![H-bridge real](media/web/h-bridge-real.jpg)
 
 _Motherboard_
 
@@ -113,8 +114,6 @@ _Motherboard_
 ![Motherboard real](media/web/robot-motherboard-assembled.png)
 
 _Control block diagram_
-
-![Control block diagram](media/web/motor-control-block-diagram.png)
 
 ### Challenges
 
