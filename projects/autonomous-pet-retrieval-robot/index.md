@@ -23,8 +23,8 @@ M.O. was our robot entry for Engineering Physics' robot design course, ENPH 253!
 
 Each year, the second year fizzers are divided into teams of four and tasked with designing and building an autonomous
 robot from scratch over the course of six weeks. The 2025 challenge was to rescue "pets" from a burning building (
-simulated by a bunch of stuffies hidden on an obstacle course) and then bring them back to safety. The entire course traversal
-and pet pickup needed to be done without any human input.
+simulated by a bunch of stuffies hidden on an obstacle course) and then bring them back to safety. The entire course
+traversal and pet pickup needed to be done without any human input.
 
 The name of our robot "M.O.", comes from our contra-rotating brush pickup mechanism. It reminded us a lot of the
 cleaning robot in _Wall-E_ of the same name, and right before competition it stuck.
@@ -44,7 +44,7 @@ You can see many of the direct results of this design philosophy in the physical
 
 The whole pickup mechanism has only two degrees of freedom, the arm is mechanically linked such that the wrist joint
 angle is a position of the shoulder angle, and the speed of the pickup brushes. We have both a shoulder and wrist joint,
-but they are mechanically linked such that the wrist angle is only dependant on the shoulder angle, allowing us to only
+but they are mechanically linked such that the wrist angle is only dependent on the shoulder angle, allowing us to only
 have to control the shoulder joint.
 
 We used FreeRTOS for extremely simple scheduling of the many concurrent tasks we had to run. With many control loops
