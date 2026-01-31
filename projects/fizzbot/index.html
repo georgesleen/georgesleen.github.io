@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Fizzbot</title>
+  <link rel="stylesheet" href="/styles/main.css" />
+</head>
+<body>
+  <nav>
+    <a href="/">Home</a> |
+<a href="/projects/">Projects</a> |
+<a href="/blog/">Blog</a> |
+<a href="/courses/">Courses</a> |
+<a href="https://github.com/georgesleen/">GitHub</a>
+
+  </nav>
+  <main>
+    <h1>Fizzbot</h1>
+<p><img src="media/discord-profile.png" alt="Fizzbot"></p>
+<h2>Overview</h2>
+<p>Fizzbot is a Discord-style chat model trained on the third-year Discord server for my Engineering Physics cohort. The
+project started after a proof-of-concept at a Fizz talent show, where my friend Bram Banik demoed a simple test version.
+I wanted to see how far I could take the idea if I built the whole pipeline end-to-end: data prep, training, inference
+tooling, and an actual Discord bot.</p>
+<p>Training runs on my friend Ronny Cravioto-Ross' DGX Spark, and everything else is designed so I can iterate locally
+without too much friction.</p>
+<p>Under the hood, Fizzbot is a retraining effort on top of an existing base model rather than training from scratch.
+I chose Mistral-7B (v0.1) as the base because it gives a strong quality/size tradeoff and works well with QLoRA for
+faster iteration.</p>
+<hr>
+<h2>Project Overview</h2>
+<p>The basic loop looks like this:</p>
+<ol>
+<li>Export Discord logs (Discrub JSON).</li>
+<li>Clean and normalize messages into a consistent schema.</li>
+<li>Build training examples that preserve speaker identity using tokens like <code>&lt;S0&gt; ... &lt;EOT&gt;</code>.</li>
+<li>Train a causal language model (GPU/QLoRA when available, CPU smoke tests when not).</li>
+<li>Run inference either in a CLI for quick testing, or behind a Discord bot that replies when pinged.</li>
+</ol>
+<hr>
+<h2>My Contributions</h2>
+<p>This project has two halves (Python ML + Rust bot), and I worked across both.</p>
+<ul>
+<li>Built the data pipeline from raw Discrub exports to JSONL training examples.</li>
+<li>Added multi-speaker formatting with <code>&lt;S#&gt;</code> tokens and <code>&lt;EOT&gt;</code> message boundaries.</li>
+<li>Set up training scripts and YAML configs for both GPU/QLoRA runs and CPU smoke tests.</li>
+<li>Wrote an inference CLI with decoding so model output turns back into readable chat.</li>
+<li>Implemented the Rust Discord bot wrapper that spawns the model process and streams prompts/responses over
+stdin/stdout.</li>
+<li>Added Makefile + Docker helpers so it's easy to run locally or in a container.</li>
+</ul>
+<hr>
+<h2>Challenges</h2>
+<p>Some of the tricky parts were not the &quot;train a model&quot; step, but everything around it:</p>
+<ol>
+<li>Cleaning Discord data without deleting the personality.</li>
+<li>Preserving speaker identity across long contexts (and making the output decodable again).</li>
+<li>Keeping the bot integration reliable when the model process is slow, chatty, or crashes.</li>
+</ol>
+<hr>
+<h2>Technical Highlights</h2>
+<h3>Data Pipeline</h3>
+<p>The generator converts Discrub exports into JSONL training examples:</p>
+<ul>
+<li>Normalizes messages into <code>{username, content, timestamp}</code>.</li>
+<li>Sorts by timestamp per channel.</li>
+<li>Builds <code>(context -&gt; target)</code> examples with randomized context windows.</li>
+<li>Replaces usernames with speaker tokens <code>&lt;S0&gt;</code>, <code>&lt;S1&gt;</code>, ...</li>
+<li>Appends <code>&lt;EOT&gt;</code> end markers to each message.</li>
+<li>Outputs <code>train_data/training_examples.jsonl</code> and <code>train_data/speaker_map.json</code>.</li>
+</ul>
+<h3>Training</h3>
+<p>Training is driven by YAML configs:</p>
+<ul>
+<li>GPU/QLoRA defaults in <code>llm/train_config.yaml</code> (Mistral-7B, 4-bit).</li>
+<li>Retraining uses LoRA adapters instead of a full fine-tune.</li>
+<li>CPU-friendly config in <code>llm/train_config_cpu.yaml</code> for fast smoke tests.</li>
+<li>Outputs are stored under <code>llm/runs/&lt;run_name&gt;/&lt;timestamp&gt;/</code>.</li>
+</ul>
+<h3>Inference CLI</h3>
+<p>The inference tool supports:</p>
+<ul>
+<li>Running the latest model or a specific checkpoint.</li>
+<li>Decoding <code>&lt;S#&gt;</code> tokens back into <code>username: message</code> format.</li>
+<li>Interactive prompts for quick testing.</li>
+</ul>
+<h3>Discord Bot (Rust)</h3>
+<p>The Discord bot is built in Rust with Serenity and launches the LLM process as a child task:</p>
+<ul>
+<li>Spawns <code>make fizzbot</code> and streams prompts/responses through stdin/stdout.</li>
+<li>Maps Discord users to speaker tokens using <code>speaker_map.json</code>.</li>
+<li>Responds when mentioned, strips the mention, and prevents pings.</li>
+</ul>
+<hr>
+<h2>Repository</h2>
+<p><a href="https://github.com/georgesleen/fizzbot-2">github.com/georgesleen/fizzbot-2</a></p>
+<hr>
+<h2>Other Media</h2>
+<p><img src="media/example-text.png" alt="Example text"></p>
+
+  </main>
+</body>
+</html>
+
