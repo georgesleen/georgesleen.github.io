@@ -1,7 +1,7 @@
 ---
 title: "Fizzbot"
 layout: project.njk
-description: "Discord bot to interact with LLM trained on my friend's discord server"
+description: "Private discord bot to interact with an LLM trained on a discord server"
 thumbnail: "media/thumbnail.png"
 date: 2026-01-04
 status: "complete"
