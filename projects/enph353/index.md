@@ -1,7 +1,7 @@
 ---
-title: "ENPH 353 - HTTP 418 Autonomous Robot"
+title: "ML Based Robot Detective"
 layout: project.njk
-description: "Autonomous clue-finding robot in simulation using ROS, vision, and ML"
+description: "A robot trained to read signs with OCR and drive an obstacle course with IL and other ML techniques"
 thumbnail: "media/map.png"
 date: 2025-12-06
 status: "complete"
