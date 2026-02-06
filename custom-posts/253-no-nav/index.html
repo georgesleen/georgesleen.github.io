@@ -15,11 +15,21 @@
   <link rel="shortcut icon" href="/images/favicon.ico" />
   <link rel="icon" type="image/png" href="/images/favicon.png" />
   <link rel="stylesheet" href="/styles/main.css" />
+  <style>
+    .no-nav a {
+      pointer-events: none;
+      color: inherit;
+      text-decoration: none;
+    }
+    .no-nav a.keep-link {
+      pointer-events: auto;
+      color: #3366cc;
+      text-decoration: underline;
+    }
+  </style>
 </head>
-<body>
-  <header class="no-nav-header">
-    <a href="/">George Sleen</a>
-  </header>
+<body class="no-nav">
+  <header class="no-nav-header">George Sleen</header>
   <main>
     
 
@@ -163,7 +173,7 @@ collector switched even with the same part number. The fix was simple in switchi
 </ul>
 <hr>
 <h2>Repository</h2>
-<p><a href="https://github.com/enph253-2025-team5">github.com/enph253-2025-team5</a></p>
+<p><a class="keep-link" href="https://github.com/enph253-2025-team5">github.com/enph253-2025-team5</a></p>
 <hr>
 <h2>Other Media</h2>
 <ul>
