@@ -5,6 +5,7 @@ layout: base.njk
 #type: ""
 date: 2025-02-07T12:00:00+08:00
 thumbnail: "images/tux.png"
+description: "Why I switched to Linux Mint, the install hurdles, and what stuck."
 ---
 
 Recently OneDrive has been screwing with my files again,

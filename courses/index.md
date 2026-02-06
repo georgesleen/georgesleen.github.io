@@ -1,4 +1,5 @@
 ---
+title: Courses
 layout: base.njk
 ---
 

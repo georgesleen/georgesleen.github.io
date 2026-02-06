@@ -1,7 +1,7 @@
 ---
 title: "Cloud Chamber"
 layout: base.njk
-description: "Visualizing ionizing radiation at home"
+description: "Visualizing ionizing radiation at home."
 thumbnail: "media/thumbnail.jpg"
 date: 2015-11-01T12:00:00+08:00
 status: "legacy"

@@ -1,12 +1,12 @@
 ---
 title: "Fizzbot"
 layout: project.njk
-description: "Trained a custom LLM and integrated it as a discord bot"
+description: "Trained a custom LLM and integrated it as a discord bot."
 thumbnail: "media/thumbnail.png"
 date: 2026-01-04
 status: "complete"
 featured: false
-tags: ["llm", "nlp", "discord", "python", "rust", "data pipeline", "docker"]
+tags: ["ml"]
 media:
   - "media/placeholder-1.png"
   - "media/placeholder-2.png"

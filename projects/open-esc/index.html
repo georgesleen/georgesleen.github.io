@@ -3,7 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Open ESC</title>
+  
+  <title>Open ESC - George Sleen</title>
+  
+  <meta name="description" content="An open-source electronic speed controller with firmware written in Rust." />
+  <link rel="canonical" href="https://georgesleen.github.io/projects/open-esc/" />
+  <meta property="og:title" content="Open ESC" />
+  <meta property="og:description" content="An open-source electronic speed controller with firmware written in Rust." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://georgesleen.github.io/projects/open-esc/" />
+  
+  <meta property="og:image" content="https://georgesleen.github.io/projects/open-esc/media/thumbnail.png" />
+  
+  <link rel="icon" href="/images/favicon.ico" />
+  <link rel="icon" type="image/png" href="/images/favicon.png" />
   <link rel="stylesheet" href="/styles/main.css" />
 </head>
 <body>
@@ -12,7 +25,9 @@
 <a href="/projects/">Projects</a> |
 <a href="/blog/">Blog</a> |
 <a href="/courses/">Courses</a> |
-<a href="https://github.com/georgesleen/">GitHub</a>
+<a href="/resume.pdf">Resume</a> |
+<a href="https://github.com/georgesleen/">GitHub</a> |
+<a href="https://www.linkedin.com/in/george-sleen/">LinkedIn</a>
 
   </nav>
   <main>
@@ -64,6 +79,9 @@ phase-to-phase commutation.</li>
 <p><img src="./media/complementary-pwm.png" alt="Complementary PWM"><br>
 <img src="./media/complementary-pwm-with-deadtime.png" alt="Complementary PWM with deadtime"></p>
 <hr>
+<h2>Additional Media</h2>
+<p><img src="./media/inverter-gate-voltages_2025-10-01.png" alt="Inverter gate voltages">
+<img src="./media/rust-code.png" alt="Firmware (Rust)"></p>
 <h2>Firmware Direction</h2>
 <p>The firmware is being developed in Rust using the <a href="https://github.com/embassy-rs/embassy">Embassy</a> async framework
 for the RP2040.</p>
@@ -92,4 +110,3 @@ than writing ad-hoc loops. I expect this to pay off once the motor is actually s
   </main>
 </body>
 </html>
-

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+  <title>Microcouple - George Sleen</title>
+  
+  <meta name="description" content="RP2040-based wireless IR communicator with LED matrix, capacitive touch, USB-C, and LiPo charging." />
+  <link rel="canonical" href="https://georgesleen.github.io/projects/microcouple/" />
+  <meta property="og:title" content="Microcouple" />
+  <meta property="og:description" content="RP2040-based wireless IR communicator with LED matrix, capacitive touch, USB-C, and LiPo charging." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://georgesleen.github.io/projects/microcouple/" />
+  
+  <meta property="og:image" content="https://georgesleen.github.io/projects/microcouple/media/microcouple-image.jpg" />
+  
+  <link rel="icon" href="/images/favicon.ico" />
+  <link rel="icon" type="image/png" href="/images/favicon.png" />
+  <link rel="stylesheet" href="/styles/main.css" />
+</head>
+<body>
+  <nav>
+    <a href="/">Home</a> |
+<a href="/projects/">Projects</a> |
+<a href="/blog/">Blog</a> |
+<a href="/courses/">Courses</a> |
+<a href="/resume.pdf">Resume</a> |
+<a href="https://github.com/georgesleen/">GitHub</a> |
+<a href="https://www.linkedin.com/in/george-sleen/">LinkedIn</a>
+
+  </nav>
+  <main>
+    <h1>Microcouple</h1>
+<p><img src="media/microcouple-image.jpg" alt="Microcouple board"></p>
+<h2>Overview</h2>
+<p>Microcouple is a pair of RP2040-based boards that communicate wirelessly over infrared. Each board includes an LED
+matrix display, capacitive touch inputs, IR transmit/receive hardware, USB-C connectivity, and on-board LiPo charging.</p>
+<hr>
+<h2>Notes</h2>
+<p>On my first revision, I wasn’t careful enough reading the documentation or studying the reference designs. I saw “SoC”
+and assumed I could just place the chip and go. That was a mistake: the QSPI lines were essential, and I needed to add
+external storage on those lines for it to work properly. On the second revision I also caught that the EEPROM was
+missing and fixed that. It was a good reminder that “system on chip” doesn’t mean “system on board.”</p>
+<hr>
+<h2>Contributions</h2>
+<ul>
+<li>Designed the schematic and PCB in KiCad, integrating RP2040, IR transceiver, USB-C, and power management.</li>
+<li>Implemented the LED matrix drive and capacitive touch sensing interfaces.</li>
+<li>Validated IR communication between boards and basic UI interactions.</li>
+</ul>
+<hr>
+<h2>Technical Highlights</h2>
+<ul>
+<li><strong>Wireless IR Link:</strong> Hardware for bidirectional IR communication (NEC protocol at ~38 kHz).</li>
+<li><strong>Display:</strong> Integrated LED matrix for animations and status feedback.</li>
+<li><strong>Input:</strong> Capacitive touch pads for simple user interaction.</li>
+<li><strong>Power:</strong> USB-C input with LiPo charging and battery operation.</li>
+<li><strong>Firmware:</strong> Core bring-up and protocol work in progress.</li>
+</ul>
+<hr>
+<h2>GitHub</h2>
+<p><a href="https://github.com/georgesleen/microcouple">github.com/georgesleen/microcouple</a></p>
+<hr>
+<h2>Media</h2>
+<ul>
+<li>
+<p><em>Board photo</em><br>
+<img src="media/microcouple-image.jpg" alt="Microcouple board"></p>
+</li>
+<li>
+<p><em>Schematic (page 1)</em><br>
+<img src="media/microcouple-schematic-p1.svg" alt="Microcouple schematic"></p>
+</li>
+</ul>
+
+  </main>
+</body>
+</html>

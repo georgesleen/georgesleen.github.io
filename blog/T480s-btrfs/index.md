@@ -3,6 +3,7 @@ title: "BTRFS and my new T480s"
 layout: base.njk
 date: 2025-06-24T12:00:00+08:00
 thumbnail: "images/btrfs-logo.png"
+description: "E-waste ThinkPads, a keyboard mishap, and why I switched to BTRFS."
 ---
 
 # BTRFS and my new laptop

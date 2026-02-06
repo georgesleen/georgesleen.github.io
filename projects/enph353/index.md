@@ -1,12 +1,12 @@
 ---
 title: "ML Based Robot Detective"
 layout: project.njk
-description: "A robot trained to read signs with OCR and drive an obstacle course with IL and other ML techniques"
+description: "A robot trained to read signs with OCR and drive an obstacle course with IL and other ML techniques."
 thumbnail: "media/map.png"
 date: 2025-12-06
 status: "complete"
 featured: false
-tags: ["robotics", "CV", "machine learning", "ROS", "simulation", "yolo", "imitation learning"]
+tags: ["robotics", "ml", "simulation", "sensing", "mechanical"]
 media:
   - media/map.png
   - media/data-collection-gui.png

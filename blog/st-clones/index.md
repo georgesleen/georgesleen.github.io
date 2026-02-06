@@ -3,6 +3,7 @@ title: "ST-link, blue pills, and compiling for clones"
 layout: base.njk
 date: 2025-04-12T12:00:00+08:00
 thumbnail: "images/blue-pill-stock.jpg"
+description: "Using ST-Links and PlatformIO to program Blue Pills, and dealing with clones."
 ---
 
 Moving away from Arduino for embedded systems comes with lots of perks,

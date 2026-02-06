@@ -1,7 +1,7 @@
 ---
 title: "Mini Metal Foundry"
 layout: base.njk
-description: "Backyard foundry to melt down aluminum cans"
+description: "Backyard foundry to melt down aluminum cans."
 thumbnail: "media/thumbnail.jpg"
 date: 2016-08-01T12:00:00+08:00
 status: "legacy"

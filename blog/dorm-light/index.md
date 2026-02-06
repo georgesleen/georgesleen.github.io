@@ -3,6 +3,7 @@ title: "Smart dorm room lights"
 layout: base.njk
 date: 2023-10-01T12:00:00+08:00
 thumbnail: "images/wifi-light-1.jpg"
+description: "A Wi-Fi dorm light switch with an ESP8266, a servo, and a campus Wi-Fi curveball."
 ---
 
 Late one night, in a procrastination-fueled productivity burst, I decided that I wanted to connect something physical to the internet.

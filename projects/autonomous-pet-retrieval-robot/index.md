@@ -1,16 +1,23 @@
 ---
 title: "'M.O.' – Autonomous Pet Retrieval Robot"
 layout: project.njk
-description: "Autonomous robot built for UBC Engineering Physics' 2025 Pet Rescue competition"
+description: "Autonomous robot built for UBC Engineering Physics' 2025 Pet Rescue competition."
 thumbnail: "media/web/thumbnail.png"
 date: 2025-08-01
 status: "complete"
 featured: true
-tags: ["robotics", "embedded systems", "pcb design", "firmware"]
+tags: ["robotics", "embedded", "firmware", "pcbs", "controls", "sensing", "electrical", "mechanical"]
 media:
   - media/web/final-robot-side.png
   - media/web/complete-electronics.png
+  - media/web/h-bridge.png
+  - media/web/h-bridge-electrical.png
+  - media/web/dual-h-bridge-schematic-page1.svg
+  - media/web/dual-h-bridge-drawing-page3.svg
+  - media/web/robot-motherboard-schematic-page1.svg
+  - media/web/robot-motherboard-no-fill.png
   - media/web/debris-traversal.mp4
+  - media/web/robot-motherboard-drawing-page3.svg
 ---
 
 # “M.O.” – Autonomous Pet Retrieval Robot
@@ -72,6 +79,8 @@ robot at all and I am very grateful to have experienced this rewarding and very 
 
 _Pictured:_ Alessandra Ionescu-Zanetti (Mech, Elec, Soft), Connor Floyd (Mech), Jonah Lee (Soft), George Sleen (Elec,
 Soft)
+
+_Teammate sites:_ [Jonah](https://jonahjlee.github.io), [Connor](https://www.cfloyd.ca), [Alessandra](https://alessandraiz.github.io)
 
 ---
 
@@ -155,6 +164,27 @@ some of the issues that I personally encountered and was able to fix.
 
 - _Electronics assembly_  
   ![Complete electronics](media/web/complete-electronics.png)
+
+- _H-bridge layout_  
+  ![H-bridge layout](media/web/h-bridge.png)
+
+- _H-bridge electrical_  
+  ![H-bridge electrical](media/web/h-bridge-electrical.png)
+
+- _Robot motherboard schematic_  
+  ![Robot motherboard schematic](media/web/robot-motherboard-schematic-page1.svg)
+
+- _Robot motherboard drawing_  
+  ![Robot motherboard drawing](media/web/robot-motherboard-drawing-page3.svg)
+
+- _Robot motherboard layout (no fill)_  
+  ![Robot motherboard layout](media/web/robot-motherboard-no-fill.png)
+
+- _H-bridge schematic_  
+  ![H-bridge schematic](media/web/dual-h-bridge-schematic-page1.svg)
+
+- _H-bridge drawing_  
+  ![H-bridge drawing](media/web/dual-h-bridge-drawing-page3.svg)
 
 - _Pet pickup test_  
   <video src="media/web/simple-pet-pickup.mp4" controls style="width:100%; height:auto; display:block;"></video>

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://georgesleen.github.io/sitemap.xml

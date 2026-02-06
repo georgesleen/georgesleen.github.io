@@ -3,7 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Projects</title>
+  
+  <title>Projects - George Sleen</title>
+  
+  <meta name="description" content="Portfolio and projects by George Sleen." />
+  <link rel="canonical" href="https://georgesleen.github.io/projects/" />
+  <meta property="og:title" content="Projects" />
+  <meta property="og:description" content="Portfolio and projects by George Sleen." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://georgesleen.github.io/projects/" />
+  
+  <link rel="icon" href="/images/favicon.ico" />
+  <link rel="icon" type="image/png" href="/images/favicon.png" />
   <link rel="stylesheet" href="/styles/main.css" />
 </head>
 <body>
@@ -12,17 +23,41 @@
 <a href="/projects/">Projects</a> |
 <a href="/blog/">Blog</a> |
 <a href="/courses/">Courses</a> |
-<a href="https://github.com/georgesleen/">GitHub</a>
+<a href="/resume.pdf">Resume</a> |
+<a href="https://github.com/georgesleen/">GitHub</a> |
+<a href="https://www.linkedin.com/in/george-sleen/">LinkedIn</a>
 
   </nav>
   <main>
     
 <h1>Projects</h1>
 
+<div class="filters" aria-label="Project filters">
+  <button class="filter-button is-active" data-filter="all" type="button">All</button>
+  <button class="filter-button" data-filter="pcbs" type="button">PCBs</button>
+  <button class="filter-button" data-filter="controls" type="button">Controls</button>
+  <button class="filter-button" data-filter="embedded" type="button">Embedded</button>
+  <button class="filter-button" data-filter="ml" type="button">ML</button>
+  <button class="filter-button" data-filter="power" type="button">Power</button>
+  <button class="filter-button" data-filter="computer-architecture" type="button">Computer Architecture</button>
+  <button class="filter-button" data-filter="robotics" type="button">Robotics</button>
+  <button class="filter-button" data-filter="simulation" type="button">Simulation</button>
+  <button class="filter-button filter-more" data-filter="more" type="button" aria-expanded="false">More ▾</button>
+  <div class="filters-more" hidden>
+    <button class="filter-button" data-filter="mechanical" type="button">Mechanical</button>
+  </div>
+</div>
+
 
 
 
   
+  
+    
+    
+  
+    
+    
   
     
     
@@ -61,12 +96,15 @@
     
     
       
-        <h2 class="status-header">Complete</h2>
+        
+          <h2 class="status-header">Complete</h2>
+        
         <div class="projects-grid">
         
       
 
-      <div class="project-card">
+      
+      <div class="project-card" data-tags="ml">
         <a href="/projects/fizzbot/" class="project-link">
           <div class="project-info">
             <h3>Fizzbot</h3>
@@ -74,7 +112,7 @@
               <small class="project-date">January 2026</small>
             
             
-              <p>Trained a custom LLM and integrated it as a discord bot</p>
+              <p>Trained a custom LLM and integrated it as a discord bot.</p>
             
           </div>
           
@@ -93,7 +131,8 @@
     
       
 
-      <div class="project-card">
+      
+      <div class="project-card" data-tags="robotics,ml,simulation,sensing,mechanical">
         <a href="/projects/enph353/" class="project-link">
           <div class="project-info">
             <h3>ML Based Robot Detective</h3>
@@ -101,7 +140,7 @@
               <small class="project-date">December 2025</small>
             
             
-              <p>A robot trained to read signs with OCR and drive an obstacle course with IL and other ML techniques</p>
+              <p>A robot trained to read signs with OCR and drive an obstacle course with IL and other ML techniques.</p>
             
           </div>
           
@@ -126,7 +165,8 @@
     
       
 
-      <div class="project-card">
+      
+      <div class="project-card" data-tags="robotics,embedded,firmware,pcbs,controls,sensing,electrical,mechanical">
         <a href="/projects/autonomous-pet-retrieval-robot/" class="project-link">
           <div class="project-info">
             <h3>&#39;M.O.&#39; – Autonomous Pet Retrieval Robot</h3>
@@ -134,7 +174,7 @@
               <small class="project-date">August 2025</small>
             
             
-              <p>Autonomous robot built for UBC Engineering Physics&#39; 2025 Pet Rescue competition</p>
+              <p>Autonomous robot built for UBC Engineering Physics&#39; 2025 Pet Rescue competition.</p>
             
           </div>
           
@@ -153,7 +193,36 @@
     
       
 
-      <div class="project-card">
+      
+      <div class="project-card" data-tags="embedded,firmware,pcbs,sensing,electrical,mechanical">
+        <a href="/projects/microcouple/" class="project-link">
+          <div class="project-info">
+            <h3>Microcouple</h3>
+            
+              <small class="project-date">January 2025</small>
+            
+            
+              <p>RP2040-based wireless IR communicator with LED matrix, capacitive touch, USB-C, and LiPo charging.</p>
+            
+          </div>
+          
+            <img
+              src="/projects/microcouple/media/microcouple-image.jpg"
+              alt="Microcouple thumbnail"
+              class="project-thumb"
+            />
+          
+        </a>
+      </div>
+
+    
+  
+    
+    
+      
+
+      
+      <div class="project-card" data-tags="pcbs,controls,electrical,sensing,mechanical">
         <a href="/projects/microcontrollerless-servo/" class="project-link">
           <div class="project-info">
             <h3>Continuous Servo Control PCB</h3>
@@ -161,12 +230,12 @@
               <small class="project-date">November 2024</small>
             
             
-              <p>Control circuit for a servo with speed feedback and PI control</p>
+              <p>Control circuit for a servo with speed feedback and PI control.</p>
             
           </div>
           
             <img
-              src="/projects/microcontrollerless-servo/media/thumbnail.png"
+              src="/projects/microcontrollerless-servo/media/enph259-servo-front.png"
               alt="Continuous Servo Control PCB thumbnail"
               class="project-thumb"
             />
@@ -180,7 +249,8 @@
     
       
 
-      <div class="project-card">
+      
+      <div class="project-card" data-tags="computer architecture,simulation,pcbs,electrical,mechanical">
         <a href="/projects/8-bit-computer/" class="project-link">
           <div class="project-info">
             <h3>8-Bit Computer</h3>
@@ -188,7 +258,7 @@
               <small class="project-date">August 2024</small>
             
             
-              <p>A custom 8-bit computer designed from discrete components</p>
+              <p>A custom 8-bit computer designed from discrete components.</p>
             
           </div>
           
@@ -205,9 +275,13 @@
   
     
     
+  
+    
+    
       
 
-      <div class="project-card">
+      
+      <div class="project-card" data-tags="embedded,sensing,mechanical,electrical">
         <a href="/projects/wifi-dorm-lights/" class="project-link">
           <div class="project-info">
             <h3>Wi-Fi Controlled Lights</h3>
@@ -215,7 +289,7 @@
               <small class="project-date">October 2023</small>
             
             
-              <p>Non-destructive Wi-Fi-controlled dorm room light switch using ESP8266 and custom mount</p>
+              <p>Non-destructive Wi-Fi-controlled dorm room light switch using ESP8266 and custom mount.</p>
             
           </div>
           
@@ -251,12 +325,15 @@
     
     
       
-        <h2 class="status-header">Active</h2>
+        
+          <h2 class="status-header">Active</h2>
+        
         <div class="projects-grid">
         
       
 
-      <div class="project-card">
+      
+      <div class="project-card" data-tags="computer architecture,pcbs,electrical,simulation">
         <a href="/projects/verilog-cpu/" class="project-link">
           <div class="project-info">
             <h3>Verilog CPU</h3>
@@ -264,7 +341,7 @@
               <small class="project-date">September 2025</small>
             
             
-              <p>RISC-V CPU designed with Verilog. The successor to my 8-bit computer</p>
+              <p>RISC-V CPU designed with Verilog. The successor to my 8-bit computer.</p>
             
           </div>
           
@@ -283,7 +360,8 @@
     
       
 
-      <div class="project-card">
+      
+      <div class="project-card" data-tags="power,electrical,firmware,embedded,pcbs,mechanical">
         <a href="/projects/open-esc/" class="project-link">
           <div class="project-info">
             <h3>Open ESC</h3>
@@ -291,7 +369,7 @@
               <small class="project-date">September 2025</small>
             
             
-              <p>An open-source electronic speed controller with firmware written in Rust</p>
+              <p>An open-source electronic speed controller with firmware written in Rust.</p>
             
           </div>
           
@@ -304,6 +382,12 @@
         </a>
       </div>
 
+    
+  
+    
+    
+  
+    
     
   
     
@@ -357,12 +441,94 @@
     
     
       
-        <h2 class="status-header">Legacy</h2>
+        
+          <h2 class="status-header">Design Teams</h2>
+        
         <div class="projects-grid">
         
       
 
-      <div class="project-card">
+      
+      <div class="project-card" data-tags="mechanical,simulation">
+        <a href="/projects/subc-propeller-design/" class="project-link">
+          <div class="project-info">
+            <h3>SUBC</h3>
+            
+              <small class="project-date">May 2024</small>
+            
+            
+              <p>UBC Submarine Design Team builds a human-powered submarine for international races.</p>
+            
+          </div>
+          
+            <img
+              src="/projects/subc-propeller-design/media/subc-2023.jpg"
+              alt="SUBC thumbnail"
+              class="project-thumb"
+            />
+          
+        </a>
+      </div>
+
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+  
+    </div>
+  
+
+  
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+      
+        
+          <h2 class="status-header">Legacy</h2>
+        
+        <div class="projects-grid">
+        
+      
+
+      
+      <div class="project-card" data-tags="">
         <a href="/projects/mini-metal-foundry/" class="project-link">
           <div class="project-info">
             <h3>Mini Metal Foundry</h3>
@@ -370,7 +536,7 @@
               <small class="project-date">August 2016</small>
             
             
-              <p>Backyard foundry to melt down aluminum cans</p>
+              <p>Backyard foundry to melt down aluminum cans.</p>
             
           </div>
           
@@ -389,7 +555,8 @@
     
       
 
-      <div class="project-card">
+      
+      <div class="project-card" data-tags="">
         <a href="/projects/cloud-chamber/" class="project-link">
           <div class="project-info">
             <h3>Cloud Chamber</h3>
@@ -397,7 +564,7 @@
               <small class="project-date">November 2015</small>
             
             
-              <p>Visualizing ionizing radiation at home</p>
+              <p>Visualizing ionizing radiation at home.</p>
             
           </div>
           
@@ -448,14 +615,62 @@
     
     
   
+    
+    
+  
+    
+    
+  
   
 
 
 
 <style>
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin: 1rem 0 1.5rem;
+  justify-content: flex-start;
+  position: relative;
+}
+.filter-button {
+  border: 1px solid #bbb;
+  background: #f7f7f7;
+  color: #222;
+  padding: 0.4rem 0.8rem;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.filter-button.is-active {
+  background: #222;
+  color: #fff;
+  border-color: #222;
+}
+.filters-more {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: 0;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 0.6rem;
+  box-shadow: 0 8px 20px rgb(0 0 0 / 0.1);
+  z-index: 10;
+}
+.filters-more[hidden] {
+  display: none;
+}
+.filter-more {
+  border-style: dashed;
+}
 .projects-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  grid-template-columns: 1fr;
   gap: 1.5rem;
 }
 .project-card {
@@ -463,6 +678,7 @@
   padding: 1rem;
   border-radius: 6px;
   text-align: left;
+  min-height: 140px;
 }
 .project-link {
   display: flex;
@@ -494,7 +710,62 @@
 }
 </style>
 
+<script>
+(() => {
+  const filterMap = {
+    pcbs: ["pcbs", "pcb design", "pcb", "kicad"],
+    controls: ["controls", "control systems"],
+    embedded: ["embedded", "embedded systems", "firmware", "rp2040", "iot", "sensing", "sensors", "sensor", "imu", "lidar", "ir communication", "capacitive touch"],
+    mechanical: ["mechanical", "3d printing", "propeller design", "submarine"],
+    ml: ["ml", "machine learning", "cv", "nlp", "llm", "yolo", "imitation learning"],
+    power: ["power", "power electronics", "electrical", "circuits", "esc"],
+    "computer-architecture": ["computer architecture", "digital logic"],
+    robotics: ["robotics"],
+    simulation: ["simulation", "cfd"],
+  };
+
+  const buttons = Array.from(document.querySelectorAll(".filter-button"));
+  const moreToggle = document.querySelector(".filter-more");
+  const morePanel = document.querySelector(".filters-more");
+  const cards = Array.from(document.querySelectorAll(".project-card"));
+
+  const applyFilter = (key) => {
+    buttons.forEach((button) => {
+      button.classList.toggle("is-active", button.dataset.filter === key);
+    });
+
+    cards.forEach((card) => {
+      if (key === "all") {
+        card.style.display = "";
+        return;
+      }
+      const tags = (card.dataset.tags || "").split(",").map((tag) => tag.trim());
+      const matches = (filterMap[key] || []).some((needle) => tags.includes(needle));
+      card.style.display = matches ? "" : "none";
+    });
+  };
+
+  buttons.forEach((button) => {
+    button.addEventListener("click", () => {
+      if (button.dataset.filter === "more") {
+        const isOpen = !morePanel.hasAttribute("hidden");
+        if (isOpen) {
+          morePanel.setAttribute("hidden", "");
+          moreToggle.setAttribute("aria-expanded", "false");
+          moreToggle.textContent = "More ▾";
+        } else {
+          morePanel.removeAttribute("hidden");
+          moreToggle.setAttribute("aria-expanded", "true");
+          moreToggle.textContent = "More ▴";
+        }
+        return;
+      }
+      applyFilter(button.dataset.filter);
+    });
+  });
+})();
+</script>
+
   </main>
 </body>
 </html>
-

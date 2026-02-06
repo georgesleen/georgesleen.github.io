@@ -5,7 +5,7 @@
 
 body {
   font-family: system-ui, sans-serif;
-  max-width: 720px;
+  max-width: 900px;
   margin: 2rem auto;
   padding: 0 1rem;
   background: #f9f9f9;
@@ -47,6 +47,15 @@ nav {
 nav a {
   margin: 0 1rem;
 }
+.site-name {
+  font-weight: 600;
+}
+.no-nav-header {
+  text-align: left;
+  margin: 1.5rem 0 2rem;
+  font-weight: 700;
+  font-size: 2rem;
+}
 
 /* Footer */
 footer {
@@ -59,7 +68,7 @@ footer {
 /* Projects */
 .projects-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: 1fr;
   gap: 1.5rem;
   margin-top: 2rem;
 }

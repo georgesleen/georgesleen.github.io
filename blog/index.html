@@ -3,7 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Blog</title>
+  
+  <title>Blog - George Sleen</title>
+  
+  <meta name="description" content="Portfolio and projects by George Sleen." />
+  <link rel="canonical" href="https://georgesleen.github.io/blog/" />
+  <meta property="og:title" content="Blog" />
+  <meta property="og:description" content="Portfolio and projects by George Sleen." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://georgesleen.github.io/blog/" />
+  
+  <link rel="icon" href="/images/favicon.ico" />
+  <link rel="icon" type="image/png" href="/images/favicon.png" />
   <link rel="stylesheet" href="/styles/main.css" />
 </head>
 <body>
@@ -12,7 +23,9 @@
 <a href="/projects/">Projects</a> |
 <a href="/blog/">Blog</a> |
 <a href="/courses/">Courses</a> |
-<a href="https://github.com/georgesleen/">GitHub</a>
+<a href="/resume.pdf">Resume</a> |
+<a href="https://github.com/georgesleen/">GitHub</a> |
+<a href="https://www.linkedin.com/in/george-sleen/">LinkedIn</a>
 
   </nav>
   <main>
@@ -22,15 +35,48 @@
 <div class="blogs-grid">
   
     
+      <div class="blog-card">
+        
+        <a href="https://www.engphys.ubc.ca/2025/11/14/generation-quantum-hackathon-in-geneva/" class="blog-link" target="_blank" rel="noopener">
+        
+          <div class="blog-info">
+            <h2>GenQ Hackathon in Geneva</h2>
+            
+              <small class="blog-date">November 14, 2025</small>
+            
+            
+              <small class="blog-external">External link</small>
+            
+            
+              <p>A recap of the GenQ Hackathon in Geneva.</p>
+            
+          </div>
+          
+            <img
+              src="/blog/genq-hackathon/thumbnail.jpeg"
+              alt="GenQ Hackathon in Geneva thumbnail"
+              class="blog-thumb"
+            />
+          
+        </a>
+      </div>
+    
+  
+    
   
     
       <div class="blog-card">
+        
         <a href="/blog/T480s-btrfs/" class="blog-link">
+        
           <div class="blog-info">
             <h2>BTRFS and my new T480s</h2>
             
               <small class="blog-date">June 24, 2025</small>
             
+            
+            
+              <p>E-waste ThinkPads, a keyboard mishap, and why I switched to BTRFS.</p>
             
           </div>
           
@@ -46,12 +92,45 @@
   
     
       <div class="blog-card">
+        
+        <a href="https://www.linkedin.com/pulse/currents-marine-electronics-reflection-my-time-blue-robotics-sleen-cqbjc/" class="blog-link" target="_blank" rel="noopener">
+        
+          <div class="blog-info">
+            <h2>The currents of marine electronics: A reflection on my time at Blue Robotics</h2>
+            
+              <small class="blog-date">May 27, 2025</small>
+            
+            
+              <small class="blog-external">External link</small>
+            
+            
+              <p>Reflection on my time at Blue Robotics and lessons from marine electronics.</p>
+            
+          </div>
+          
+            <img
+              src="/blog/blue-robotics/thumbnail.jpg"
+              alt="The currents of marine electronics: A reflection on my time at Blue Robotics thumbnail"
+              class="blog-thumb"
+            />
+          
+        </a>
+      </div>
+    
+  
+    
+      <div class="blog-card">
+        
         <a href="/blog/st-clones/" class="blog-link">
+        
           <div class="blog-info">
             <h2>ST-link, blue pills, and compiling for clones</h2>
             
               <small class="blog-date">April 12, 2025</small>
             
+            
+            
+              <p>Using ST-Links and PlatformIO to program Blue Pills, and dealing with clones.</p>
             
           </div>
           
@@ -67,12 +146,17 @@
   
     
       <div class="blog-card">
+        
         <a href="/blog/mint-switch/" class="blog-link">
+        
           <div class="blog-info">
             <h2>Switching to linux</h2>
             
               <small class="blog-date">February 7, 2025</small>
             
+            
+            
+              <p>Why I switched to Linux Mint, the install hurdles, and what stuck.</p>
             
           </div>
           
@@ -88,12 +172,17 @@
   
     
       <div class="blog-card">
+        
         <a href="/blog/dorm-light/" class="blog-link">
+        
           <div class="blog-info">
             <h2>Smart dorm room lights</h2>
             
               <small class="blog-date">October 1, 2023</small>
             
+            
+            
+              <p>A Wi-Fi dorm light switch with an ESP8266, a servo, and a campus Wi-Fi curveball.</p>
             
           </div>
           
@@ -114,14 +203,20 @@
 <style>
 .blogs-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  grid-template-columns: 1fr;
   gap: 1.5rem;
 }
 .blog-card {
-  border: 1px solid #ccc;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 1px 5px rgb(0 0 0 / 0.1);
   padding: 1rem;
-  border-radius: 6px;
   text-align: left;
+  transition: box-shadow 0.3s ease;
+  min-height: 140px;
+}
+.blog-card:hover {
+  box-shadow: 0 5px 15px rgb(0 0 0 / 0.15);
 }
 .blog-link {
   display: flex;
@@ -139,9 +234,20 @@
   border-radius: 4px;
   object-fit: cover;
 }
+.blog-date {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #666;
+  font-size: 0.9rem;
+}
+.blog-external {
+  display: block;
+  color: #666;
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+}
 </style>
 
   </main>
 </body>
 </html>
-

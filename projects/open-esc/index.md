@@ -1,16 +1,19 @@
 ---
 title: "Open ESC"
 layout: project.njk
-description: "An open-source electronic speed controller with firmware written in Rust"
+description: "An open-source electronic speed controller with firmware written in Rust."
 thumbnail: "media/thumbnail.png"
 date: 2025-09-01
 status: "active"
 featured: false
-tags: [ "power electronics", "ESC", "Rust", "embedded systems", "pcb design" ]
+tags: [ "power", "electrical", "firmware", "embedded", "pcbs", "mechanical" ]
 media:
   - media/bootstrap-high-side_2025-09-20.png
   - media/working-commutation-phase-ab_2025_09-20.png
   - media/complementary-pwm.png
+  - media/complementary-pwm-with-deadtime.png
+  - media/inverter-gate-voltages_2025-10-01.png
+  - media/rust-code.png
   - media/dead-mosfets_2025-09-20.jpg
 ---
 
@@ -68,6 +71,11 @@ The long-term vision is to create a minimal, well-documented ESC that others can
 ![Complementary PWM with deadtime](./media/complementary-pwm-with-deadtime.png)
 
 ---
+
+## Additional Media
+
+![Inverter gate voltages](./media/inverter-gate-voltages_2025-10-01.png)
+![Firmware (Rust)](./media/rust-code.png)
 
 ## Firmware Direction
 

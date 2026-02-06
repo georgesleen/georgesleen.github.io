@@ -1,12 +1,12 @@
 ---
 title: "Wi-Fi Controlled Lights"
 layout: project.njk
-description: "Non-destructive Wi-Fi-controlled dorm room light switch using ESP8266 and custom mount"
+description: "Non-destructive Wi-Fi-controlled dorm room light switch using ESP8266 and custom mount."
 thumbnail: "media/thumbnail.jpg"
 date: 2023-10-01
 status: "complete"
 featured: false
-tags: [ "embedded systems", "IoT", "3D printing", "circuits" ]
+tags: [ "embedded", "sensing", "mechanical", "electrical" ]
 media:
   - media/esp8266+proto.png
   - media/wifi-light-1.jpg

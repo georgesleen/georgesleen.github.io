@@ -1,15 +1,18 @@
 ---
 title: "Continuous Servo Control PCB"
 layout: project.njk
-description: "Control circuit for a servo with speed feedback and PI control"
-thumbnail: "media/thumbnail.png"
+description: "Control circuit for a servo with speed feedback and PI control."
+thumbnail: "media/enph259-servo-front.png"
 date: 2024-11-01
 status: "complete"
 featured: false
-tags: [ "pcb design", "control systems", "servo", "circuits" ]
+tags: [ "pcbs", "controls", "electrical", "sensing", "mechanical" ]
 media:
-  - media/board-render.png
-  - media/assembled-board.jpg
+  - media/enph259-servo-front.png
+  - media/final-product.jpg
+  - media/servo-schematic-p1.svg
+  - media/servo-front-pcb-p1.svg
+  - media/servo-lab-setup.png
 ---
 
 # Continuous Servo Control PCB
@@ -59,6 +62,15 @@ that could be powered externally and provide smoother, more accurate speed contr
 
 - *Assembled board with servo*  
   ![Assembled board](media/final-product.jpg)
+
+- *Schematic (page 1)*  
+  ![Servo schematic](media/servo-schematic-p1.svg)
+
+- *PCB front (page 1)*  
+  ![Servo PCB front](media/servo-front-pcb-p1.svg)
+
+- *Lab setup screenshot*  
+  ![Servo lab setup](media/servo-lab-setup.png)
 
 ---
 

@@ -1,7 +1,7 @@
 ---
 title: "8-Bit Computer"
 layout: project.njk
-description: "A custom 8-bit computer designed from discrete components"
+description: "A custom 8-bit computer designed from discrete components."
 thumbnail: "images/thumbnail.png"
 media:
   - "images/general-register-render.png"
@@ -12,7 +12,7 @@ media:
 date: 2024-08-01
 status: "complete"
 featured: true
-tags: ["digital logic", "computer architecture", "PCB design", "simulation"]
+tags: ["computer architecture", "simulation", "pcbs", "electrical", "mechanical"]
 ---
 
 # 8-Bit Computer
