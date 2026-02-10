@@ -14,7 +14,7 @@ media:
 
 # Fizzbot
 
-![Fizzbot](media/discord-profile.png)
+![Fizzbot](media/thumbnail.png)
 
 ## Overview
 
