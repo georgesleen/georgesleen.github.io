@@ -4,11 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   
-  <title>&#39;M.O.&#39; – Autonomous Pet Retrieval Robot - George Sleen</title>
+  <title>Autonomous Pet Retrieval Robot - George Sleen</title>
   
   <meta name="description" content="Autonomous robot built for UBC Engineering Physics&#39; 2025 Pet Rescue competition." />
   <link rel="canonical" href="https://georgesleen.github.io/projects/autonomous-pet-retrieval-robot/" />
-  <meta property="og:title" content="&#39;M.O.&#39; – Autonomous Pet Retrieval Robot" />
+  <meta property="og:title" content="Autonomous Pet Retrieval Robot" />
   <meta property="og:description" content="Autonomous robot built for UBC Engineering Physics&#39; 2025 Pet Rescue competition." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://georgesleen.github.io/projects/autonomous-pet-retrieval-robot/" />
@@ -31,32 +31,41 @@
 
   </nav>
   <main>
-    <h1>“M.O.” – Autonomous Pet Retrieval Robot</h1>
+    <h1>Autonomous Pet Retrieval Robot - 'M.O.'</h1>
 <p><img src="media/web/final-robot-side.png" alt="Complete robot"></p>
 <h2>Overview</h2>
 <p>M.O. was our robot entry for Engineering Physics' robot design course, ENPH 253!</p>
-<p>Each year, the second year fizzers are divided into teams of four and tasked with designing and building an autonomous
-robot from scratch over the course of six weeks. The 2025 challenge was to rescue &quot;pets&quot; from a burning building (
-simulated by a bunch of stuffies hidden on an obstacle course) and then bring them back to safety. The entire course
-traversal and pet pickup needed to be done without any human input.</p>
-<p>The name of our robot &quot;M.O.&quot;, comes from our contra-rotating brush pickup mechanism. It reminded us a lot of the
-cleaning robot in <em>Wall-E</em> of the same name, and right before competition it stuck.</p>
+<p>Each year, the second year fizzers are divided into teams of four and tasked
+with designing and building an autonomous robot from scratch over the course of
+six weeks. The 2025 challenge was to rescue &quot;pets&quot; from a burning building (
+simulated by a bunch of stuffies hidden on an obstacle course) and then bring
+them back to safety. The entire course traversal and pet pickup needed to be
+done without any human input.</p>
+<p>The name of our robot &quot;M.O.&quot;, comes from our contra-rotating brush pickup
+mechanism. It reminded us a lot of the cleaning robot in <em>Wall-E</em> of the same
+name, and right before competition it stuck.</p>
 <hr>
 <h2>Robot Overview</h2>
-<p>Throughout the course of building our robot we stuck to a few key design principles that served us well:</p>
+<p>Throughout the course of building our robot we stuck to a few key design
+principles that served us well:</p>
 <ol>
 <li>The fewer degrees of freedom we had the better</li>
 <li>Iterating fast is more important than perfecting it the first time.</li>
 <li>Code abstraction is essential</li>
-<li>MCU processing power should not be considered unless actual bottlenecks are encountered</li>
+<li>MCU processing power should not be considered unless actual bottlenecks are
+encountered</li>
 </ol>
-<p>You can see many of the direct results of this design philosophy in the physical design and codebase of our robot.</p>
-<p>The whole pickup mechanism has only two degrees of freedom, the arm is mechanically linked such that the wrist joint
-angle is a position of the shoulder angle, and the speed of the pickup brushes. We have both a shoulder and wrist joint,
-but they are mechanically linked such that the wrist angle is only dependent on the shoulder angle, allowing us to only
-have to control the shoulder joint.</p>
-<p>We used FreeRTOS for extremely simple scheduling of the many concurrent tasks we had to run. With many control loops
-going, having dynamic loop times would be extremely difficult to deal with and troubleshoot, so it made our final
+<p>You can see many of the direct results of this design philosophy in the physical
+design and codebase of our robot.</p>
+<p>The whole pickup mechanism has only two degrees of freedom, the arm is
+mechanically linked such that the wrist joint angle is a position of the
+shoulder angle, and the speed of the pickup brushes. We have both a shoulder and
+wrist joint, but they are mechanically linked such that the wrist angle is only
+dependent on the shoulder angle, allowing us to only have to control the
+shoulder joint.</p>
+<p>We used FreeRTOS for extremely simple scheduling of the many concurrent tasks we
+had to run. With many control loops going, having dynamic loop times would be
+extremely difficult to deal with and troubleshoot, so it made our final
 algorithms for detecting and picking up pets that much easier.</p>
 <p>Some other notable features are:</p>
 <ul>
@@ -64,42 +73,55 @@ algorithms for detecting and picking up pets that much easier.</p>
 <li>IMU and rotary encoders for determining the state of our robot and course</li>
 <li>A basket to fit all pets and return them via the zipline feature</li>
 <li>Custom H-bridges for optimal motor control</li>
-<li>Power electronics and sense electronics have galvanically separated grounds for drastically reduced EMI</li>
+<li>Power electronics and sense electronics have galvanically separated grounds
+for drastically reduced EMI</li>
 <li>Custom PCBs for clean wiring and signal integrity</li>
-<li>PID control for custom servos built from rotary encoders/potentiometers + high power DC motors</li>
+<li>PID control for custom servos built from rotary encoders/potentiometers + high
+power DC motors</li>
 </ul>
 <hr>
 <h2>Our Team</h2>
-<p>I was extremely lucky to work with some of the most talented people I know. Without my team there would have been no
-robot at all and I am very grateful to have experienced this rewarding and very stressful time with them.</p>
-<p><img src="media/web/team-photo.png" alt="Team photo"></p>
-<p><em>Pictured:</em> Alessandra Ionescu-Zanetti (Mech, Elec, Soft), Connor Floyd (Mech), Jonah Lee (Soft), George Sleen (Elec,
-Soft)</p>
-<p><em>Teammate sites:</em> <a href="https://jonahjlee.github.io">Jonah</a>, <a href="https://www.cfloyd.ca">Connor</a>, <a href="https://alessandraiz.github.io">Alessandra</a></p>
+<p>I was extremely lucky to work with some of the most talented people I know.
+Without my team there would have been no robot at all and I am very grateful to
+have experienced this rewarding and very stressful time with them.</p>
+<p><img src="media/robot-summer-team.jpg" alt="Team photo"></p>
+<p><em>Pictured:</em> Alessandra Ionescu-Zanetti (Mech, Elec, Soft), Connor Floyd (Mech),
+George Sleen (Elec, Soft), Jonah Lee (Soft)</p>
+<p><em>Teammate sites:</em> <a href="https://jonahjlee.github.io">Jonah</a>,
+<a href="https://www.cfloyd.ca">Connor</a>, <a href="https://alessandraiz.github.io">Alessandra</a></p>
 <hr>
 <h2>My Contributions</h2>
-<p>As the electrical lead, I took on the design of most electrical projects required for our robot. That included:</p>
+<p>As the electrical lead, I took on the design of most electrical projects
+required for our robot. That included:</p>
 <ul>
 <li>Designing a custom H-bridge and associated PCB</li>
 <li>Planning power distribution and delivery</li>
-<li>Creating a motherboard and glue circuitry to connect all the subsystems together</li>
+<li>Creating a motherboard and glue circuitry to connect all the subsystems
+together</li>
 </ul>
-<p>I also helped our software lead Jonah with much of the control firmware. As part of the firmware I:</p>
+<p>I also helped our software lead Jonah with much of the control firmware. As part
+of the firmware I:</p>
 <ul>
 <li>Spearheaded the use of FreeRTOS for scheduling concurrent tasks</li>
-<li>Wrote drivers for the sensors relevant to motor control (i.e. rotary encoders, potentiometers, etc)</li>
-<li>Designed and tuned control loops for turning simple DC motors into position based servos</li>
-<li>Wrote code to translate high level requests like &quot;Line follow for 10cm&quot; into appropriate control logic for our motors.</li>
+<li>Wrote drivers for the sensors relevant to motor control (i.e. rotary encoders,
+potentiometers, etc)</li>
+<li>Designed and tuned control loops for turning simple DC motors into position
+based servos</li>
+<li>Wrote code to translate high level requests like &quot;Line follow for 10cm&quot; into
+appropriate control logic for our motors.</li>
 </ul>
-<p>On the electrical side, I designed the custom H-bridge driver board for the drivetrain and handled the PCB design,
-assembly, and troubleshooting for all major subsystems. Because the ESP32 we used had a limited number of pins, I also
-designed around this constraint using multiplexing and multi-drop buses to maximize what we could do with the available
-hardware.</p>
-<p>On the firmware side, I worked on the concurrency and control logic of the robot. The ESP32 ran FreeRTOS, so I
-implemented mutexes to safely handle concurrent access to I²C sensors. I also wrote the PID control loops that closed
-the feedback on the drivetrain and actuators, which were essential for smooth navigation and reliable manipulation. As
-the codebase grew, I helped maintain consistency and documentation so the team could continue building quickly without
-things breaking.</p>
+<p>On the electrical side, I designed the custom H-bridge driver board for the
+drivetrain and handled the PCB design, assembly, and troubleshooting for all
+major subsystems. Because the ESP32 we used had a limited number of pins, I also
+designed around this constraint using multiplexing and multi-drop buses to
+maximize what we could do with the available hardware.</p>
+<p>On the firmware side, I worked on the concurrency and control logic of the
+robot. The ESP32 ran FreeRTOS, so I implemented mutexes to safely handle
+concurrent access to I²C sensors. I also wrote the PID control loops that closed
+the feedback on the drivetrain and actuators, which were essential for smooth
+navigation and reliable manipulation. As the codebase grew, I helped maintain
+consistency and documentation so the team could continue building quickly
+without things breaking.</p>
 <h3>Media</h3>
 <p><em>H-bridge PCB</em></p>
 <p><img src="media/web/h-bridge-combined.png" alt="H-bridge PCB"></p>
@@ -109,32 +131,42 @@ things breaking.</p>
 <p><em>Control block diagram</em></p>
 <p><img src="media/web/motor-control-block-diagram.png" alt="Control block diagram"></p>
 <h3>Challenges</h3>
-<p>The more projects I do, the more I realize just how difficult it is to get something right on the first try. Here were
-some of the issues that I personally encountered and was able to fix.</p>
+<p>The more projects I do, the more I realize just how difficult it is to get
+something right on the first try. Here were some of the issues that I personally
+encountered and was able to fix.</p>
 <ol>
 <li>Our I2C bus would lock up and our sensors stopped responding
 <ul>
-<li>Solution: Our issue was that our tasks would stop halfway through an I2C transmission, leaving the bus in an
-invalid state. To fix this I probed around and found that our mutexes were not strict enough and our atomic
-sections were being split up into multiple pieces. To fix this I surrounded the whole transmission with a mutex.</li>
+<li>Solution: Our issue was that our tasks would stop halfway through an I2C
+transmission, leaving the bus in an invalid state. To fix this I probed
+around and found that our mutexes were not strict enough and our atomic
+sections were being split up into multiple pieces. To fix this I surrounded
+the whole transmission with a mutex.</li>
 </ul>
 </li>
 <li>Our H-bridges had a lot of shoot-through
 <ul>
-<li>Solution: The culprit turned out to be one of the NPN BTJs that were supposed to bring some of the power MOSFET
-gates low. The BJTs that we had did not match the pinout of the datasheet we referenced, and had the base and
-collector switched even with the same part number. The fix was simple in switching traces on the PCB.</li>
+<li>Solution: The culprit turned out to be one of the NPN BTJs that were
+supposed to bring some of the power MOSFET gates low. The BJTs that we had
+did not match the pinout of the datasheet we referenced, and had the base
+and collector switched even with the same part number. The fix was simple
+in switching traces on the PCB.</li>
 </ul>
 </li>
 </ol>
 <hr>
 <h2>Technical Highlights</h2>
 <ul>
-<li><strong>Controller:</strong> ESP32 running FreeRTOS, coordinating sensing, navigation, and actuation</li>
-<li><strong>Sensors:</strong> LiDAR for pet detection, IR reflectance sensors for line following</li>
-<li><strong>Actuation:</strong> DC motors driven by custom H-bridge, servo release mechanism for the zipline basket</li>
-<li><strong>Electronics:</strong> Isolated logic and motor grounds to reduce noise, multiplexed analog inputs to expand sensor capacity</li>
-<li><strong>System Design:</strong> Modular PCBs for drivetrain and logic subsystems, enabling independent testing before integration</li>
+<li><strong>Controller:</strong> ESP32 running FreeRTOS, coordinating sensing, navigation, and
+actuation</li>
+<li><strong>Sensors:</strong> LiDAR for pet detection, IR reflectance sensors for line
+following</li>
+<li><strong>Actuation:</strong> DC motors driven by custom H-bridge, servo release mechanism
+for the zipline basket</li>
+<li><strong>Electronics:</strong> Isolated logic and motor grounds to reduce noise, multiplexed
+analog inputs to expand sensor capacity</li>
+<li><strong>System Design:</strong> Modular PCBs for drivetrain and logic subsystems, enabling
+independent testing before integration</li>
 </ul>
 <hr>
 <h2>Repository</h2>
