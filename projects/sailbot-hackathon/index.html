@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+  <title>Sailbot Hackathon - George Sleen</title>
+  
+  <meta name="description" content="YOLO-to-ASIC pipeline and glasses-control PCB from a sailbot-sponsored hackathon." />
+  <link rel="canonical" href="https://georgesleen.github.io/projects/sailbot-hackathon/" />
+  <meta property="og:title" content="Sailbot Hackathon" />
+  <meta property="og:description" content="YOLO-to-ASIC pipeline and glasses-control PCB from a sailbot-sponsored hackathon." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://georgesleen.github.io/projects/sailbot-hackathon/" />
+  
+  <link rel="icon" href="/images/favicon.ico" />
+  <link rel="icon" type="image/png" href="/images/favicon.png" />
+  <link rel="stylesheet" href="/styles/main.css" />
+</head>
+<body>
+  <nav>
+    <a href="/">Home</a> |
+<a href="/projects/">Projects</a> |
+<a href="/blog/">Blog</a> |
+<a href="/courses/">Courses</a> |
+<a href="/resume.pdf">Resume</a> |
+<a href="https://github.com/georgesleen/">GitHub</a> |
+<a href="https://www.linkedin.com/in/george-sleen/">LinkedIn</a>
+
+  </nav>
+  <main>
+    <h1>Sailbot Hackathon</h1>
+<h2>Overview</h2>
+<p>In March 2026, I participated in a hackathon sponsored by UBC Sailbot with the
+&quot;elec-larpers&quot; team. Our project explored putting a YOLO object detection model
+onto a custom ASIC.</p>
+<h2>YOLO to ASIC</h2>
+<p>The pipeline went: YOLO model (Python) to C++ via hls4ml, to Verilog RTL via
+Bambu, and finally to a Sky130 ASIC via LibreLane.</p>
+<p>I set up the Nix-based LibreLane environment for the ASIC flow and did the
+feasibility analysis. The result: the design requires approximately 396 Mbits
+of SRAM (about 24,000 SRAM macros, 6,887 mm^2 of macro area). Not tapeout
+ready, but a useful exercise in understanding the full ML-to-silicon pipeline.</p>
+<h2>Glasses-Control PCB</h2>
+<p>I also designed a &quot;glasses-control&quot; PCB with an STM32, camera interfaces,
+haptic feedback, and an IMU. It was a one-day build during the hackathon.</p>
+
+  </main>
+</body>
+</html>

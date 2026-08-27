@@ -6,10 +6,10 @@
   
   <title>UBC Sailbot - George Sleen</title>
   
-  <meta name="description" content="Communication firmware, hackathon ASIC exploration, and embedded systems work for UBC Sailbot&#39;s autonomous sailboat Polaris." />
+  <meta name="description" content="Communication firmware and embedded systems work for UBC Sailbot&#39;s autonomous sailboat Polaris." />
   <link rel="canonical" href="https://georgesleen.github.io/projects/ubc-sailbot/" />
   <meta property="og:title" content="UBC Sailbot" />
-  <meta property="og:description" content="Communication firmware, hackathon ASIC exploration, and embedded systems work for UBC Sailbot&#39;s autonomous sailboat Polaris." />
+  <meta property="og:description" content="Communication firmware and embedded systems work for UBC Sailbot&#39;s autonomous sailboat Polaris." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://georgesleen.github.io/projects/ubc-sailbot/" />
   
@@ -63,18 +63,6 @@ host unit tests.</li>
 workflow and the Nucleo hardware. My early work sessions involved getting UART
 printing to work, debugging I2C and NMEA protocol issues with an Analog
 Discovery 3, and writing unit tests for the wind sensor parser.</p>
-<hr>
-<h2>Sailbot Hackathon</h2>
-<p>In March 2026, I participated in a sailbot hackathon with the &quot;elec-larpers&quot;
-team. Our project explored putting a YOLO object detection model onto a custom
-ASIC. The pipeline went: YOLO model (Python) to C++ via hls4ml, to Verilog RTL
-via Bambu, and finally to a Sky130 ASIC via LibreLane.</p>
-<p>I set up the Nix-based LibreLane environment for the ASIC flow and did the
-feasibility analysis. The result: the design requires approximately 396 Mbits
-of SRAM (about 24,000 SRAM macros, 6,887 mm^2 of macro area). Not tapeout
-ready, but a useful exercise in understanding the full ML-to-silicon pipeline.</p>
-<p>I also designed a &quot;glasses-control&quot; PCB with an STM32, camera interfaces,
-haptic feedback, and an IMU. It was a one-day build during the hackathon.</p>
 <hr>
 <h2>Repositories</h2>
 <ul>

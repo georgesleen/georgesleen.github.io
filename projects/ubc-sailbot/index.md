@@ -1,10 +1,10 @@
 ---
 title: "UBC Sailbot"
 layout: project.njk
-description: "Communication firmware, hackathon ASIC exploration, and embedded systems work for UBC Sailbot's autonomous sailboat Polaris."
+description: "Communication firmware and embedded systems work for UBC Sailbot's autonomous sailboat Polaris."
 thumbnail: "media/polaris-imu-pcb-orthographic.png"
 date: 2026-08-16
-status: "active"
+status: "design-teams"
 featured: false
 tags: ["embedded", "firmware", "electrical"]
 media:
@@ -51,23 +51,6 @@ I started on this codebase in October 2025, learning the team's STM32CubeIDE
 workflow and the Nucleo hardware. My early work sessions involved getting UART
 printing to work, debugging I2C and NMEA protocol issues with an Analog
 Discovery 3, and writing unit tests for the wind sensor parser.
-
----
-
-## Sailbot Hackathon
-
-In March 2026, I participated in a sailbot hackathon with the "elec-larpers"
-team. Our project explored putting a YOLO object detection model onto a custom
-ASIC. The pipeline went: YOLO model (Python) to C++ via hls4ml, to Verilog RTL
-via Bambu, and finally to a Sky130 ASIC via LibreLane.
-
-I set up the Nix-based LibreLane environment for the ASIC flow and did the
-feasibility analysis. The result: the design requires approximately 396 Mbits
-of SRAM (about 24,000 SRAM macros, 6,887 mm^2 of macro area). Not tapeout
-ready, but a useful exercise in understanding the full ML-to-silicon pipeline.
-
-I also designed a "glasses-control" PCB with an STM32, camera interfaces,
-haptic feedback, and an IMU. It was a one-day build during the hackathon.
 
 ---
 

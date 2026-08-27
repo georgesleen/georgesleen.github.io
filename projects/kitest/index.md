@@ -5,7 +5,7 @@ description: "Simulation-based test harness for KiCad. DRC checks manufacturabil
 thumbnail: ""
 date: 2026-06-23
 status: "active"
-featured: true
+featured: false
 tags: ["electrical", "pcbs", "simulation"]
 media: []
 ---
