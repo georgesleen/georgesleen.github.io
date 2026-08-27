@@ -17,100 +17,70 @@ media:
 
 ![Top-level schematic](media/schematic-toplevel.png)
 
-## Overview
-
-This project is a custom ultrasonic sonar system designed from scratch in
-KiCad. The board transmits and receives ultrasonic pulses through a phased
-array of piezoelectric transducers for applications like object detection and
+This is a custom ultrasonic sonar system that Josh Himmens and I are designing
+from scratch in KiCad. The board transmits and receives ultrasonic pulses
+through a phased array of piezoelectric transducers for object detection and
 distance measurement.
 
-The project lives in a monorepo with the main board design, a development
-board for prototyping TX/RX circuitry, a shared KiCad component library, and a
-standalone SPICE simulation sub-project for the receive amplifier.
+The project lives in a monorepo with the main board, a dev board for prototyping
+TX/RX circuitry, a shared KiCad component library, and a standalone SPICE
+simulation for the receive amplifier.
 
-## System Architecture
+## Transmit
 
-The board has three major subsystems:
+I built the H-bridge driver circuit that generates the 20 kHz drive signals for
+the transducer array. The array uses Murata MA40S4S piezoelectric ultrasonic
+transducers (40 kHz, 10 mm diameter, 20 Vp-p max input). The top-level
+schematic instantiates the 8-element array three times, for 24 elements total.
 
-### Transmit (TX)
+## Receive
 
-An H-bridge driver circuit generates 20 kHz drive signals for the transducer
-array. The array uses Murata MA40S4S piezoelectric ultrasonic transducers
-(40 kHz operating frequency, 10 mm diameter, 20 Vp-p max input). The top-level
-schematic instantiates the 8-element transducer array three times, for a total
-of 24 elements.
+Josh designed the RX chain. SPV0142LR5H-1 MEMS microphones (Knowles, analog
+omnidirectional) feed into a multi-stage amplifier. Each group of four MEMS mics
+connects to a quad pre-amplifier, and each element has its own RX amplifier
+channel. The pre-amp runs at a gain of 21 with a 120 MHz GBP op-amp.
 
-### Receive (RX)
+A standalone SPICE simulation project (`rx_amp_sim/`) lets us iterate on the RX
+amplifier design without dragging the full schematic into simulation.
 
-SPV0142LR5H-1 MEMS microphones (Knowles, analog omnidirectional) feed into a
-multi-stage amplifier chain. Each group of four MEMS mics connects to a quad
-pre-amplifier, and each element has its own RX amplifier channel. The pre-amp
-stage runs at a gain of 21 with a 120 MHz GBP op-amp.
+## Power tree
 
-A standalone SPICE simulation project (`rx_amp_sim/`) lets me iterate on the
-RX amplifier design without dragging the full schematic into simulation.
-
-### Power Tree
-
-_Power supply hierarchy (George Sleen):_
+_Power supply hierarchy:_
 
 ![Power supply hierarchy](media/power-supply-hierarchy.png)
 
-The power supply is hierarchical and supports two input sources through a power
+I designed the full power tree. It supports two input sources through a power
 mux with ideal diode ORing:
 
 - USB-C (5 V / 900 mA)
 - XT60 connector (battery or bench supply)
 
-From the input, the power tree generates every rail the system needs:
+From the input, the tree generates every rail the system needs: 5 V to 12 V
+boost (TPS55340), inverting buck-boost for a negative rail (TPS63700), 3.3 V
+adjustable buck for digital logic, negative 10 V LDO (LM337), 12 V to 10 V
+LDO, and a 2.75 V LDO.
 
-- 5 V to 12 V boost (TPS55340PWPR)
-- Inverting buck-boost for a negative rail (TPS63700DRCR)
-- 3.3 V adjustable buck for digital logic
-- Negative 10 V LDO (LM337IMPX)
-- 12 V to 10 V LDO
-- 2.75 V LDO
+The inverting buck-boost was the hardest part. The component calculations for
+the inductor and feedback resistors took multiple iterations. I kept the old
+revision (`inverting_buck_boost_OLD.kicad_sch`) alongside the current one
+because my commit message at the time was "Do some more questionable math for
+the inverting buck boost" and I wanted the reference.
 
-## Shared KiCad Library
+## Shared library and tooling
 
-The `sonar-library/` directory contains all shared symbols, footprints, 3D
-models, and SPICE models. A Python setup script (`setup-kicad.py`, using PEP
-723 inline metadata) registers the library with KiCad's global tables and
-sets path variables in `kicad_common.json`. The script refuses to run while
-KiCad is open to avoid config clobbering.
+The `sonar-library/` directory has over 40 symbols, 19 custom footprints, STEP
+models for the connectors, and SPICE models for the TVS diode and boost
+converter. I wrote a Python setup script (`setup-kicad.py`, PEP 723 inline
+metadata) that registers the library with KiCad's global tables and sets path
+variables. It refuses to run while KiCad is open to avoid config clobbering.
 
-The library has over 40 symbols, 19 custom footprints, STEP models for the
-connectors, and SPICE models for the TVS diode and boost converter.
+Getting library resolution to work across machines was its own problem. KiCad
+has two layers of resolution: global (via `kicad_common.json` path variables)
+and project-local (via per-project `sym-lib-table`). The setup script and
+careful use of `${KIPRJMOD}` relative paths keep them from fighting.
 
-## My Contributions
-
-I am the primary contributor (24 of 41 commits). My work includes:
-
-- **Power supply design.** I designed the full power tree: boost converters,
-  inverting buck-boost (with some "questionable math" for the component
-  calculations), LDOs, ideal diodes, and the input power mux.
-- **TX H-bridge.** I built the 20 kHz H-bridge driver circuit from scratch.
-- **Shared library and setup tooling.** I created the monorepo structure,
-  wrote the shared KiCad library, and built the Python setup script.
-- **Monorepo migration.** I merged the previously separate sonar-v1-pcb and
-  tx-rx-dev-board repositories into a unified structure.
-
-Joshua Himmens contributed the earliest schematic work, the RX receiver chain
-(quad pre-amp, MEMS RX), and set up the RX amp SPICE simulation.
-
-## Challenges
-
-1. **Negative rail generation.** The RX amplifier chain needs a negative supply
-   rail. I used a TPS63700 inverting buck-boost to generate it. The component
-   calculations for the inductor and feedback resistors took multiple iterations
-   to get right. I kept the old revision (`inverting_buck_boost_OLD.kicad_sch`)
-   alongside the current one for reference.
-
-2. **Library resolution across projects.** KiCad has two layers of library
-   resolution: global (via `kicad_common.json` path variables) and
-   project-local (via per-project `sym-lib-table`). Getting these to coexist
-   without breaking paths across machines required the setup script and careful
-   use of `${KIPRJMOD}` relative paths.
+I also merged the previously separate sonar-v1-pcb and tx-rx-dev-board
+repositories into the monorepo.
 
 ## Repository
 

@@ -30,18 +30,17 @@
   </nav>
   <main>
     <h1>Sailbot Hackathon</h1>
-<h2>Overview</h2>
-<p>In March 2026, I participated in a hackathon sponsored by UBC Sailbot with the
-&quot;elec-larpers&quot; team. Our project explored putting a YOLO object detection model
-onto a custom ASIC.</p>
+<p>In March 2026 I did a hackathon sponsored by UBC Sailbot with the
+&quot;elec-larpers&quot; team. We tried to put a YOLO object detection model onto a
+custom ASIC.</p>
 <h2>YOLO to ASIC</h2>
 <p>The pipeline went: YOLO model (Python) to C++ via hls4ml, to Verilog RTL via
-Bambu, and finally to a Sky130 ASIC via LibreLane.</p>
-<p>I set up the Nix-based LibreLane environment for the ASIC flow and did the
-feasibility analysis. The result: the design requires approximately 396 Mbits
-of SRAM (about 24,000 SRAM macros, 6,887 mm^2 of macro area). Not tapeout
-ready, but a useful exercise in understanding the full ML-to-silicon pipeline.</p>
-<h2>Glasses-Control PCB</h2>
+Bambu, to a Sky130 ASIC via LibreLane. I set up the Nix-based LibreLane
+environment and did the feasibility analysis. The result: the design needs about
+396 Mbits of SRAM (roughly 24,000 SRAM macros, 6,887 mm^2 of macro area). Not
+tapeout ready, but a useful exercise in understanding the full ML-to-silicon
+pipeline.</p>
+<h2>Glasses-control PCB</h2>
 <p>I also designed a &quot;glasses-control&quot; PCB with an STM32, camera interfaces,
 haptic feedback, and an IMU. It was a one-day build during the hackathon.</p>
 

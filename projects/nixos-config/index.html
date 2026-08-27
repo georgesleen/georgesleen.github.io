@@ -30,23 +30,19 @@
   </nav>
   <main>
     <h1>NixOS Config</h1>
-<h2>Overview</h2>
 <p>This is my NixOS configuration: a single flake-based repository that manages
-every machine I run. The repo has about 5,400 lines of Nix across 78 files,
-with 491 commits since January 2026.</p>
-<p>The git history tells the whole story of learning NixOS from scratch. Early
-commits are trial-and-error (&quot;Try fixing STM32CubeMX to use the fake home&quot;,
-&quot;Hopefully fix bug that just locks up the whole computer&quot;). Later commits are
-surgical (&quot;waybar: clock via glibc date, libstdc++ tzdb reads Vancouver an
-hour behind&quot;). The repo grew from a bare GNOME desktop into a fully declarative
-sway setup, a multi-host infrastructure, and a tested shell script collection.</p>
-<p>The hosts are:</p>
+every machine I run. About 5,400 lines of Nix across 78 files, with 491
+commits since January 2026.</p>
+<p>The git history is the real story of learning NixOS from scratch. Early commits
+are trial-and-error (&quot;Try fixing STM32CubeMX to use the fake home&quot;, &quot;Hopefully
+fix bug that just locks up the whole computer&quot;). Later commits are surgical
+(&quot;waybar: clock via glibc date, libstdc++ tzdb reads Vancouver an hour behind&quot;).</p>
+<p>The hosts:</p>
 <ul>
 <li><strong>gs-thinkpad-t480s</strong> (primary daily driver, Intel i5-8250U)</li>
-<li><strong>gs-server</strong> (Framework-class server with a Windows 11 VM via libvirt/VFIO
+<li><strong>gs-server</strong> (Framework-class server with a Windows 11 VM via VFIO
 passthrough)</li>
-<li><strong>gs-pi4</strong> (Raspberry Pi 4, media server, cross-compiled via QEMU binfmt
-emulation)</li>
+<li><strong>gs-pi4</strong> (Raspberry Pi 4, media server, cross-compiled via QEMU binfmt)</li>
 <li><strong>gs-openwrt-one</strong> (OpenWrt router, built declaratively from Nix)</li>
 <li><strong>gs-pi4-vm</strong> (QEMU test VM for the Pi 4 config)</li>
 </ul>
@@ -54,174 +50,137 @@ emulation)</li>
 <p>The flake entry point wires each host together with home-manager as a NixOS
 module. The module tree has four layers:</p>
 <ol>
-<li><strong>Core</strong> (<code>modules/core/</code>): packages and settings that apply to every host.</li>
+<li><strong>Core</strong> (<code>modules/core/</code>): packages and settings for every host.</li>
 <li><strong>Roles</strong> (<code>modules/roles/</code>): one per host kind (laptop, server). A host
-imports exactly one role.</li>
-<li><strong>Features</strong> (<code>modules/features/</code>): 22 opt-in modules covering audio, btrfs,
-fonts, desktop, sway, virtualization, Steam, Flipper Zero, Firefox,
-containers (distrobox), and more. A role selects which features it needs.</li>
+imports exactly one.</li>
+<li><strong>Features</strong> (<code>modules/features/</code>): 22 opt-in modules (audio, btrfs, fonts,
+desktop, sway, virtualization, Steam, Firefox, containers, etc.). A role
+picks which features it needs.</li>
 <li><strong>Hardware</strong> (<code>modules/hardware/</code>): per-machine quirks (ThinkPad lid
 behavior, Thunderbolt dock handling, PCIe wakeup management).</li>
 </ol>
-<p>Home-manager configs live in <code>home/dotfiles/</code>, one file per program: sway
-(274 lines), waybar (355 lines), kitty (202 lines), helix, kanshi, battery
+<p>Home-manager configs live in <code>home/dotfiles/</code>, one file per program: sway (274
+lines), waybar (355 lines), kitty (202 lines), helix, kanshi, battery
 management, fuzzel, darkman, swayidle, and more.</p>
 <h2>Testing</h2>
 <p>Shell scripts that make runtime decisions are split into standalone files with
-fixture-based test suites. There are 11 test scripts covering:</p>
-<ul>
-<li><strong>Lid decision:</strong> tests against synthetic <code>/proc/acpi</code>, <code>/sys/bus/thunderbolt</code>,
-and <code>/sys/class/drm</code> trees. Every combination of docked/undocked, AC/battery,
-and lid open/closed has a fixture.</li>
-<li><strong>Thunderbolt state:</strong> tests against synthetic PCI device trees to detect
-whether the controller is wedged.</li>
-<li><strong>Display plan:</strong> tests against fake <code>swaymsg -t get_outputs</code> JSON to verify
-layout geometry for extend, mirror, swap, and external-only modes.</li>
-<li><strong>Workspace plan:</strong> tests against fake <code>swaymsg -t get_workspaces</code> JSON to
-verify workspace reassignment across all three modes.</li>
-<li><strong>Battery level:</strong> tests the threshold transitions and notification
-deduplication.</li>
-<li><strong>Waybar formatting, AV stepping, GPU busy detection, secrets guard,
-snapper orphan cleanup.</strong></li>
-</ul>
+fixture-based test suites. There are 11 test scripts covering the lid handler,
+Thunderbolt state, display layout, workspace assignment, battery level
+transitions, waybar formatting, AV stepping, GPU busy detection, secrets guard,
+and snapper cleanup. Every combination of docked/undocked, AC/battery, lid
+open/closed has its own fixture.</p>
 <p>A <code>Makefile</code> target runs the full suite. Every script takes overridable paths
-(e.g. <code>LID_STATE</code>, <code>TB_DEVICES</code>, <code>DRM_DIR</code>) so tests substitute fixture trees.</p>
-<h2>ThinkPad Hardware Management</h2>
-<h3>Lid and Power</h3>
+(e.g. <code>LID_STATE</code>, <code>TB_DEVICES</code>, <code>DRM_DIR</code>) so tests substitute fixture trees
+instead of reading real system state.</p>
+<h2>ThinkPad hardware</h2>
+<h3>Lid and power</h3>
 <p>The lid handler reads four inputs: lid state, Thunderbolt authorization,
-connected displays, and AC power. It outputs one of four actions:
-<code>none</code>, <code>stay-awake</code>, <code>suspend</code>, or <code>suspend-then-hibernate</code>.</p>
-<p>The decision tree: a connected external display or an authorized Thunderbolt
-device means &quot;docked&quot; (stay awake). Otherwise, AC means suspend, and battery
-means suspend-then-hibernate (S3 first, S4 after 30 minutes via RTC wake).</p>
-<p>On resume, the system re-arms PCIe root port wakeup, checks the lid state, and
-if the lid is still closed (e.g. a hibernate self-wake), goes straight back to
-sleep. Otherwise it restarts DNS and Wi-Fi and fires Thunderbolt recovery.</p>
-<h3>Thunderbolt Recovery</h3>
+connected displays, and AC power. It outputs one of four actions: none,
+stay-awake, suspend, or suspend-then-hibernate.</p>
+<p>The decision tree: an external display or an authorized Thunderbolt device means
+&quot;docked&quot; (stay awake). Otherwise, AC means suspend, and battery means
+suspend-then-hibernate (S3 first, then S4 after 30 minutes via RTC wake).</p>
+<p>On resume, the system re-arms PCIe wakeup, checks if the lid is still closed
+(e.g. a hibernate self-wake), and if so goes straight back to sleep. Otherwise
+it restarts DNS, Wi-Fi, and fires Thunderbolt recovery.</p>
+<h3>Thunderbolt recovery</h3>
 <p>The T480s has an Alpine Ridge LP Thunderbolt controller that wedges after
 hibernate. A hung ICM (internal connection manager) leaves the PCI bridge
 functions alive but the NHI (native host interface) gone, or the NHI present
 with an empty domain. Either way, hotplug stops working.</p>
 <p>I wrote a detection script that checks the PCI topology for this specific
-failure mode, and a recovery script that hard-resets the chip: it removes the
-PCI functions, cuts <code>force_power</code> for a 10-second off dwell (2 seconds was not
-enough), rescans, and releases. This runs automatically on resume as a
-systemd service.</p>
+failure, and a recovery script that hard-resets the chip: it removes the PCI
+functions, cuts <code>force_power</code> for a 10-second off dwell (2 seconds was not
+enough), rescans, and releases. This runs automatically on resume as a systemd
+service.</p>
 <h3>Dock USB</h3>
 <p>The Lenovo USB-C dock (40AY) had SuperSpeed link failures. I added a udev rule
-to hold the Alpine Ridge xHCI controller at <code>power/control=on</code> when the dock
-is connected, which prevents the controller from power-gating and dropping
-the link.</p>
-<h2>Desktop (Sway)</h2>
-<p>The desktop evolved from a GNOME setup through a long swaybar/i3blocks phase
-into the current sway-native stack. Every component is declared in Nix.</p>
+to hold the Alpine Ridge xHCI controller at <code>power/control=on</code> when the dock is
+connected, which prevents the controller from power-gating and dropping the
+link.</p>
+<h2>Desktop (sway)</h2>
+<p>The desktop evolved from GNOME through a swaybar/i3blocks phase into the current
+sway-native stack. Everything is declared in Nix.</p>
 <h3>Waybar</h3>
-<p>Waybar replaced swaybar/i3blocks after I hit limits with SNI tray icon
-rendering. I wrote the config from scratch: pill-shaped blocks, Nightfox color
-palette, function-matched colors (green accent for healthy, yellow for battery
-warnings). The clock uses glibc <code>date</code> instead of the built-in widget because
-<code>libstdc++</code> reads the Vancouver timezone an hour behind.</p>
-<h3>Display and Workspace Management</h3>
-<ul>
-<li><strong>kanshi</strong> manages output profiles with wildcard external matching. The
-external monitor is discovered at runtime, not hardcoded by name.</li>
-<li><strong>display-plan.sh</strong> computes the sway output layout from connected displays.
-It handles extend, external-only, mirror, and swap modes, with automatic
-scale detection (4K panels get 2x) and subpixel assertion.</li>
-<li><strong>workspace-plan.sh</strong> reassigns workspaces across outputs. Odd workspaces go
-to the internal panel, even to the external. A <code>swap</code> keybind flips sides
-live.</li>
-</ul>
-<h3>Other Desktop</h3>
-<ul>
-<li><strong>Custom xkb keymap</strong> remaps Caps Lock to Escape and Left Alt to
-Hyper_L/Mod3.</li>
-<li><strong>fuzzel</strong> as the application launcher (font matched to kitty at size 12,
-scaled per output).</li>
-<li><strong>darkman</strong> auto-switches GTK theme and wallpaper between light and dark
-based on solar position (latitude/longitude of Vancouver).</li>
-<li><strong>Wallpaper rotation</strong> renders wallpapers from source SVGs to 4K PNGs at
-build time, with an optional NixOS emblem watermark composited via
-ImageMagick.</li>
-<li><strong>swayidle</strong> locks with swaylock-effects (blurred, dimmed background) after
-30 minutes, then turns off displays.</li>
-<li><strong>AV stepping</strong> rounds volume and brightness percentages to the next step
-boundary (tested).</li>
-<li><strong>dnscrypt-proxy</strong> routes DNS over HTTPS to Cloudflare.</li>
-</ul>
+<p>I replaced swaybar/i3blocks after hitting limits with SNI tray icon rendering.
+The config is written from scratch: pill-shaped blocks, Nightfox color palette,
+function-matched colors (green for healthy, yellow for battery warnings). The
+clock uses glibc <code>date</code> instead of the built-in widget because <code>libstdc++</code> reads
+the Vancouver timezone an hour behind.</p>
+<h3>Display and workspace management</h3>
+<p>kanshi manages output profiles with wildcard external matching. <code>display-plan.sh</code>
+computes the sway output layout from connected displays, with automatic scale
+detection (4K panels get 2x) and subpixel assertion. <code>workspace-plan.sh</code>
+reassigns workspaces: odd numbers go to the internal panel, even to the external.
+A keybind flips sides live.</p>
+<h3>Steam Remote Play debugging</h3>
+<p>I tried streaming games from <code>gs-server</code> to the T480s via Steam Remote Play and
+got a pure white screen. The streaming stats showed <code>display ~999 ms</code> (~1 FPS)
+regardless of decode method.</p>
+<p>First I thought it was the VA-API DRM hardware decoder. Toggling hardware
+decoding off changed the decode time but display stayed at 999 ms. Then I tried
+<code>LIBGL_DRI3_DISABLE=1</code>, which bricked Steam launch entirely because XWayland
+dropped DRI2 support. Then I tried Vulkan WSI present mode overrides, since
+Steam's UI uses Vulkan, not OpenGL, and all the GLX-targeted fixes were aimed at
+the wrong renderer. No effect.</p>
+<p>The actual signal was in the timing data: display time tracks inversely with how
+fast frames arrive. When the server stalls and frames come in slower than 1 Hz,
+display catches up and renders fine. When frames arrive at 60 Hz, display locks
+to ~1000 ms. That is compositor frame-callback throttling, not a vsync timeout.
+Sway sends <code>wl_surface.frame</code> callbacks for the streaming window at ~1 Hz.</p>
+<h3>Other desktop</h3>
+<p>Custom xkb keymap remaps Caps Lock to Escape and Left Alt to Hyper_L/Mod3.
+fuzzel as the launcher. darkman auto-switches GTK theme and wallpaper between
+light and dark based on solar position. Wallpaper rotation renders source SVGs
+to 4K PNGs at build time with an optional NixOS emblem watermark via
+ImageMagick. swayidle locks after 30 minutes, then turns off displays.
+dnscrypt-proxy routes DNS over HTTPS to Cloudflare.</p>
 <h3>Battery</h3>
 <p>A systemd user timer polls battery state and fires notifications at low and
-critical thresholds. The threshold transitions are deduplicated (no repeated
-warnings) and tested against fixtures. At the critical level, the system
-auto-hibernates.</p>
-<h2>Server (GPU Passthrough)</h2>
-<p>The Framework server runs a Windows 11 VM via libvirt with VFIO GPU
-passthrough. IOMMU is enabled with <code>iommu=pt</code>, and the RX 580 detaches from
-<code>amdgpu</code> on demand via <code>virsh nodedev-detach</code>. The host keeps ROCm/OpenCL for
-compute when the GPU is not passed through. The VM definition is declarative
-(NixVirt), but <code>active = null</code> so a NixOS rebuild never disturbs a running
-session.</p>
-<p>The VM sits on a libvirt NAT bridge (not macvtap, because Wi-Fi stations
-cannot present a guest's MAC to the AP). A qemu hook script manages iptables
-port-forwarding rules so the guest is reachable from the LAN. The forwarding
-plan is generated by a tested script (<code>win11-forward.sh</code>) and applied/torn
-down on VM start/stop.</p>
-<h2>Pi 4 Media Server</h2>
-<p>The Pi 4 runs a media stack (Jellyfin, Sonarr, Radarr) on btrfs with
-subvolume quotas. The config cross-compiles on the T480s via QEMU binfmt
-emulation and deploys over the network. A test VM (<code>gs-pi4-vm</code>) boots the
-full Pi config in QEMU with a Makefile that builds, launches, prints service
-URLs, and offers SSH access, so I can validate service changes before
-deploying to hardware.</p>
-<p>Specific work:</p>
-<ul>
-<li><strong>btrfs subvolume management.</strong> Media and state are separate subvolumes,
-with a 256 GiB quota on media. Boot-time assertions verify the subvolumes
-exist and the quota is applied.</li>
-<li><strong>Multi-device btrfs boot race.</strong> <code>/srv/media</code> automounts to survive the
-race where the second device in a multi-device btrfs filesystem is not yet
-scanned at mount time.</li>
-<li><strong>Snapper orphan cleanup.</strong> A tested script reaps orphaned snapper snapshots,
-with a sleep inhibitor to prevent the machine from suspending mid-cleanup.</li>
-<li><strong>Media management suites.</strong> A cleanup dashboard, season pack planner, health
-checker, and a background pause system for Jellyfin that suspends transcoding
-when the client disconnects.</li>
-<li><strong>Moonfin/Delfin.</strong> I packaged the Moonfin Jellyfin client with its native
-library dependencies (libepoxy, libXv, libmpv) and a desktop entry so it
-appears in fuzzel.</li>
-</ul>
-<h2>OpenWrt Router</h2>
+critical thresholds. The transitions are deduplicated (no repeated warnings) and
+tested. At critical, the system auto-hibernates.</p>
+<h2>Server (GPU passthrough)</h2>
+<p>The Framework server runs a Windows 11 VM via libvirt with VFIO GPU passthrough.
+IOMMU is on with <code>iommu=pt</code>, and the RX 580 detaches from <code>amdgpu</code> on demand
+via <code>virsh nodedev-detach</code>. The host keeps ROCm/OpenCL for compute when the GPU
+is not passed through. The VM definition is declarative (NixVirt), but
+<code>active = null</code> so a rebuild never disturbs a running session.</p>
+<p>The VM sits on a libvirt NAT bridge (not macvtap, because Wi-Fi stations cannot
+present a guest's MAC to the AP). A qemu hook script manages iptables port
+forwarding so the guest is reachable from the LAN.</p>
+<h2>Pi 4 media server</h2>
+<p>The Pi 4 runs Jellyfin, Sonarr, and Radarr on btrfs with subvolume quotas. The
+config cross-compiles on the T480s via QEMU binfmt emulation and deploys over
+the network. A test VM (<code>gs-pi4-vm</code>) boots the full Pi config in QEMU so I can
+validate service changes before deploying to hardware.</p>
+<p>The btrfs setup was its own project. Media and state are separate subvolumes
+with a 256 GiB quota on media. Boot-time assertions verify the subvolumes exist
+and the quota is applied. <code>/srv/media</code> automounts to survive the race where the
+second device in a multi-device btrfs filesystem is not yet scanned at mount
+time.</p>
+<p>I also packaged the Moonfin Jellyfin client with its native library dependencies
+(libepoxy, libXv, libmpv) and a desktop entry so it appears in fuzzel.</p>
+<h2>OpenWrt router</h2>
 <p>The OpenWrt One runs in WISP mode: a Wi-Fi client uplink on 5 GHz through NAT
-to wired LAN plus a local AP, with hardware flow offloading. The firmware
-image is built declaratively from Nix using <code>nix-openwrt-imagebuilder</code>.</p>
-<p>Features:</p>
-<ul>
-<li><strong>Tailscale:</strong> Joins the tailnet on first boot via a uci-defaults script.</li>
-<li><strong>DNS:</strong> Routes LAN DNS through the Pi's AdGuard Home for ad blocking, with
-a reservation fallback.</li>
-<li><strong>2.5G port:</strong> Folded into <code>br-lan</code> for the downstream switch.</li>
-<li><strong>Secrets:</strong> Wi-Fi credentials and Tailscale auth key encrypted with sops-nix.</li>
-<li><strong>Package index patching:</strong> OpenWrt rebuilds its package indexes in place, so
-every cached <code>packages.adb</code> hash goes stale on point releases. I maintain a
+to wired LAN plus a local AP, with hardware flow offloading. The firmware image
+is built declaratively from Nix using <code>nix-openwrt-imagebuilder</code>.</p>
+<p>Tailscale joins the tailnet on first boot. LAN DNS routes through the Pi's
+AdGuard Home. Wi-Fi credentials and the Tailscale auth key are encrypted with
+sops-nix.</p>
+<p>One ongoing annoyance: OpenWrt rebuilds its package indexes in place, so every
+cached <code>packages.adb</code> hash goes stale on point releases. I maintain a
 <code>freshHashes</code> table that patches the fixed-output derivation hashes at build
-time.</li>
-</ul>
-<p>The move from OpenWrt 25.12 replaced <code>opkg</code> with <code>apk</code>, which required
-reworking the package installation flow. Flash and update go through Makefile
-targets.</p>
+time.</p>
 <h2>Firefox</h2>
-<p>Firefox extensions and policies are declared in Nix. Extensions
-(uBlock Origin, Bitwarden, Vimium, Privacy Badger, ClearURLs, Facebook
-Container, YouTube Shorts Block, Adaptive Tab Bar Colour) are
-<code>force_installed</code> from AMO's latest URL and track upstream automatically.
-Telemetry, Pocket, and sponsored content are disabled via policy.</p>
-<h2>Claude Code Integration</h2>
-<p>The repo manages Claude Code's own configuration (<code>claude.nix</code> generates
-<code>~/.claude/settings.json</code>). I also wrote custom Claude skills as Nix modules:
-a <code>/workflow</code> skill with three modes (auto, user, claude), a <code>/debug</code>
-root-cause skill, a returns-processing skill (covering Amazon and DigiKey),
-and a media-grab fix skill. A <code>sudo</code> workaround uses fuzzel as an askpass
-agent so that Claude's ttyless <code>sudo</code> calls pop a GUI prompt on the desktop
+<p>Extensions and policies are declared in Nix. Extensions (uBlock Origin,
+Bitwarden, Vimium, Privacy Badger, ClearURLs, Facebook Container, YouTube
+Shorts Block, Adaptive Tab Bar Colour) are <code>force_installed</code> from AMO's latest
+URL and track upstream automatically.</p>
+<h2>Claude Code integration</h2>
+<p>The repo manages Claude Code's own configuration. I wrote custom skills as Nix
+modules: a <code>/workflow</code> skill with three modes (auto, user, claude), a <code>/debug</code>
+root-cause skill, and a returns-processing skill. A <code>sudo</code> workaround uses
+fuzzel as an askpass agent so Claude's ttyless <code>sudo</code> calls pop a GUI prompt
 instead of hanging.</p>
 <h2>Secrets</h2>
 <p>Managed with sops-nix. Each host has an age key derived from its SSH host key.
