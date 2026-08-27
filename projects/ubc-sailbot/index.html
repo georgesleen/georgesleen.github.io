@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+  <title>UBC Sailbot - George Sleen</title>
+  
+  <meta name="description" content="Communication firmware, hackathon ASIC exploration, and embedded systems work for UBC Sailbot&#39;s autonomous sailboat Polaris." />
+  <link rel="canonical" href="https://georgesleen.github.io/projects/ubc-sailbot/" />
+  <meta property="og:title" content="UBC Sailbot" />
+  <meta property="og:description" content="Communication firmware, hackathon ASIC exploration, and embedded systems work for UBC Sailbot&#39;s autonomous sailboat Polaris." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://georgesleen.github.io/projects/ubc-sailbot/" />
+  
+  <meta property="og:image" content="https://georgesleen.github.io/projects/ubc-sailbot/media/polaris-imu-pcb-orthographic.png" />
+  
+  <link rel="icon" href="/images/favicon.ico" />
+  <link rel="icon" type="image/png" href="/images/favicon.png" />
+  <link rel="stylesheet" href="/styles/main.css" />
+</head>
+<body>
+  <nav>
+    <a href="/">Home</a> |
+<a href="/projects/">Projects</a> |
+<a href="/blog/">Blog</a> |
+<a href="/courses/">Courses</a> |
+<a href="/resume.pdf">Resume</a> |
+<a href="https://github.com/georgesleen/">GitHub</a> |
+<a href="https://www.linkedin.com/in/george-sleen/">LinkedIn</a>
+
+  </nav>
+  <main>
+    <h1>UBC Sailbot</h1>
+<h2>Overview</h2>
+<p>UBC Sailbot builds an autonomous sailboat called Polaris. I joined the team in
+September 2025 and work on the embedded systems that keep the boat running: the
+shared communication firmware that ties the subsystems together, and the
+<a href="/projects/plrs-imu/">PLRS-IMU</a> heading sensor fusion system (covered on its
+own page).</p>
+<hr>
+<h2>Communication Module Firmware</h2>
+<p>The boat's subsystems (rudder controller, wingsail controller, sensor module,
+power distribution) each run on STM32U575 Nucleo boards. The communication
+module firmware is the shared codebase for all of them.</p>
+<p>My contributions include:</p>
+<ul>
+<li><strong>NMEA0183 parsing</strong> for the LCJ CV7 wind sensor. I wrote clean parsers with
+typed structs so the data self-documents. No more raw fixed-point integers
+with comments explaining how to decode them.</li>
+<li><strong>Rudder link protocol.</strong> I designed a COBS-framed serial protocol that feeds
+the fused heading from the IMU to the rudder controller.</li>
+<li><strong>Rudder equivalence analysis.</strong> When a teammate refactored the rudder control
+model, I did a forensic comparison and found two real bugs: a doubled integral
+increment and uninitialized state.</li>
+<li><strong>Integration and branch management.</strong> I merged the wingsail, rudder, PDB,
+and sensor module branches into one coherent state, documented all branch
+tips, and wrote the git flow and testing workflow for the team.</li>
+<li><strong>CI pipeline.</strong> I set up GitHub Actions for <code>.ioc</code> peripheral checking and
+host unit tests.</li>
+</ul>
+<p>I started on this codebase in October 2025, learning the team's STM32CubeIDE
+workflow and the Nucleo hardware. My early work sessions involved getting UART
+printing to work, debugging I2C and NMEA protocol issues with an Analog
+Discovery 3, and writing unit tests for the wind sensor parser.</p>
+<hr>
+<h2>Sailbot Hackathon</h2>
+<p>In March 2026, I participated in a sailbot hackathon with the &quot;elec-larpers&quot;
+team. Our project explored putting a YOLO object detection model onto a custom
+ASIC. The pipeline went: YOLO model (Python) to C++ via hls4ml, to Verilog RTL
+via Bambu, and finally to a Sky130 ASIC via LibreLane.</p>
+<p>I set up the Nix-based LibreLane environment for the ASIC flow and did the
+feasibility analysis. The result: the design requires approximately 396 Mbits
+of SRAM (about 24,000 SRAM macros, 6,887 mm^2 of macro area). Not tapeout
+ready, but a useful exercise in understanding the full ML-to-silicon pipeline.</p>
+<p>I also designed a &quot;glasses-control&quot; PCB with an STM32, camera interfaces,
+haptic feedback, and an IMU. It was a one-day build during the hackathon.</p>
+<hr>
+<h2>Repositories</h2>
+<ul>
+<li>PLRS-IMU (separate page): <a href="/projects/plrs-imu/">PLRS-IMU project</a></li>
+<li>Communication firmware: <a href="https://github.com/UBCSailbot/com-module-firmware">github.com/UBCSailbot/com-module-firmware</a></li>
+</ul>
+
+  </main>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+  <title>Photonics Lab - George Sleen</title>
+  
+  <meta name="description" content="Frequency discriminator bring-up and laser linewidth measurement on a silicon photonic chip." />
+  <link rel="canonical" href="https://georgesleen.github.io/projects/photonics-lab/" />
+  <meta property="og:title" content="Photonics Lab" />
+  <meta property="og:description" content="Frequency discriminator bring-up and laser linewidth measurement on a silicon photonic chip." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://georgesleen.github.io/projects/photonics-lab/" />
+  
+  <meta property="og:image" content="https://georgesleen.github.io/projects/photonics-lab/media/ref-photonic-chip-closeup.jpeg" />
+  
+  <link rel="icon" href="/images/favicon.ico" />
+  <link rel="icon" type="image/png" href="/images/favicon.png" />
+  <link rel="stylesheet" href="/styles/main.css" />
+</head>
+<body>
+  <nav>
+    <a href="/">Home</a> |
+<a href="/projects/">Projects</a> |
+<a href="/blog/">Blog</a> |
+<a href="/courses/">Courses</a> |
+<a href="/resume.pdf">Resume</a> |
+<a href="https://github.com/georgesleen/">GitHub</a> |
+<a href="https://www.linkedin.com/in/george-sleen/">LinkedIn</a>
+
+  </nav>
+  <main>
+    <h1>Photonics Lab</h1>
+<p><img src="media/ref-photonic-chip-closeup.jpeg" alt="Photonic chip closeup"></p>
+<h2>Overview</h2>
+<p>I work in a silicon photonics research lab at UBC through the SiEPIC program.
+The project is to bring up an integrated frequency discriminator chip and use
+it to measure laser linewidth.</p>
+<p>The chip is a Mach-Zehnder interferometer (MZI) fabricated by Advanced Micro
+Foundry (AMF) in a 220 nm silicon-on-insulator process. It converts a laser's
+frequency fluctuations into an intensity signal at a balanced photodetector
+pair. From the detected signal, the frequency-noise power spectral density
+gives the linewidth.</p>
+<h2>How It Works</h2>
+<p>The discriminator is an unbalanced MZI: the input splits, one arm picks up a
+delay, and a 2x2 multimode-interference coupler recombines the two arms onto a
+balanced photodiode pair. The operating point is the zero-difference fringe,
+where intensity noise drops out and phase sensitivity is maximal.</p>
+<p>A PIN junction variable optical attenuator (VOA) on the short arm equalizes the
+two arms. A heater tunes the interferometer phase to hold quadrature. The
+balanced differential photocurrent is then proportional to the laser's
+frequency fluctuations, and the power spectral density of that signal gives the
+frequency-noise spectrum.</p>
+<p><img src="media/measurement-setup-block-diagram.png" alt="Measurement setup block diagram"></p>
+<h2>My Work</h2>
+<p>I wrote the experimental proposal for the bring-up, covering the full
+measurement chain:</p>
+<ol>
+<li><strong>Reference laser characterization.</strong> Run each test laser (a benchtop
+tunable source at 1550 nm and a telecom DFB in a butterfly package) through
+the OEwaves OE4000 reference analyzer and a delayed self-heterodyne setup.</li>
+<li><strong>Electronics and PCB validation.</strong> Bring up the TIA (transimpedance
+amplifier) board using an OPA858 decompensated op-amp, and the PD-bias board.</li>
+<li><strong>Optical I/O.</strong> Couple light into the chip through edge couplers and confirm
+the on-chip photodetectors respond.</li>
+<li><strong>Loss matching.</strong> Bias the PIN attenuator to equalize the two interferometer
+arms.</li>
+<li><strong>MZI interference and quadrature lock.</strong> Bring the arms into interference
+and adjust the heater to hold the zero-differential operating point.</li>
+<li><strong>Discriminator calibration.</strong> Fix the volts-per-hertz slope with a known
+frequency-modulation tone from an AWG.</li>
+<li><strong>Linewidth extraction.</strong> Recover the frequency-noise PSD, apply the
+beta-separation line, and extract the FWHM linewidth.</li>
+</ol>
+<h2>VOA Simulation</h2>
+<p>As a supporting piece, I ported the lab's Lumerical CHARGE and MODE simulation
+pipeline to open-source Python tools (DEVSIM for drift-diffusion, femwell for
+the eigenmode solve). The simulation models the PIN VOA's cross-section: a
+220 nm SOI rib waveguide with lateral p++ and n++ implants, sweeping forward
+bias from 0 to 4 V and computing the effective index change from injected free
+carriers.</p>
+<p><em>Carrier density maps at four bias points:</em></p>
+<p><img src="media/carrier_maps.png" alt="Carrier maps"></p>
+<p><em>Effective index vs. voltage (Python pipeline vs. Lumerical reference):</em></p>
+<p><img src="media/neff_vs_V.png" alt="neff vs voltage"></p>
+<h2>Equipment</h2>
+<p>The lab bench includes a Keysight B2902A source-measure unit pair, an OEwaves
+OE4000 linewidth analyzer, a Rigol DG1022 AWG, and an ILX LDM4980 laser diode
+mount with temperature control.</p>
+<h2>Repository</h2>
+<p>VOA simulation: <a href="https://github.com/georgesleen/frequency-discriminator-voa-simulation">github.com/georgesleen/frequency-discriminator-voa-simulation</a></p>
+
+  </main>
+</body>
+</html>

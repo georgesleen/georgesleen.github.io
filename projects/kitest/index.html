@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+  <title>KiTest - George Sleen</title>
+  
+  <meta name="description" content="Simulation-based test harness for KiCad. DRC checks manufacturability, ERC checks wiring, KiTest checks intent." />
+  <link rel="canonical" href="https://georgesleen.github.io/projects/kitest/" />
+  <meta property="og:title" content="KiTest" />
+  <meta property="og:description" content="Simulation-based test harness for KiCad. DRC checks manufacturability, ERC checks wiring, KiTest checks intent." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://georgesleen.github.io/projects/kitest/" />
+  
+  <link rel="icon" href="/images/favicon.ico" />
+  <link rel="icon" type="image/png" href="/images/favicon.png" />
+  <link rel="stylesheet" href="/styles/main.css" />
+</head>
+<body>
+  <nav>
+    <a href="/">Home</a> |
+<a href="/projects/">Projects</a> |
+<a href="/blog/">Blog</a> |
+<a href="/courses/">Courses</a> |
+<a href="/resume.pdf">Resume</a> |
+<a href="https://github.com/georgesleen/">GitHub</a> |
+<a href="https://www.linkedin.com/in/george-sleen/">LinkedIn</a>
+
+  </nav>
+  <main>
+    <h1>KiTest</h1>
+<h2>Overview</h2>
+<p>KiTest brings automated testing to analog and mixed-signal circuit design. The
+idea is simple: a schematic captures the design, but nowhere does it capture
+the intended behavior. What voltage should appear at this node? How fast should
+the output settle? What is the gain at 10 kHz? Today, engineers verify these
+properties by manually building SPICE test setups every time they change the
+circuit. KiTest makes those tests persistent, one-command re-runnable artifacts
+that live next to the design files.</p>
+<p>The framing I like to use: <strong>DRC checks manufacturability, ERC checks wiring,
+KiTest checks intent.</strong></p>
+<h2>How It Works</h2>
+<p>The pipeline has four stages:</p>
+<ol>
+<li>Export a KiCad schematic to a SPICE netlist via <code>kicad-cli</code></li>
+<li>Inject test-side stimulus (DC supplies, AC sources) into the netlist</li>
+<li>Run an analysis (operating point, transient, or AC sweep) through ngspice</li>
+<li>Parse the results and check them against assertions</li>
+</ol>
+<p>A test for a resistor divider looks like this: export the schematic, inject a
+5 V supply, run an operating point analysis, and assert that the output node
+settles to 2.5 V within 1% tolerance.</p>
+<h2>Architecture</h2>
+<p>The core is written in Rust (edition 2024), structured as a Cargo workspace
+with two crates:</p>
+<ul>
+<li><strong>kitest</strong> contains the engine: a <code>Backend</code> trait with three methods
+(<code>run_op</code>, <code>run_tran</code>, <code>run_ac</code>), each returning a typed result. The ngspice
+backend runs <code>ngspice -b</code> as a subprocess, parses the rawfile output, and
+returns structured data.</li>
+<li><strong>kitest-py</strong> is a PyO3 binding so that testbenches can be written in Python
+and run under pytest.</li>
+</ul>
+<p>Running ngspice as a subprocess (rather than via its shared library FFI) is a
+deliberate choice. The shared library has single-instance global state, which
+blocks parallel test execution. The subprocess approach also keeps kitest
+license-independent from ngspice's GPL dependencies.</p>
+<h2>Assertions</h2>
+<p>All assertions are tolerance-aware. No exact-float comparison is ever used.
+The assertion vocabulary so far:</p>
+<ul>
+<li><code>settles_to(target, tolerance)</code> for transient settling</li>
+<li><code>overshoot(limit)</code> for transient overshoot</li>
+<li><code>gain_db_at(frequency, expected, tolerance)</code> for AC gain</li>
+<li><code>phase_deg_at(frequency, expected, tolerance)</code> for AC phase</li>
+</ul>
+<p>Tolerances support both absolute and percentage forms.</p>
+<h2>Stimulus Injection</h2>
+<p>KiTest works with netlist &quot;bodies&quot; (no trailing <code>.end</code>). The <code>kicad-cli</code> export
+wrapper strips the terminator, and the engine wraps the body in a <code>.control</code>
+block with the analysis directive. Injected voltage sources use the prefix <code>Vkt</code>
+(e.g. <code>Vkt1</code>, <code>Vkt2</code>) to avoid colliding with the design's own sources.</p>
+<h2>Current State</h2>
+<p>KiTest is in active early development. The full pipeline works end to end:
+KiCad export, ngspice simulation, and assertion checking for DC, transient,
+and AC analyses. The walking skeleton (a resistor divider test) passes in CI.</p>
+<p>What is not built yet:</p>
+<ul>
+<li>Full Python testbench API (the PyO3 binding currently exposes only <code>version()</code>)</li>
+<li>Static/connectivity assertions (no-SPICE tier)</li>
+<li>Boundary/sheet slicing for testing sub-circuits in isolation</li>
+<li>Behavioral MCU-in-the-loop via Renode</li>
+<li>Xyce backend</li>
+</ul>
+<h2>Development Environment</h2>
+<p>The <code>flake.nix</code> provides the complete toolchain: Rust, ngspice, Python, uv,
+and <code>kicad-small</code>. CI runs the same Nix shell (<code>nix develop -c make fmt-check lint test</code>), so local and CI environments are identical.</p>
+<h2>Relicensing</h2>
+<p>I originally licensed KiTest under AGPL-3.0. I switched to LGPL-3.0-or-later
+because AGPL's network clause guards a hosted-service scenario that does not
+apply to a local/CI tool, and it blocked corporate adoption. Under LGPL,
+kitest's own code stays copyleft, but importing it to write testbenches imposes
+nothing on downstream works.</p>
+<h2>Repository</h2>
+<p><a href="https://github.com/georgesleen/kitest">github.com/georgesleen/kitest</a></p>
+
+  </main>
+</body>
+</html>

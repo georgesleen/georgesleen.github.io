@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+  <title>EasyEDA to KiCad Converter - George Sleen</title>
+  
+  <meta name="description" content="Fork of easyeda2kicad.py with fixes for API reliability, used to populate my personal KiCad library." />
+  <link rel="canonical" href="https://georgesleen.github.io/projects/easyeda2kicad/" />
+  <meta property="og:title" content="EasyEDA to KiCad Converter" />
+  <meta property="og:description" content="Fork of easyeda2kicad.py with fixes for API reliability, used to populate my personal KiCad library." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://georgesleen.github.io/projects/easyeda2kicad/" />
+  
+  <meta property="og:image" content="https://georgesleen.github.io/projects/easyeda2kicad/media/demo_symbol.png" />
+  
+  <link rel="icon" href="/images/favicon.ico" />
+  <link rel="icon" type="image/png" href="/images/favicon.png" />
+  <link rel="stylesheet" href="/styles/main.css" />
+</head>
+<body>
+  <nav>
+    <a href="/">Home</a> |
+<a href="/projects/">Projects</a> |
+<a href="/blog/">Blog</a> |
+<a href="/courses/">Courses</a> |
+<a href="/resume.pdf">Resume</a> |
+<a href="https://github.com/georgesleen/">GitHub</a> |
+<a href="https://www.linkedin.com/in/george-sleen/">LinkedIn</a>
+
+  </nav>
+  <main>
+    <h1>EasyEDA to KiCad Converter</h1>
+<p><img src="media/demo_symbol.png" alt="Symbol conversion demo"></p>
+<h2>Overview</h2>
+<p>When I design PCBs in KiCad, I source most of my components from LCSC for
+JLCPCB assembly. The problem is that LCSC hosts its component models in
+EasyEDA's proprietary format, not in KiCad's native format. Manually
+recreating symbols, footprints, and 3D models for every part is tedious and
+error prone.</p>
+<p>easyeda2kicad.py solves this. It is a zero-dependency Python CLI tool that
+converts any LCSC component (symbol, footprint, and colored 3D model) into
+KiCad library files with a single command.</p>
+<h2>Why a Fork</h2>
+<p>The upstream project by uPesy Electronics is mature and well maintained (v1.0.1,
+446 commits, 23 releases). I forked it after EasyEDA's API started rejecting
+requests made with the default Python user-agent string. My fork adds a
+browser-like <code>User-Agent</code> header and a <code>Referer</code> header to prevent these
+rejections.</p>
+<h2>How I Use It</h2>
+<p>My personal KiCad library, <code>gs-kicad-lib</code>, calls easyeda2kicad as a CLI
+subprocess. When I need a new LCSC component, I run:</p>
+<pre><code class="language-bash">python -m easyeda2kicad --full --lcsc_id=C2040 --output=gs-kicad-lib
+</code></pre>
+<p>This fetches the component data from EasyEDA's API, parses their proprietary
+shape format, and exports a KiCad symbol, footprint, and 3D model into my
+library. From there, every KiCad project on my machine can reference the part.</p>
+<p>The tool also supports batch processing. I can pass multiple LCSC IDs in one
+invocation to populate a full BOM at once.</p>
+<h2>Technical Details</h2>
+<ul>
+<li><strong>Zero runtime dependencies.</strong> The tool uses only Python's standard library
+(<code>urllib</code>, <code>json</code>, <code>ssl</code>, <code>argparse</code>). This lets it run inside KiCad's bundled
+Python, which has limited pip access on some platforms.</li>
+<li><strong>3D model conversion.</strong> OBJ files from EasyEDA are converted to VRML
+(<code>.wrl</code>) with proper material colors. STEP files pass through unchanged.</li>
+<li><strong>API response caching.</strong> The <code>--use-cache</code> flag stores fetched component data
+in <code>.easyeda_cache/</code>, so repeated runs for the same part do not hit the API.</li>
+</ul>
+<h2>Repository</h2>
+<p><a href="https://github.com/georgesleen/easyeda2kicad.py">github.com/georgesleen/easyeda2kicad.py</a></p>
+<p>Upstream: <a href="https://github.com/uPesy/easyeda2kicad.py">github.com/uPesy/easyeda2kicad.py</a></p>
+
+  </main>
+</body>
+</html>

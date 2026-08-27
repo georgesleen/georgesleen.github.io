@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+  <title>PLRS-IMU - George Sleen</title>
+  
+  <meta name="description" content="7-state EKF sensor fusion firmware, PCB, and simulation for UBC Sailbot&#39;s heading system. C++23, FreeRTOS, RP2040." />
+  <link rel="canonical" href="https://georgesleen.github.io/projects/plrs-imu/" />
+  <meta property="og:title" content="PLRS-IMU" />
+  <meta property="og:description" content="7-state EKF sensor fusion firmware, PCB, and simulation for UBC Sailbot&#39;s heading system. C++23, FreeRTOS, RP2040." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://georgesleen.github.io/projects/plrs-imu/" />
+  
+  <meta property="og:image" content="https://georgesleen.github.io/projects/plrs-imu/media/polaris-imu-pcb-orthographic.png" />
+  
+  <link rel="icon" href="/images/favicon.ico" />
+  <link rel="icon" type="image/png" href="/images/favicon.png" />
+  <link rel="stylesheet" href="/styles/main.css" />
+</head>
+<body>
+  <nav>
+    <a href="/">Home</a> |
+<a href="/projects/">Projects</a> |
+<a href="/blog/">Blog</a> |
+<a href="/courses/">Courses</a> |
+<a href="/resume.pdf">Resume</a> |
+<a href="https://github.com/georgesleen/">GitHub</a> |
+<a href="https://www.linkedin.com/in/george-sleen/">LinkedIn</a>
+
+  </nav>
+  <main>
+    <h1>PLRS-IMU</h1>
+<p><img src="media/polaris-imu-pcb-orthographic.png" alt="Polaris IMU PCB"></p>
+<h2>Overview</h2>
+<p>PLRS-IMU is the heading sensor fusion system for <a href="/projects/ubc-sailbot/">UBC Sailbot</a>'s
+autonomous sailboat Polaris. The goal is heading accuracy of 2 degrees or less
+by fusing an IMU and dual-antenna GNSS through an Extended Kalman Filter.</p>
+<p>The project spans three layers: C++23 firmware on an RP2040 running FreeRTOS,
+a custom PCB designed in KiCad, and a Python simulation that runs the same
+compiled filter offline for tuning and validation. I am the sole author of 173
+out of 175 commits.</p>
+<h2>Hardware</h2>
+<ul>
+<li><strong>MCU:</strong> Raspberry Pi RP2040 (Pico), with RP2350 support for newer boards</li>
+<li><strong>IMU:</strong> Originally an Xsens MTi-3-5A-T. After the original sensor died, I
+swapped it for a BNO085 and wrote a full SHTP/SH-2 protocol layer from
+scratch.</li>
+<li><strong>GNSS:</strong> Septentrio mosaic-go H (dual antenna, heading capable)</li>
+<li><strong>PCB:</strong> Custom board I designed in KiCad, with the RP2040/RP2354, debug
+probe, and overvoltage protection</li>
+</ul>
+<h2>Firmware</h2>
+<p>The firmware runs FreeRTOS on the RP2040. I wrote it in C++23. All protocol
+layers (Xbus, SHTP/SH-2, SBF/NMEA) are Arduino-free and host-testable under
+plain <code>g++ -std=c++23</code>.</p>
+<p>The 7-state Extended Kalman Filter estimates:</p>
+<ul>
+<li>Heading, roll, and pitch</li>
+<li>3-axis gyro bias</li>
+<li>Magnetometer offset</li>
+</ul>
+<p>The gyro bias state is the key to holding heading through GNSS outages. When
+fixes drop out, the filter has already learned the bias and can dead-reckon
+with corrected gyro integration. The magnetometer offset provides a secondary
+anchor when GNSS is unavailable.</p>
+<h2>Simulation</h2>
+<p>The same C++ EKF code that ships on the RP2040 is bound into Python via
+nanobind. This lets me run the filter offline against synthetic sensor data for
+visualization and tuning. Tuning values transfer faithfully because the same
+compiled filter runs in both environments.</p>
+<p>The sim includes:</p>
+<ul>
+<li>Timeseries plots of truth vs. estimate with residuals and 1-sigma bands</li>
+<li>A 3D boat visualization showing truth, EKF estimate, and raw IMU</li>
+<li>A drift sweep heatmap that maps peak heading error across every combination
+of boat attitude and turn-on gyro bias</li>
+</ul>
+<p><em>EKF holding heading through a GNSS outage:</em></p>
+<p><img src="media/sim-outage-hold.png" alt="GNSS outage heading hold"></p>
+<p><em>Same scenario at 20 degree heel with a body-Y gyro bias:</em></p>
+<p><img src="media/sim-heel-outage.png" alt="Heeled outage heading hold"></p>
+<p><em>Peak heading error across the full attitude envelope during a 30 s outage:</em></p>
+<p><img src="media/sim-drift-sweep.png" alt="Drift sweep heatmap"></p>
+<h2>PCB</h2>
+<p>I designed the custom PCB for the IMU system in KiCad. It carries the
+RP2040 (or RP2354), the IMU sensor, a debug probe header, and overvoltage
+protection circuitry. The board connects to the Septentrio GNSS module and
+communicates with the rudder controller over the COBS serial link.</p>
+<p><em>PCB front:</em></p>
+<p><img src="media/polaris-imu-pcb-front.png" alt="PCB front"></p>
+<p><em>PCB back:</em></p>
+<p><img src="media/polaris-imu-pcb-back.png" alt="PCB back"></p>
+<h2>Scale</h2>
+<p>The codebase totals approximately 17,000 lines: 5,700 lines of C++ firmware,
+7,200 lines of Python simulation, and 4,000 lines of C++ tests.</p>
+<h2>Repositories</h2>
+<ul>
+<li>Firmware and simulation: <a href="https://github.com/UBCSailbot/PLRS-IMU">github.com/UBCSailbot/PLRS-IMU</a></li>
+<li>PCB: <a href="https://github.com/georgesleen/polaris-imu-pcb">github.com/georgesleen/polaris-imu-pcb</a></li>
+</ul>
+
+  </main>
+</body>
+</html>
