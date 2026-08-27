@@ -13,6 +13,8 @@
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://georgesleen.github.io/projects/phased-array-sonar/" />
   
+  <meta property="og:image" content="https://georgesleen.github.io/projects/phased-array-sonar/media/schematic-toplevel.png" />
+  
   <link rel="icon" href="/images/favicon.ico" />
   <link rel="icon" type="image/png" href="/images/favicon.png" />
   <link rel="stylesheet" href="/styles/main.css" />
@@ -30,6 +32,7 @@
   </nav>
   <main>
     <h1>Phased Array Sonar</h1>
+<p><img src="media/schematic-toplevel.png" alt="Top-level schematic"></p>
 <h2>Overview</h2>
 <p>This project is a custom ultrasonic sonar system designed from scratch in
 KiCad. The board transmits and receives ultrasonic pulses through a phased
@@ -54,6 +57,8 @@ stage runs at a gain of 21 with a 120 MHz GBP op-amp.</p>
 <p>A standalone SPICE simulation project (<code>rx_amp_sim/</code>) lets me iterate on the
 RX amplifier design without dragging the full schematic into simulation.</p>
 <h3>Power Tree</h3>
+<p><em>Power supply hierarchy (George Sleen):</em></p>
+<p><img src="media/power-supply-hierarchy.png" alt="Power supply hierarchy"></p>
 <p>The power supply is hierarchical and supports two input sources through a power
 mux with ideal diode ORing:</p>
 <ul>

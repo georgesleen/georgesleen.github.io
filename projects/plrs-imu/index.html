@@ -65,6 +65,8 @@ plain <code>g++ -std=c++23</code>.</p>
 fixes drop out, the filter has already learned the bias and can dead-reckon
 with corrected gyro integration. The magnetometer offset provides a secondary
 anchor when GNSS is unavailable.</p>
+<p><em>BNO085 magnetometer calibration: convergence, heading sweep, orientation, and coverage:</em></p>
+<p><img src="media/mag-cal-spin.png" alt="Mag cal spin test"></p>
 <h2>Simulation</h2>
 <p>The same C++ EKF code that ships on the RP2040 is bound into Python via
 nanobind. This lets me run the filter offline against synthetic sensor data for

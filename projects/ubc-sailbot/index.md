@@ -10,6 +10,7 @@ tags: ["embedded", "firmware", "electrical"]
 media:
   - media/polaris-imu-pcb-orthographic.png
   - media/gdb-debugging.png
+  - media/uart-loopback-test.png
   - media/nmea-messages-printing.png
 ---
 
@@ -51,6 +52,14 @@ I started on this codebase in October 2025, learning the team's STM32CubeIDE
 workflow and the Nucleo hardware. My early work sessions involved getting UART
 printing to work, debugging I2C and NMEA protocol issues with an Analog
 Discovery 3, and writing unit tests for the wind sensor parser.
+
+_UART loopback test on the Analog Discovery 3 protocol analyzer:_
+
+![UART loopback test](media/uart-loopback-test.png)
+
+_Debugging the wind sensor driver with GDB on the STM32:_
+
+![GDB debugging session](media/gdb-debugging.png)
 
 ---
 

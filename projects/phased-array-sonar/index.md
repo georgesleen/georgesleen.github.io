@@ -2,15 +2,20 @@
 title: "Phased Array Sonar"
 layout: project.njk
 description: "Ultrasonic phased-array transducer board with custom power tree, H-bridge driver, and RX amplifier chain."
-thumbnail: ""
+thumbnail: "media/schematic-toplevel.png"
 date: 2026-04-08
 status: "active"
 featured: false
 tags: ["pcbs", "electrical", "power", "simulation"]
-media: []
+media:
+  - media/schematic-toplevel.png
+  - media/power-supply-hierarchy.png
+  - media/pcb-top.png
 ---
 
 # Phased Array Sonar
+
+![Top-level schematic](media/schematic-toplevel.png)
 
 ## Overview
 
@@ -46,6 +51,10 @@ A standalone SPICE simulation project (`rx_amp_sim/`) lets me iterate on the
 RX amplifier design without dragging the full schematic into simulation.
 
 ### Power Tree
+
+_Power supply hierarchy (George Sleen):_
+
+![Power supply hierarchy](media/power-supply-hierarchy.png)
 
 The power supply is hierarchical and supports two input sources through a power
 mux with ideal diode ORing:

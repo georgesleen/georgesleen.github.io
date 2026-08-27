@@ -11,6 +11,7 @@ media:
   - media/polaris-imu-pcb-orthographic.png
   - media/polaris-imu-pcb-front.png
   - media/polaris-imu-pcb-back.png
+  - media/mag-cal-spin.png
   - media/sim-outage-hold.png
   - media/sim-heel-outage.png
   - media/sim-drift-sweep.png
@@ -57,6 +58,10 @@ The gyro bias state is the key to holding heading through GNSS outages. When
 fixes drop out, the filter has already learned the bias and can dead-reckon
 with corrected gyro integration. The magnetometer offset provides a secondary
 anchor when GNSS is unavailable.
+
+_BNO085 magnetometer calibration: convergence, heading sweep, orientation, and coverage:_
+
+![Mag cal spin test](media/mag-cal-spin.png)
 
 ## Simulation
 
