@@ -33,7 +33,7 @@
   <main>
     <h1>Open ESC</h1>
 <p>I've used a lot of brushless motors without really knowing what happens inside the ESC. Open ESC is an attempt at doing both halves myself — a discrete three-phase power stage and Rust firmware for the RP2040 using <a href="https://github.com/embassy-rs/embassy">Embassy</a>.</p>
-<h2>First switching hardware</h2>
+<h2>Hardware</h2>
 <p>The first version fed the high-side gates from a boost converter. It could drive LEDs and produce phase waveforms, but it kept killing the high-side MOSFETs on switching.</p>
 <p><img src="media/dead-mosfets_2025-09-20.jpg" alt="Dead MOSFETs"></p>
 <p>I switched to a bootstrap high-side drive and iterated on the bootstrap capacitor (initially 10 µF, ended up at 100 nF). That got clean phase-to-phase commutation on the bench.</p>

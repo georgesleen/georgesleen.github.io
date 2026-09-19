@@ -17,7 +17,7 @@ A KiCad schematic can pass ERC and still be electrically wrong. ERC will tell me
 
 The framing I like: **DRC checks manufacturability, ERC checks wiring, KiTest checks intent.**
 
-## What works
+## Current state
 
 KiTest is a Rust workspace with a PyO3 package for pytest-facing testbenches. Today it can export a KiCad schematic through `kicad-cli`, drive ngspice in batch mode, and hand typed operating-point, transient, and AC results back to Python. The Python binding is functional now, not just `version()`; it exposes DC/pulse/sinusoidal/AC sources, node lookups, waveforms and spectra, and tolerance-aware settling, overshoot, gain, and phase checks. There are pytest examples that run the whole thing end-to-end through KiCad export and ngspice.
 

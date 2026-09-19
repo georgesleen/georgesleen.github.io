@@ -21,7 +21,7 @@ media:
 
 I've used a lot of brushless motors without really knowing what happens inside the ESC. Open ESC is an attempt at doing both halves myself — a discrete three-phase power stage and Rust firmware for the RP2040 using [Embassy](https://github.com/embassy-rs/embassy).
 
-## First switching hardware
+## Hardware
 
 The first version fed the high-side gates from a boost converter. It could drive LEDs and produce phase waveforms, but it kept killing the high-side MOSFETs on switching.
 

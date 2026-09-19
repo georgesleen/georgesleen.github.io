@@ -40,7 +40,7 @@ The BNO's magnetic yaw isn't true heading — declination, boat iron, and the EN
 
 The rudder link carries heading, roll, pitch, yaw rate, and a `heading_valid` flag. That flag needs the heading variance inside its threshold, pitch nowhere near the ZYX singularity, and a good BNO calibration status. If any of those goes bad, the rudder falls back to its own logic.
 
-## The GNSS was fine; my diagnostic wasn't
+## GNSS
 
 The GNSS is a Septentrio mosaic-go H — dual antenna, produces a real compass heading from the baseline between the two.
 
@@ -50,7 +50,7 @@ The second unit's aux tracked 3 to 6 satellites cleanly, but the attitude solve 
 
 My parser only counted MeasEpoch Type1 sub-blocks and ignored the nested Type2 sub-blocks, which is where the aux antenna reports most of its measurements. The two antennas actually had 26 common satellites the whole time. After the parser fix, heading locked at 241° and stayed within about 0.15° peak-to-peak while stationary.
 
-## GNSS outages
+## Outages
 
 With default tuning, the sim drops `heading_valid` about 16 seconds into an outage. My first framing was to call that "16 seconds of usable heading", which is wrong — that's just when the covariance grows past the rudder's 5° sigma gate. It tells you when the rudder gives up, not how accurate the heading was before that.
 

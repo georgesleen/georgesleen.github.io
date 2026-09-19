@@ -25,7 +25,7 @@ media:
 
 For the ENPH 353 final, Joshua Himmens and I built a robot in simulation that drove a course, read the blue clue boards, avoided pedestrians and a truck, and recovered from crashes, from a single onboard camera. Team name was HTTP 418. Josh mostly worked on driving; I mostly worked on OCR and imitation-learning training. Josh also came up with the idea of using YOLO for character recognition and designed a lot of the training setup, so the line between the two halves is fuzzier than it sounds.
 
-## What we ended up with
+## The system
 
 We tried reinforcement learning first. Training took days per model, none of them drove well enough for competition, and we ran out of iteration time. What actually competed was an imitation-learning model exported to ONNX. The export also solved a Python-version fight — training could happen in a modern TensorFlow environment while inference ran in the older Python that ships with ROS, fast enough to steer on every camera frame.
 

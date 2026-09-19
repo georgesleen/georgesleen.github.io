@@ -34,7 +34,7 @@
     <h1>ENPH 353 - HTTP 418</h1>
 <p><img src="media/map.png" alt="Simulated world map"></p>
 <p>For the ENPH 353 final, Joshua Himmens and I built a robot in simulation that drove a course, read the blue clue boards, avoided pedestrians and a truck, and recovered from crashes, from a single onboard camera. Team name was HTTP 418. Josh mostly worked on driving; I mostly worked on OCR and imitation-learning training. Josh also came up with the idea of using YOLO for character recognition and designed a lot of the training setup, so the line between the two halves is fuzzier than it sounds.</p>
-<h2>What we ended up with</h2>
+<h2>The system</h2>
 <p>We tried reinforcement learning first. Training took days per model, none of them drove well enough for competition, and we ran out of iteration time. What actually competed was an imitation-learning model exported to ONNX. The export also solved a Python-version fight — training could happen in a modern TensorFlow environment while inference ran in the older Python that ships with ROS, fast enough to steer on every camera frame.</p>
 <p>The first OCR plan also failed. One YOLO model that read individual characters well was bad at locating the whole clue board in-frame. We ended up finding the boards with an HSV threshold on their very specific blue, cropping them, and sending the crop to a custom YOLO OCR model on Modal. The clue collector kept a histogram of everything read and submitted the mode instead of trusting any single frame.</p>
 <p><img src="media/yolo-ocr.png" alt="YOLO OCR output"></p>
