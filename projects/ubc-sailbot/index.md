@@ -17,54 +17,35 @@ media:
 
 # UBC Sailbot
 
-I joined UBC Sailbot in September 2025 and started on the shared communication
-firmware. Every controller on the boat runs the same STM32U575 codebase, so a
-change to a sensor parser or a protocol touches the rudder, the wingsail, the
-power distribution board, and the sensor module all at once.
+UBC Sailbot builds an autonomous sailboat called Polaris. I joined in September 2025, and I mostly work on the embedded side — the shared communication firmware every subsystem runs, and the [PLRS-IMU](/projects/plrs-imu/) heading sensor (which has its own page).
 
-My first few weeks were mostly spent getting boards to talk. Lots of UART
-loopback and I2C poking with an Analog Discovery 3, and GDB on the wind-sensor
-driver.
+Every subsystem — rudder controller, wingsail controller, sensor module, power distribution — runs the same STM32U575 codebase. A change to a sensor parser or a protocol touches every board on the boat at once.
 
-![UART loopback test](media/uart-loopback-test.png)
+My first few weeks were spent getting boards to actually talk. UART loopback, I2C probing with an Analog Discovery 3, and a lot of GDB in the wind-sensor driver.
 
-![GDB debugging session](media/gdb-debugging.png)
+![UART loopback](media/uart-loopback-test.png)
+
+![GDB debugging](media/gdb-debugging.png)
 
 ## Communication firmware
 
-The LCJ CV7 wind sensor talks NMEA0183, and I worked on the typed parser for it.
-Instead of raw fixed-point integers with a comment explaining how to decode
-them, the messages come out as structs that say what they are.
+The LCJ CV7 wind sensor talks NMEA0183, and I worked on the typed parser for it — the messages come out as structs rather than raw fixed-point integers with a comment on top explaining how to decode them.
 
-One bug I chased down there: the scheduler was publishing CAN message
-`0x040 SAIL_WIND` after both the MWV and XDR sentences. XDR only carries
-temperature, so every second message shipped stale wind data. Commit `f841995`
-publishes it on MWV only.
+One CV7 bug I chased down there: the scheduler was publishing CAN message `0x040 SAIL_WIND` after both the MWV and XDR sentences. XDR only carries temperature, so the second publish shipped stale wind data every cycle. Commit `f841995` publishes it on MWV only.
 
 ![NMEA messages during bring-up](media/nmea-messages-printing.png)
 
-I also worked on the COBS-framed link between PLRS-IMU and the rudder
-controller, the protocol documentation, branch integration, and CI checks for
-host tests and STM32 peripheral configuration. My larger heading-sensor work is
-documented on the [PLRS-IMU page](/projects/plrs-imu/).
+I also designed the COBS-framed serial link between PLRS-IMU and the rudder controller, wrote the surrounding protocol docs, integrated four development branches into one working state, and set up the GitHub Actions checks that gate `.ioc` peripheral configuration and host unit tests.
 
-## Checking the rudder refactor
+## Rudder-controller refactor
 
-After four months of rudder tuning and refactoring landed from two parallel
-branches, nobody could say whether the merged controller still behaved like the
-one that had been flying. I built a differential harness and pushed the same 200
-randomized trajectories, 10,000 samples, through both builds.
+After four months of parallel rudder tuning and refactoring landed on the same branch, nobody could confidently say whether the merged controller still behaved like the version that had been on the water. I built a differential harness that fed both the pre- and post-refactor builds the same 200 randomised trajectories, 10,000 samples each.
 
-The shipped firmware defines `STRAIGHT_ONLY`. On that path the refactor matched
-the old controller after two bug fixes. A tuning branch had accidentally added
-the integral twice, so the integral term ran too fast. Some controller and
-maneuver state was also uninitialized; that bug was already in the older code.
+The shipped firmware defines `STRAIGHT_ONLY`, so `runPID` only reaches `straightLine()`. On that path the refactor matched the old behavior once two real bug fixes were included.
 
-The other state-machine paths had changed on purpose and still had open bugs.
-My conclusion was limited to the code we actually ship: `STRAIGHT_ONLY` stayed
-equivalent apart from those two fixes.
+The first was an integral accumulation added twice in the same branch on the tuning line — the integral term ran 1.5× fast whenever the output wasn't clamped, worth up to 1.28° of rudder difference across the test sweep. The second was a controller state struct left uninitialized (`ControllerState cState;` never zeroed), so `integralError`, `previousError`, and `filteredError` were reading whatever was on the stack.
 
-## Repositories
+The state-machine paths outside `STRAIGHT_ONLY` were intentionally different and had their own open issues; my conclusion was scoped to the path the boat actually runs.
 
-- [Communication firmware](https://github.com/UBCSailbot/com-module-firmware)
-- [PLRS-IMU](/projects/plrs-imu/)
+- Communication firmware: [github.com/UBCSailbot/com-module-firmware](https://github.com/UBCSailbot/com-module-firmware)
+- PLRS-IMU: [PLRS-IMU project](/projects/plrs-imu/)

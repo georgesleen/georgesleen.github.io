@@ -30,50 +30,25 @@
   </nav>
   <main>
     <h1>NixOS Config</h1>
-<p>I keep all of my system configuration in one Nix flake. If I break a machine, I
-want the fix in git instead of in a shell history I will never find again. The
-repo currently covers three NixOS machines and two OpenWrt images:</p>
+<p>The Nix flake that manages every machine I actually run. The point is that if I break one, the fix belongs in git, not in a shell history I'll never find again.</p>
+<p>It currently covers three NixOS machines and two OpenWrt image builds:</p>
 <ul>
-<li><code>gs-thinkpad-t480s</code>, my daily-use laptop;</li>
-<li><code>gs-server</code>, including a Windows VM with GPU passthrough;</li>
-<li><code>gs-pi4</code>, the media and backup server;</li>
-<li><code>gs-openwrt-one</code>, a declarative WISP/router image; and</li>
-<li><code>gs-pi1-parents</code>, an OpenWrt image for a remote Tailscale exit node and subnet
-router.</li>
+<li><code>gs-thinkpad-t480s</code>, my daily-driver laptop.</li>
+<li><code>gs-server</code>, a Framework-class server with a Windows 11 VM via VFIO GPU passthrough.</li>
+<li><code>gs-pi4</code>, the Raspberry Pi 4 that runs the media stack.</li>
+<li><code>gs-openwrt-one</code>, a declaratively-built WISP/router image for the OpenWrt One.</li>
+<li><code>gs-pi1-parents</code>, an OpenWrt image for a Raspberry Pi 1 B+ that lives at a family member's house as a Tailscale exit node / subnet router.</li>
 </ul>
-<p>There is also a QEMU target for testing the Pi configuration, but that isn't a
-real machine.</p>
-<h2>Shared modules</h2>
-<p>Each NixOS machine has a small host file. Common settings live in shared
-modules, each host picks a role, and the role pulls in features such as Sway,
-audio, containers, or laptop power handling. Hardware-specific workarounds stay
-with the machine that needs them. Home Manager configures the programs I use on
-the laptop and server from the same repo.</p>
-<p>I keep decision-making shell scripts outside the Nix expressions so I can feed
-them fake state in tests. That has caught mistakes in lid handling, display
-layout, battery warnings, boot ordering, media checks, and OpenWrt route setup
-without making the real machine the test fixture.</p>
-<p>Secrets use sops-nix. NixOS hosts decrypt with an age key derived from their SSH
-host key. The OpenWrt builds inject their first-boot credentials while building
-the image, so none of the plaintext ends up in git.</p>
+<p>There's also a QEMU test target for the Pi config, but it's a test target, not a machine.</p>
+<h2>Layout</h2>
+<p>Each host has a small entry file. Common config lives in shared modules, each host picks a role (<code>laptop</code>, <code>server</code>, <code>pi</code>), and the role pulls in the features that host actually needs — Sway, audio, containers, laptop power handling, virtualization, and so on. Machine-specific quirks (T480s lid handling, Thunderbolt dock, PCIe wakeup) live in <code>modules/hardware/</code>. Home Manager configures the programs I use on both the laptop and the server from the same repo.</p>
+<p>Anything that's a runtime decision — lid state, display layout, workspace assignment, battery transitions, waybar formatting, media health, Thunderbolt state, OpenWrt route selection — lives in a shell script outside the Nix strings, with a fixture-based test suite next to it. That's what catches boot-ordering regressions and lid-handler mistakes before they get near real hardware. Secrets are sops-nix; each NixOS host derives its age identity from its SSH host key.</p>
 <h2>Deploying the Pi</h2>
-<p>The ThinkPad builds and deploys <code>gs-pi4</code>. Nix evaluates the system for
-<code>aarch64-linux</code>, then runs native aarch64 builders through QEMU/binfmt. It is
-slow native-platform emulation, not a cross-compiled NixOS system. The completed
-store paths are signed, copied to the Pi, and activated over SSH.</p>
-<p>The Pi runs my media stack and stores btrfs snapshots from the laptop. Media,
-service state, and backups have separate subvolumes. The free-space guards read
-the media qgroup because <code>df</code> can show plenty of free space after that quota is
-already full. I can boot the Pi configuration in QEMU before deploying it, and
-the service checks cover the live path from a media request to the file showing
-up in Jellyfin.</p>
-<h2>OpenWrt from the same repository</h2>
-<p>Neither OpenWrt target is a NixOS host. The OpenWrt One image configures a Wi-Fi
-uplink, wired LAN, local access point, Tailscale, and DNS forwarding. The
-Raspberry Pi 1 image uses OpenWrt because nixpkgs has no ARMv6 binary cache.
-OpenWrt's ImageBuilder can assemble its roughly 21 MB image without spending
-weeks compiling a NixOS toolchain on a 700 MHz Pi.</p>
-<p>The repository is private and lives at <code>/etc/nixos</code>.</p>
+<p>The ThinkPad is where <code>gs-pi4</code> gets built. Nix evaluates the system as <code>aarch64-linux</code> and runs the aarch64 builders under QEMU binfmt emulation — native aarch64 builds on x86 hardware, not a NixOS cross-compile. The signed store paths are then pushed across the network to the Pi.</p>
+<p><code>gs-pi4</code> runs the media stack on btrfs. Media, service state, and the T480s home backups sit on separate subvolumes with quota-aware guards that read the btrfs qgroup instead of <code>df</code> — that's how I caught the case where <code>df</code> claimed 151 GiB free while the qgroup was already full and every fetcher was hitting EDQUOT. A QEMU test VM boots the full Pi config on my laptop so activation failures show up before deploying to hardware.</p>
+<h2>OpenWrt</h2>
+<p>Neither OpenWrt target is a NixOS host. The OpenWrt One is a WISP-mode router: Wi-Fi client uplink, wired LAN, local AP, Tailscale, and DNS forwarded through the Pi's AdGuard Home. The Pi 1 B+ is deliberately OpenWrt because nixpkgs has no ARMv6 binary cache — NixOS would end up compiling glibc, systemd, and the kernel from source on a 700 MHz single core. OpenWrt's ImageBuilder assembles a ~21 MB image in seconds.</p>
+<p>Repository is private and lives at <code>/etc/nixos</code>.</p>
 
   </main>
 </body>

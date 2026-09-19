@@ -23,72 +23,40 @@ media:
 
 ![Simulated world map](media/map.png)
 
-For the ENPH 353 final competition, Joshua Himmens and I had to make a simulated
-robot drive a city course, read clue boards, avoid pedestrians and vehicles, and
-recover from crashes using only its camera feed. We called the team HTTP 418.
-Josh spent most of his time on driving. I spent most of mine training OCR and
-imitation-learning models. Josh also proposed using YOLO for the characters and
-designed much of the training scheme, so there was plenty of overlap.
+For the ENPH 353 final, Joshua Himmens and I built a robot in simulation that drove a course, read the blue clue boards, avoided pedestrians and a truck, and recovered from crashes, from a single onboard camera. Team name was HTTP 418. Josh mostly worked on driving; I mostly worked on OCR and imitation-learning training. Josh also came up with the idea of using YOLO for character recognition and designed a lot of the training setup, so the line between the two halves is fuzzier than it sounds.
 
-## What survived to competition
+## What we ended up with
 
-We tried reinforcement learning first. Training took days per model, none of
-them drove well enough for competition, and we ran out of time to keep
-iterating. What we actually competed with was an imitation-learning model
-exported to ONNX. The export also solved a practical problem: we could train in
-a modern TensorFlow environment and still run inference inside the old Python
-that ships with ROS, fast enough to steer on every camera frame.
+We tried reinforcement learning first. Training took days per model, none of them drove well enough for competition, and we ran out of iteration time. What actually competed was an imitation-learning model exported to ONNX. The export also solved a Python-version fight — training could happen in a modern TensorFlow environment while inference ran in the older Python that ships with ROS, fast enough to steer on every camera frame.
 
-The first OCR plan failed too. One YOLO model read isolated characters well but
-was bad at spotting whole clue boards in the world. In the end we found the sign
-borders with an HSV threshold on their very specific blue, cropped them, and
-sent the crop to a custom YOLO OCR model running on Modal. The clue collector
-kept a histogram of everything it read and submitted the most common answer
-instead of trusting any single frame.
+The first OCR plan also failed. One YOLO model that read individual characters well was bad at locating the whole clue board in-frame. We ended up finding the boards with an HSV threshold on their very specific blue, cropping them, and sending the crop to a custom YOLO OCR model on Modal. The clue collector kept a histogram of everything read and submitted the mode instead of trusting any single frame.
 
 ![YOLO OCR output](media/yolo-ocr.png)
 
-The rest of the ROS system worked around those two models. A pedestrian tracker
-waited for someone to move and then stop or leave the frame, and the same path
-caught the truck. A crash detector noticed when the image stopped changing and
-respawned the robot in Gazebo. Our PyQt GUI showed the camera, the model
-overlays, the tracker state, and the data-collection controls, so we could poke
-at one node at a time.
+The rest of the ROS system worked around those two models — a pedestrian tracker that waited for someone to move and then stop or leave the frame (which also caught the truck), and a crash detector that respawned the robot in Gazebo when the image stopped changing. The PyQt GUI showed the camera, model overlays, and tracker state so we could poke at one node at a time.
 
 ![Pedestrian and vehicle detection](media/pedestrian-detection.png)
 
-## Training and integration
+## Training
 
-I built the training data and trained the character model, both the clue-board
-and the per-character classes, and did a lot of the imitation-learning training
-too. Models went into Weights & Biases, so the robot could pull whatever was
-tagged for competition without us rebuilding anything.
+I did most of the character-model training, both the clue-board and the per-character classes, and a lot of the imitation-learning training. Models went into Weights & Biases so the runtime could pull whichever one was tagged for competition.
 
 ![Training dataset snapshot](media/yolo_training_data.png)
 
-Training YOLO locally was painfully slow, so we rented a Runpod machine. The
-saved screenshot shows four RTX 5090s, and the report records roughly `100 GiB`
-of available GPU memory. Getting the batches and artifact uploads to behave
-across all four cards took a fair bit of the time we had hoped to save.
+Local YOLO training was painfully slow, so we rented time on Runpod. The saved screenshot has four RTX 5090s, and the report records roughly `100 GiB` of GPU memory available.
 
 ![Runpod training instance](media/runpod-quad-5090.png)
 
-The final report says the OCR ended up very reliable, reading every sign we
-drove past, but it was far too slow to run inline. Pushing it to an autoscaling
-endpoint meant a two-second glimpse of a sign turned into twenty or thirty
-guesses for the histogram. The driving model was cheap by comparison, but it
-needed extra data collection for the parts of the course it kept failing.
+The final OCR pipeline read every sign we drove past, but it was far too expensive to run inline. Moving it to an autoscaling Modal endpoint meant a two-second glimpse of a sign turned into twenty or thirty independent guesses for the histogram. The driving model was cheap by comparison, but it needed extra data collection for the corners of the course it kept losing.
 
 ![Control GUI and data collection](media/data-collection-gui.png)
 
 ![Clue aggregation](media/clue-collection.png)
 
-## Project record
-
 - [Simulation and control](https://github.com/enph353-2025-team2/ENPH353_HTTP_418)
 - [Vision training](https://github.com/enph353-2025-team2/yolo-vision)
 - [Final report](https://github.com/enph353-2025-team2/final-report)
-- [Competition music server](https://github.com/enph353-2025-team2/music-server)
+- [Music server](https://github.com/enph353-2025-team2/music-server)
 
 <iframe width="100%" height="450" src="https://www.youtube.com/embed/4jBRHqV6Ss8" title="Robot operating video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 

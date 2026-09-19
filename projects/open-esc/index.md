@@ -19,54 +19,35 @@ media:
 
 # Open ESC
 
-I had used plenty of brushless motors without really knowing what happened
-inside the ESC. For this project I decided to build the power stage myself and
-write the controller in Rust on an RP2040.
+I've used a lot of brushless motors without really knowing what happens inside the ESC. Open ESC is an attempt at doing both halves myself — a discrete three-phase power stage and Rust firmware for the RP2040 using [Embassy](https://github.com/embassy-rs/embassy).
 
-## The first switching hardware failed
+## First switching hardware
 
-My first high-side supply approach could drive LEDs and produce phase waveforms,
-but repeated switching killed the high-side MOSFETs.
+The first version fed the high-side gates from a boost converter. It could drive LEDs and produce phase waveforms, but it kept killing the high-side MOSFETs on switching.
 
-![Failed MOSFETs](media/dead-mosfets_2025-09-20.jpg)
+![Dead MOSFETs](media/dead-mosfets_2025-09-20.jpg)
 
-I replaced that path with a bootstrap drive and iterated on the capacitor
-values. Moving from the initial `10 µF` choice to `100 nF` produced a usable
-high-side transition in the bench experiments.
+I switched to a bootstrap high-side drive and iterated on the bootstrap capacitor (initially 10 µF, ended up at 100 nF). That got clean phase-to-phase commutation on the bench.
 
-![Bootstrap high-side waveform](media/bootstrap-high-side_2025-09-20.png)
+![Bootstrap high side](media/bootstrap-high-side_2025-09-20.png)
 
-The next problem was shoot-through. I added complementary high-side and low-side
-PWM with a dead-time offset, then checked both gate signals on the scope. This
-trace shows the gap between the transitions. There was no motor under load for
-this test.
+![Working commutation](media/working-commutation-phase-ab_2025_09-20.png)
 
-![Complementary PWM with dead time](media/complementary-pwm-with-deadtime.png)
+Next problem was shoot-through. Complementary high-side/low-side PWM with an explicit dead-time offset, checked on the scope:
 
-The phase-to-phase bench waveform showed the commutation electronics switching
-between phases:
-
-![Phase-to-phase commutation](media/working-commutation-phase-ab_2025_09-20.png)
+![Complementary PWM with deadtime](media/complementary-pwm-with-deadtime.png)
 
 <video src="media/bootstrap-led-commutation_2025-09-20.mp4" controls style="width:100%; height:auto; display:block;"></video>
 
-## Firmware experiments
+## Firmware
 
-The firmware uses Embassy on the RP2040. It has a three-half-bridge driver,
-complementary PWM, dead-time calculation, and a six-step trapezoidal commutation
-table. I also experimented with sinusoidal commutation. Neither path has
-sensorless feedback yet.
+The firmware is Embassy on the RP2040. It has a three-half-bridge driver, complementary PWM with dead-time calculation, and a six-step trapezoidal commutation table. I've also messed with sinusoidal commutation. Neither has sensorless feedback yet.
 
 ![Rust firmware](media/rust-code.png)
 
 ![Inverter gate voltages](media/inverter-gate-voltages_2025-10-01.png)
 
-Back-EMF zero-crossing, sensorless startup, and closed-loop timing are all still
-missing, and I don't have a saved test of this controller turning a BLDC motor
-under load. So far I have only driven and measured gate and phase waveforms on
-the bench.
-
-## Repositories
+Back-EMF zero-crossing detection, reliable sensorless startup, and closed-loop timing are all still ahead, and there is no saved test of the controller actually turning a motor under load. So far there's a power stage and firmware that produce the expected gate and phase waveforms on the bench.
 
 - [Hardware](https://github.com/georgesleen/open-esc-hardware)
 - [Firmware](https://github.com/georgesleen/open-esc-firmware)

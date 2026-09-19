@@ -18,32 +18,15 @@ tags: ["computer architecture", "simulation", "pcbs", "electrical", "mechanical"
 
 # 8-Bit Computer
 
-I built this after watching Ben Eater's breadboard-computer series and reading
-Malvino's *Digital Computer Electronics*. I wanted to know what actually
-happened between an instruction entering the register and a value appearing on
-the bus, so I drew the whole computer in Logisim and then split it into
-7400-series KiCad modules.
+Ben Eater's breadboard-computer series and Malvino's *Digital Computer Electronics* got me curious about what actually happens between an instruction hitting a register and a value showing up on the bus. I redrew a version of the machine in Logisim and started laying it out as modular 7400-series KiCad boards.
 
-The machine has an 8-bit shared bus, general and interface registers, a program
-counter, program memory, an instruction register, an ALU, and microcoded control
-logic. The ALU is built out of slices for the arithmetic and logic operations,
-and the control logic sequences all the bus transfers behind each fetch, decode,
-and execute step.
-
-The simulated computer is Turing-complete and runs programs I wrote in machine
-code and a small custom assembly language. The clip below loads `4` into a
-register, adds `13`, and sends the answer to the output register.
+The architecture has an 8-bit shared bus, general and interface registers, a program counter, program memory, an instruction register, an ALU built from slices, and microcoded control logic. In simulation it's Turing-complete, and I wrote machine-code and custom-assembly programs to exercise it. The clip below runs one: load `4`, add `13`, output the result.
 
 ![Full simulated computer](images/full-computer.png)
 
 <video src="videos/simple-program.mp4" controls style="width:100%; height:auto; display:block;"></video>
 
-## From simulation to boards
-
-Working it out in simulation first meant I could settle the instruction path and
-control timing before drawing any boards. The repo has KiCad schematics and PCB
-layouts for the ALU, registers, program counter, program memory, instruction
-register, and control logic.
+I didn't finish assembling the boards into a physical machine. The Logisim model runs the programs; the KiCad files were the next step.
 
 _General-register PCB render:_
 
@@ -56,11 +39,5 @@ _Program-memory PCB:_
 _ALU schematic:_
 
 ![ALU schematic](images/alu-schematic.png)
-
-I never finished assembling all of these boards into one computer. The programs
-ran in Logisim; the KiCad files show how I planned to turn each simulated block
-into hardware.
-
-## Repository
 
 [github.com/georgesleen/8-BitComputer](https://github.com/georgesleen/8-BitComputer)

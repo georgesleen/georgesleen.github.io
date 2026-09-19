@@ -33,30 +33,12 @@
   <main>
     <h1>Microcouple</h1>
 <p><img src="media/microcouple-image.jpg" alt="Microcouple board"></p>
-<p>Microcouple was meant to be a pair of small RP2040 boards that talk over
-infrared. Each one has its own LED matrix, capacitive touch pads, USB-C, and a
-LiPo charger. I mostly used the project to learn how much circuitry has to
-surround an RP2040 before it becomes a usable board.</p>
-<p>The schematic includes:</p>
-<ul>
-<li>an RP2040;</li>
-<li>infrared transmit circuitry and a 38 kHz receiver path;</li>
-<li>an LED matrix and capacitive-touch inputs;</li>
-<li>USB-C input and data connections;</li>
-<li>LiPo charging and battery power; and</li>
-<li>on revision 2, a W25Q128 QSPI flash device.</li>
-</ul>
-<p>I got that wrong the first time around. I saw &quot;system on chip&quot;, assumed I could
-just place the RP2040 and go, and left off the external QSPI flash it boots
-from. Revision 2 adds a 128 Mbit W25Q128 and routes the QSPI bus properly. A
-system on chip is not a system on a board.</p>
-<p>The hardware side is fairly complete: KiCad hierarchy, PCB layout, fabrication
-outputs, and a 3D model. The firmware is not. <code>firmware/src/main.py</code> is an empty
-file, so the IR protocol, the touch pads, the LED animations, and the USB side
-were never written or tested.</p>
-<p><em>Schematic, first page:</em></p>
+<p>Microcouple is a pair of small RP2040 boards that talk to each other over infrared. Each one carries an LED matrix, capacitive touch pads, USB-C, and LiPo charging. Mostly it was a PCB-design exercise: how much circuitry has to sit around an RP2040 before it's a usable board.</p>
+<p>The schematic covers the RP2040, IR transmit circuitry and a 38 kHz receiver, an LED matrix, capacitive touch inputs, USB-C, LiPo charging, and — from revision 2 onward — a W25Q128 QSPI flash device.</p>
+<p>That flash was the correction. On revision 1 I saw &quot;SoC&quot;, assumed I could just place the RP2040 and go, and left off the external QSPI storage the chip actually boots from. Revision 2 adds the 128 Mbit W25Q128 and routes the QSPI bus properly. &quot;System on chip&quot; doesn't mean &quot;system on board&quot;.</p>
+<p>The hardware side is fairly complete — KiCad hierarchy, PCB layout, fabrication outputs, 3D model — but there is no firmware. <code>firmware/src/main.py</code> is empty. The IR protocol, touch pads, LED animations, and USB behavior were never written.</p>
+<p><em>Schematic (page 1):</em></p>
 <p><img src="media/microcouple-schematic-p1.svg" alt="Microcouple schematic"></p>
-<h2>Repository</h2>
 <p><a href="https://github.com/georgesleen/microcouple">github.com/georgesleen/microcouple</a></p>
 
   </main>

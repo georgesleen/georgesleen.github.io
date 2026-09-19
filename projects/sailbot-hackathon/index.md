@@ -13,32 +13,12 @@ media: []
 
 # Sailbot Hackathon
 
-For a Sailbot-sponsored hackathon, our “elec-larpers” team picked a suitably
-unreasonable goal: turn a YOLO model into a Sky130 ASIC in a weekend.
+March 2026, Sailbot-sponsored hackathon, "elec-larpers" team. Our goal was to put a YOLO object-detection model onto a custom Sky130 ASIC.
 
-The path was hls4ml for model-to-C++, Bambu for C++-to-RTL, and LibreLane for
-physical design. I brought up the Nix/LibreLane environment, got the generated
-RTL into a reproducible handoff, and checked whether the result had any chance
-of fitting.
+The pipeline was YOLO → hls4ml → C++ → Bambu → Verilog RTL → LibreLane → Sky130. I brought up the Nix-based LibreLane environment, got the generated RTL through the handoff, and ran a feasibility check on whether the design could plausibly fit.
 
-It did not.
-
-The generated top level contains 25 behavioral memories with two read and two
-write ports, totaling `396.55 Mbits`. Even if I ignore the port problem and map
-only the raw bit count onto the available single-port-ish Sky130 macro, the
-lower bound is 24,204 SRAM macros and `6886.969 mm²` of macro area. That is
-before paying for a real 2-read/2-write implementation, logic, routing, or
-margin.
-
-That killed the tapeout idea. The flow was still worth keeping: we got from the
-model to generated RTL and into LibreLane, and I wrote a handoff that
-reproduces both the setup and the failure, so nobody has to spend another
-weekend finding the same memory wall.
+It couldn't. The generated top level instantiates 25 behavioral 2-read/2-write SRAM macros totalling `396.55 Mbits`. Even if I ignore the port mismatch and map the raw bit count onto Sky130's available single-port-ish macros, the lower bound is 24,204 SRAM macros and about `6886.969 mm²` of macro area — before anything for the actual 2R2W behavior, logic, routing, or margin. The useful output wasn't a tapeout candidate; it was the reproducible LibreLane flow and an explicit number for why the design didn't fit.
 
 ## Glasses controller
 
-I also worked on the control schematic for the team's smart-glasses idea. The
-hierarchical sheets cover the controller, camera, IMU, haptics, and accelerator
-interfaces. That is as far as it went: `glasses-control.kicad_pcb` contains an
-empty KiCad board and no placed footprints or routing. It was schematic work,
-not a fabricated or tested PCB.
+Alongside the ASIC work, I did some schematic work on a "glasses-control" PCB for the team's smart-glasses idea. The hierarchical sheets cover the STM32 controller, camera interfaces, IMU, haptics, and the accelerator interface. The board file (`glasses-control.kicad_pcb`) is empty — no footprints placed, no routing, no fabrication. It stopped at schematic.

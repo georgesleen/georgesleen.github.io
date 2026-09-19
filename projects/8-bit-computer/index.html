@@ -32,36 +32,17 @@
   </nav>
   <main>
     <h1>8-Bit Computer</h1>
-<p>I built this after watching Ben Eater's breadboard-computer series and reading
-Malvino's <em>Digital Computer Electronics</em>. I wanted to know what actually
-happened between an instruction entering the register and a value appearing on
-the bus, so I drew the whole computer in Logisim and then split it into
-7400-series KiCad modules.</p>
-<p>The machine has an 8-bit shared bus, general and interface registers, a program
-counter, program memory, an instruction register, an ALU, and microcoded control
-logic. The ALU is built out of slices for the arithmetic and logic operations,
-and the control logic sequences all the bus transfers behind each fetch, decode,
-and execute step.</p>
-<p>The simulated computer is Turing-complete and runs programs I wrote in machine
-code and a small custom assembly language. The clip below loads <code>4</code> into a
-register, adds <code>13</code>, and sends the answer to the output register.</p>
+<p>Ben Eater's breadboard-computer series and Malvino's <em>Digital Computer Electronics</em> got me curious about what actually happens between an instruction hitting a register and a value showing up on the bus. I redrew a version of the machine in Logisim and started laying it out as modular 7400-series KiCad boards.</p>
+<p>The architecture has an 8-bit shared bus, general and interface registers, a program counter, program memory, an instruction register, an ALU built from slices, and microcoded control logic. In simulation it's Turing-complete, and I wrote machine-code and custom-assembly programs to exercise it. The clip below runs one: load <code>4</code>, add <code>13</code>, output the result.</p>
 <p><img src="images/full-computer.png" alt="Full simulated computer"></p>
 <p><video src="videos/simple-program.mp4" controls style="width:100%; height:auto; display:block;"></video></p>
-<h2>From simulation to boards</h2>
-<p>Working it out in simulation first meant I could settle the instruction path and
-control timing before drawing any boards. The repo has KiCad schematics and PCB
-layouts for the ALU, registers, program counter, program memory, instruction
-register, and control logic.</p>
+<p>I didn't finish assembling the boards into a physical machine. The Logisim model runs the programs; the KiCad files were the next step.</p>
 <p><em>General-register PCB render:</em></p>
 <p><img src="images/general-register-render.png" alt="General register render"></p>
 <p><em>Program-memory PCB:</em></p>
 <p><img src="images/program-memory-pcb.png" alt="Program memory PCB"></p>
 <p><em>ALU schematic:</em></p>
 <p><img src="images/alu-schematic.png" alt="ALU schematic"></p>
-<p>I never finished assembling all of these boards into one computer. The programs
-ran in Logisim; the KiCad files show how I planned to turn each simulated block
-into hardware.</p>
-<h2>Repository</h2>
 <p><a href="https://github.com/georgesleen/8-BitComputer">github.com/georgesleen/8-BitComputer</a></p>
 
   </main>

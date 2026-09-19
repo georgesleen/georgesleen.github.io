@@ -18,46 +18,28 @@ media:
 
 ![Top-level schematic](media/schematic-toplevel.png)
 
-Joshua Himmens and I are working on the electronics for an ultrasonic array. We
-have a main-board design, a TX/RX development board, some SPICE work, and a
-shared KiCad library. We haven't built and tested the full sonar system.
+Joshua Himmens and I are building the electronics for an ultrasonic sonar array. There's a main board design, a TX/RX dev board, some SPICE work on the receive amplifier, and a shared KiCad library. There is not a completed and tested phased-array sonar.
 
-I designed most of the power tree and the transmit H-bridge. Josh designed most
-of the receive path, including the MEMS microphone preamplifier and the
-individual receive channels.
+I designed the power tree and the transmit-side H-bridge. Josh designed most of the receive path — the MEMS microphone frontend, the per-channel preamps, and the receive amplifier chain.
 
-## Power and transmit work
+## Power
 
-The board can accept USB-C or an XT60-connected source through a power mux and
-ideal-diode path. From there, separate converter and regulator sheets generate
-the positive, negative, digital, and analog rails needed by the transmit and
-receive sections.
+The board can run from USB-C or an XT60 (battery or bench supply) through a power mux with ideal-diode ORing. From there the tree derives every rail the rest of the board needs — 5 V to 12 V boost (TPS55340), an inverting buck-boost for the negative rail (TPS63700), an adjustable 3.3 V buck for digital, a -10 V LDO (LM337), a 12 V to 10 V LDO, and a 2.75 V LDO.
 
-![Power-supply hierarchy](media/power-supply-hierarchy.png)
+![Power supply hierarchy](media/power-supply-hierarchy.png)
 
-I designed that tree and spent the most time on the inverting buck-boost stage.
-I also designed the H-bridge sheet for the transmit elements. There is still a
-fairly obvious mismatch in the files: the H-bridge sheet says `20 kHz`, but the
-selected Murata MA40S4S transducer is a `40 kHz` part. We need to fix that
-before either frequency means anything on the bench.
+The inverting buck-boost was the hardest single stage. I still keep `inverting_buck_boost_OLD.kicad_sch` around because at one point my commit message on that stage was "Do some more questionable math for the inverting buck boost", and I want the reference.
 
-## Receive path and tooling
+The transmit H-bridge sheet has an unresolved detail. It's labelled `20 kHz`, but the Murata MA40S4S transducer is a `40 kHz` part. That mismatch needs fixing before either number means anything on the bench.
 
-Josh's receive design uses analog MEMS microphones, grouped preamplifiers, and
-individual receive channels. The separate `rx_amp_sim` KiCad project lets him
-work on the amplifier in SPICE; the real receive chain hasn't been built or
-measured.
+## Receive and tooling
 
-I combined the old main-board and TX/RX-development-board repositories into this
-monorepo and worked on the shared KiCad setup. The script is now at
-`sonar-library/setup-kicad.py`. It registers the shared symbols and footprints,
-sets the path variables, and refuses to rewrite the config while KiCad is open.
+Josh's receive design uses SPV0142LR5H-1 MEMS microphones feeding a multi-stage amplifier, with a separate `rx_amp_sim/` KiCad project for iterating on the amplifier in SPICE. The receive chain itself hasn't been built and characterized.
+
+I merged the old `sonar-v1-pcb` and `tx-rx-dev-board` repos into this monorepo and wrote the shared library tooling. `sonar-library/setup-kicad.py` (PEP 723 inline metadata) registers the library with KiCad's global tables and sets the path variables, and refuses to run while KiCad is open so it doesn't clobber the config.
 
 ![PCB layout](media/pcb-top.png)
 
-Next we need to check every rail and get one transmit/receive channel working.
-There is no array-control software or end-to-end ranging result yet.
-
-## Repository
+Next real milestone is bringing up the rails and one transmit/receive channel. There is no array-control software or end-to-end ranging result yet.
 
 [github.com/fizzy-sonar/sonar-hardware](https://github.com/fizzy-sonar/sonar-hardware)

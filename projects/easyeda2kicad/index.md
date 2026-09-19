@@ -17,36 +17,14 @@ media:
 
 ![Symbol conversion demo](media/demo_symbol.png)
 
-Most parts I use for JLCPCB assembly come from LCSC, but I design in KiCad.
-[`easyeda2kicad`](https://github.com/uPesy/easyeda2kicad.py), written by uPesy
-Electronics, does the annoying conversion work: it downloads EasyEDA's symbol,
-footprint, and 3D-model data and writes KiCad libraries.
+Most parts I buy for JLCPCB assembly come from LCSC, but I design in KiCad. The upstream [easyeda2kicad](https://github.com/uPesy/easyeda2kicad.py) by uPesy handles the conversion — it pulls EasyEDA's data and writes KiCad libraries.
 
-My fork is barely a fork. My only commit, `c639590`, changes a newline in
-`requirements.txt`. Steffen Wittemeier wrote the `User-Agent` and `Referer`
-header fix in upstream commit `95e3e0e`. An older version of this page credited
-that fix to me, which was wrong.
+My fork exists, but it's barely a fork. My only commit on it (`c639590`) changes a newline in `requirements.txt`. The `User-Agent`/`Referer` header fix people sometimes credit to me is actually Steffen Wittemeier's, in upstream commit `95e3e0e`.
 
-What I actually wrote is the tooling around the converter in
-[`gs-kicad-lib`](https://github.com/georgesleen/gs-kicad-lib). It depends on
-`easyeda2kicad>=1.0.1` and adds:
-
-- an interactive importer with fuzzy library and footprint search;
-- a choice between generated, existing, or no footprint link;
-- tidying of KiCad fields and the procurement metadata I care about;
-- a check that every symbol has the required fields; and
-- setup tooling that registers the libraries and path variables with KiCad.
-
-Now I can pick an LCSC part, decide where its files go, clean up the fields, and
-run the same checks as the rest of my library, instead of babysitting every
-import.
-
-_Generated footprint:_
+The real work lives in [gs-kicad-lib](https://github.com/georgesleen/gs-kicad-lib), which depends on `easyeda2kicad>=1.0.1` and wraps it in the workflow I actually use — interactive importer with fuzzy library and footprint search, generated/existing/no footprint link options, field and procurement metadata normalization, required-field validation, and setup tooling that registers everything with KiCad in one shot.
 
 ![Footprint conversion demo](media/demo_footprint.png)
 
-## Repositories
-
-- [My small easyeda2kicad fork](https://github.com/georgesleen/easyeda2kicad.py)
+- [My fork](https://github.com/georgesleen/easyeda2kicad.py)
 - [Upstream easyeda2kicad](https://github.com/uPesy/easyeda2kicad.py)
-- [My gs-kicad-lib tooling](https://github.com/georgesleen/gs-kicad-lib)
+- [gs-kicad-lib](https://github.com/georgesleen/gs-kicad-lib)

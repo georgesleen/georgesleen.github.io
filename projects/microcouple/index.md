@@ -17,34 +17,16 @@ media:
 
 ![Microcouple board](media/microcouple-image.jpg)
 
-Microcouple was meant to be a pair of small RP2040 boards that talk over
-infrared. Each one has its own LED matrix, capacitive touch pads, USB-C, and a
-LiPo charger. I mostly used the project to learn how much circuitry has to
-surround an RP2040 before it becomes a usable board.
+Microcouple is a pair of small RP2040 boards that talk to each other over infrared. Each one carries an LED matrix, capacitive touch pads, USB-C, and LiPo charging. Mostly it was a PCB-design exercise: how much circuitry has to sit around an RP2040 before it's a usable board.
 
-The schematic includes:
+The schematic covers the RP2040, IR transmit circuitry and a 38 kHz receiver, an LED matrix, capacitive touch inputs, USB-C, LiPo charging, and — from revision 2 onward — a W25Q128 QSPI flash device.
 
-- an RP2040;
-- infrared transmit circuitry and a 38 kHz receiver path;
-- an LED matrix and capacitive-touch inputs;
-- USB-C input and data connections;
-- LiPo charging and battery power; and
-- on revision 2, a W25Q128 QSPI flash device.
+That flash was the correction. On revision 1 I saw "SoC", assumed I could just place the RP2040 and go, and left off the external QSPI storage the chip actually boots from. Revision 2 adds the 128 Mbit W25Q128 and routes the QSPI bus properly. "System on chip" doesn't mean "system on board".
 
-I got that wrong the first time around. I saw "system on chip", assumed I could
-just place the RP2040 and go, and left off the external QSPI flash it boots
-from. Revision 2 adds a 128 Mbit W25Q128 and routes the QSPI bus properly. A
-system on chip is not a system on a board.
+The hardware side is fairly complete — KiCad hierarchy, PCB layout, fabrication outputs, 3D model — but there is no firmware. `firmware/src/main.py` is empty. The IR protocol, touch pads, LED animations, and USB behavior were never written.
 
-The hardware side is fairly complete: KiCad hierarchy, PCB layout, fabrication
-outputs, and a 3D model. The firmware is not. `firmware/src/main.py` is an empty
-file, so the IR protocol, the touch pads, the LED animations, and the USB side
-were never written or tested.
-
-_Schematic, first page:_
+_Schematic (page 1):_
 
 ![Microcouple schematic](media/microcouple-schematic-p1.svg)
-
-## Repository
 
 [github.com/georgesleen/microcouple](https://github.com/georgesleen/microcouple)

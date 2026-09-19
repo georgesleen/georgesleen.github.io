@@ -33,34 +33,14 @@
   <main>
     <h1>EasyEDA to KiCad Converter</h1>
 <p><img src="media/demo_symbol.png" alt="Symbol conversion demo"></p>
-<p>Most parts I use for JLCPCB assembly come from LCSC, but I design in KiCad.
-<a href="https://github.com/uPesy/easyeda2kicad.py"><code>easyeda2kicad</code></a>, written by uPesy
-Electronics, does the annoying conversion work: it downloads EasyEDA's symbol,
-footprint, and 3D-model data and writes KiCad libraries.</p>
-<p>My fork is barely a fork. My only commit, <code>c639590</code>, changes a newline in
-<code>requirements.txt</code>. Steffen Wittemeier wrote the <code>User-Agent</code> and <code>Referer</code>
-header fix in upstream commit <code>95e3e0e</code>. An older version of this page credited
-that fix to me, which was wrong.</p>
-<p>What I actually wrote is the tooling around the converter in
-<a href="https://github.com/georgesleen/gs-kicad-lib"><code>gs-kicad-lib</code></a>. It depends on
-<code>easyeda2kicad&gt;=1.0.1</code> and adds:</p>
-<ul>
-<li>an interactive importer with fuzzy library and footprint search;</li>
-<li>a choice between generated, existing, or no footprint link;</li>
-<li>tidying of KiCad fields and the procurement metadata I care about;</li>
-<li>a check that every symbol has the required fields; and</li>
-<li>setup tooling that registers the libraries and path variables with KiCad.</li>
-</ul>
-<p>Now I can pick an LCSC part, decide where its files go, clean up the fields, and
-run the same checks as the rest of my library, instead of babysitting every
-import.</p>
-<p><em>Generated footprint:</em></p>
+<p>Most parts I buy for JLCPCB assembly come from LCSC, but I design in KiCad. The upstream <a href="https://github.com/uPesy/easyeda2kicad.py">easyeda2kicad</a> by uPesy handles the conversion — it pulls EasyEDA's data and writes KiCad libraries.</p>
+<p>My fork exists, but it's barely a fork. My only commit on it (<code>c639590</code>) changes a newline in <code>requirements.txt</code>. The <code>User-Agent</code>/<code>Referer</code> header fix people sometimes credit to me is actually Steffen Wittemeier's, in upstream commit <code>95e3e0e</code>.</p>
+<p>The real work lives in <a href="https://github.com/georgesleen/gs-kicad-lib">gs-kicad-lib</a>, which depends on <code>easyeda2kicad&gt;=1.0.1</code> and wraps it in the workflow I actually use — interactive importer with fuzzy library and footprint search, generated/existing/no footprint link options, field and procurement metadata normalization, required-field validation, and setup tooling that registers everything with KiCad in one shot.</p>
 <p><img src="media/demo_footprint.png" alt="Footprint conversion demo"></p>
-<h2>Repositories</h2>
 <ul>
-<li><a href="https://github.com/georgesleen/easyeda2kicad.py">My small easyeda2kicad fork</a></li>
+<li><a href="https://github.com/georgesleen/easyeda2kicad.py">My fork</a></li>
 <li><a href="https://github.com/uPesy/easyeda2kicad.py">Upstream easyeda2kicad</a></li>
-<li><a href="https://github.com/georgesleen/gs-kicad-lib">My gs-kicad-lib tooling</a></li>
+<li><a href="https://github.com/georgesleen/gs-kicad-lib">gs-kicad-lib</a></li>
 </ul>
 
   </main>

@@ -21,55 +21,28 @@ media:
 
 ![Photonic chip closeup](media/ref-photonic-chip-closeup.jpeg)
 
-I joined a UBC photonics lab to bring up an existing silicon-photonic frequency
-discriminator. Pegah Tekieh designed the chip, AMF fabricated it in a
-PSiN-on-SOI C-band process, and Jamal packaged it with a fiber array. I have been
-working on the bench setup, measurement software, and debugging.
+I work in a silicon photonics research group at UBC through SiEPIC, bringing up an existing photonic chip as a laser frequency discriminator. The chip was designed by Pegah Tekieh, fabricated by AMF in a PSiN-on-SOI C-band process, and packaged by Jamal with a fiber array.
 
-The discriminator is an unbalanced Mach-Zehnder interferometer. One arm contains
-a long delay spiral; the other has a PIN attenuator for balancing the loss. The
-two arms recombine on a balanced photodiode pair. At quadrature, laser frequency
-noise becomes differential photocurrent. The chip's designed delay is `1.90 ns`,
-which sets the conversion from phase noise to frequency noise.
+## How it works
 
-![Measurement setup](media/measurement-setup-block-diagram.png)
+The discriminator is an unbalanced Mach-Zehnder interferometer. Light splits between two arms, one arm has a long delay spiral, and a 2×2 MMI recombines them onto a balanced photodiode pair. At quadrature, laser frequency noise turns into a differential photocurrent. A PIN VOA on the short arm balances loss, and a heater tunes the interferometer phase to hold quadrature. The chip's designed delay is `1.90 ns`, which sets the conversion between phase noise and frequency noise.
 
-## It makes fringes, but the light level is bad
+![Measurement setup block diagram](media/measurement-setup-block-diagram.png)
 
-We got fringes through the first interferometer, but the path has about
-`35.5 dB` of loss and only `11.1 dB` of fringe extinction. My first logbook
-entry said `5.5 dB` and `41 dB`. I had misread a microamp-scale current by a
-factor of 1000, so I went back through the recorded instrument display and
-corrected it.
+## Current state
 
-That loss is now the main problem. There is enough signal to prove the chip
-interferes, but not enough to treat every noise trace as laser noise. More recent
-work brought up the balanced readout and an Analog Discovery 3 acquisition path
-at `200 kS/s`, giving a `100 kHz` measurement band. The electronics can see that
-band. The optical signal reaching them is the bottleneck.
+The chip works, but it's lossy. Path P1 → MZI-1 → PD3/PD4 measures about `35.5 dB` of loss and `11.1 dB` of fringe extinction. Earlier logbook entries said `5.5 dB` and `41 dB` — those were wrong by a factor of 1000 in the photocurrent reading, and I checked them frame-by-frame against the recorded video of the original bench display.
 
-I do have a first frequency-noise spectrum, but it isn't a linewidth
-measurement. It was taken at low light, the calibration came from a
-transduction figure measured at a different optical power, and the band stops
-well below where the beta line matters for this laser. Reading a linewidth off
-that plot would be wrong.
+The readout electronics work out to a `100 kHz` band (Analog Discovery 3 at 200 kS/s), and I have a first frequency-noise spectrum. It's not yet a linewidth measurement. The run was taken at low light, the calibration used a transduction figure measured at a different power, and the band is well below where the beta line matters for the laser under test. Reading a linewidth off that plot would be wrong.
 
-## Simulation work
+The current blocker is optical, not electrical: not enough light is reaching the photodiodes to run the linewidth measurement properly.
 
-I also ported the PIN attenuator simulation from the lab's Lumerical flow to
-open-source tools: DEVSIM for the carrier transport and femwell for the optical
-mode solve. The model sweeps the lateral PIN junction bias in a 220 nm SOI rib
-waveguide and converts the injected carrier distribution into effective-index
-change.
+## Simulation
+
+Alongside the bench work, I ported the group's PIN VOA simulation from Lumerical CHARGE/MODE to open-source tools — DEVSIM for the drift-diffusion carrier solve, femwell for the optical eigenmode. The model sweeps a lateral p++/n++ PIN junction on a 220 nm SOI rib waveguide from 0 to 4 V forward bias and pulls out the effective-index change from the injected free carriers.
 
 ![Carrier density maps](media/carrier_maps.png)
 
-![Effective index versus voltage](media/neff_vs_V.png)
-
-Before I can measure linewidth, I need to recover and hold enough optical power
-through the packaged input path. Then I can repeat the calibrated spectrum with
-the full readout bandwidth.
-
-## Repository
+![Effective index vs. voltage](media/neff_vs_V.png)
 
 [VOA simulation](https://github.com/georgesleen/frequency-discriminator-voa-simulation)

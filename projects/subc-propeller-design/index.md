@@ -17,36 +17,22 @@ media:
 
 ![SUBC testing](media/subc-title.webp)
 
-I joined SUBC's drivetrain and propulsion group in September 2023. The team
-builds a human-powered submarine for international racing, where the pilot is
-the entire engine, so anything that wastes power in the drivetrain is felt
-immediately.
+SUBC (UBC Submarine Design Team) builds a human-powered submarine for international racing. The pilot is the entire engine, so anything that wastes power in the drivetrain shows up immediately in the run.
 
-The first thing I worked on was the chain skipping under load. We swapped the
-chain drive for gears, which got rid of the problem instead of us re-tensioning
-a chain forever. I also built a jig so we could test propellers on their own
-rather than bolting each one into the sub.
+I joined the drivetrain and propulsion team in September 2023. The first thing I worked on was chain skipping under load. We swapped the chain drive for gears, which killed the failure mode instead of us re-tensioning a chain forever. I also built an external jig so we could test propellers on their own instead of bolting each one into the sub.
 
-The bigger project was a toroidal propeller. I compared candidate geometries in
-SolidWorks and Ansys CFD and picked the one we would build. We 3D printed the
-blades and finished them with epoxy resin, which let us make a shape that would
-have been miserable to mould.
+The larger design project was a toroidal propeller. I compared candidate geometries in SolidWorks and Ansys CFD and picked the one we'd manufacture. The blades were 3D printed and finished with epoxy resin, which let us produce a geometry that would have been miserable to mould.
 
 ![CFD comparison](media/cfd-analysis.jpeg)
 
-I became propulsion lead in August 2024, running the group that handled the
-propeller and its mounts, and I was team captain over the same year. Most of
-that year went into keeping a 60-person team and its budget moving rather than
-doing my own analysis. The propeller, the drivetrain, the jig, and the
-manufacturing were all team efforts; the CFD comparisons and the toroidal design
-are the parts that were mine.
+I became propulsion lead in August 2024, running the group that handled the propeller and its mounts, and I was team captain over the same year. Most of that year was less about my own analysis and more about keeping a 60-person team and a $40,000 budget moving. The propeller, drivetrain, jig, and manufacturing were team efforts; the CFD comparisons and the toroidal design are the parts that were mine.
 
 ![SUBC team](media/subc-2023.jpg)
 
-## Roles
+**Roles**
 
-- Drivetrain and propulsion member, September 2023 to August 2024
-- Propulsion lead, August 2024 to August 2025
-- Team captain, August 2024 to August 2025
+- Drivetrain and propulsion member, September 2023 – August 2024
+- Propulsion lead, August 2024 – August 2025
+- Team captain, August 2024 – August 2025
 
 [subc.ca](https://subc.ca)

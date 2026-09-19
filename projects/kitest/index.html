@@ -30,34 +30,14 @@
   </nav>
   <main>
     <h1>KiTest</h1>
-<p>A KiCad schematic can pass ERC and still be electrically wrong. ERC knows a net
-is connected, but it doesn't know that a divider should produce 2.5 V or that an
-amplifier should have a certain gain at 10 kHz. I kept rebuilding those SPICE
-checks by hand, so I started KiTest to keep them beside the schematic.</p>
-<p><strong>DRC checks manufacturability, ERC checks wiring, KiTest checks intent.</strong></p>
-<h2>What works now</h2>
-<p>KiTest is a Rust workspace with a PyO3 package for writing tests under pytest.
-It can export a schematic with <code>kicad-cli</code>, run ngspice in batch mode, and return
-typed operating-point, transient, and AC results to Python.</p>
-<p>The Python API now covers DC, pulse, sinusoidal, and AC sources; node lookup;
-waveforms and spectra; absolute and percentage tolerances; settling, overshoot,
-gain, and phase. There are pytest examples that run through KiCad export and
-ngspice. The old page said the binding only exposed <code>version()</code>, which hasn't
-been true for a while.</p>
-<p>ngspice runs as a subprocess because its shared library keeps global,
-single-instance state. Separate processes are much easier to run in parallel
-without one test leaking into another. The Rust side still puts it behind a
-<code>Backend</code> trait so I can replace it later.</p>
-<h2>What isn't built yet</h2>
-<p>The plan has three levels: static netlist checks, cheap simulation smoke checks,
-and full behavioral tests. Only parts of that exist today. Hierarchical-sheet
-slicing, static connectivity assertions, broader smoke checks, MCU pin models,
-Renode firmware co-simulation, Xyce, and a KiCad IPC frontend are all still
-ideas.</p>
-<p>I also plan to use one small RP2040 board as the dogfood design, starting with a
-single analog test and adding the harder pieces one at a time. That board and
-the later firmware-in-the-loop stages are plans, not finished KiTest features.</p>
-<h2>Repository</h2>
+<p>A KiCad schematic can pass ERC and still be electrically wrong. ERC will tell me the net exists; it can't tell me a divider should sit at 2.5 V, an amplifier should have a specific gain at 10 kHz, or a transient should settle within a tolerance. I kept rebuilding those SPICE setups by hand every time the schematic changed, so I started KiTest to keep them beside the design.</p>
+<p>The framing I like: <strong>DRC checks manufacturability, ERC checks wiring, KiTest checks intent.</strong></p>
+<h2>What works</h2>
+<p>KiTest is a Rust workspace with a PyO3 package for pytest-facing testbenches. Today it can export a KiCad schematic through <code>kicad-cli</code>, drive ngspice in batch mode, and hand typed operating-point, transient, and AC results back to Python. The Python binding is functional now, not just <code>version()</code>; it exposes DC/pulse/sinusoidal/AC sources, node lookups, waveforms and spectra, and tolerance-aware settling, overshoot, gain, and phase checks. There are pytest examples that run the whole thing end-to-end through KiCad export and ngspice.</p>
+<p>ngspice runs as a subprocess rather than through libngspice, because libngspice has single-instance global state that makes parallel tests painful. The subprocess also keeps KiTest license-independent from ngspice's GPL. A <code>Backend</code> trait leaves room for an FFI backend or Xyce later.</p>
+<h2>What isn't built</h2>
+<p>The long-term design has three tiers: static netlist checks, cheap simulation smoke checks, and full behavioral testbenches. Only pieces of that exist. Hierarchical-sheet slicing, most of the static connectivity assertions, more of the smoke checks, behavioral MCU pin models, Renode-based firmware-in-the-loop, an Xyce backend, and a KiCad IPC plugin frontend are all still ahead.</p>
+<p>There's a planned RP2040 dogfood board that's supposed to drive the work one small feature at a time — LED for the walking skeleton, PWM/RC &quot;DAC&quot; and an ADC-input node for the analog tiers, firmware-in-the-loop after that. It exists on paper, not in the KiTest tree.</p>
 <p><a href="https://github.com/georgesleen/kitest">github.com/georgesleen/kitest</a></p>
 
   </main>
