@@ -32,71 +32,35 @@
   </nav>
   <main>
     <h1>Continuous Servo Control PCB</h1>
-<h2>Overview</h2>
-<p>This project was an extension of my ENPH 259 final project, where I designed and built a custom circuit and PCB to
-control a continuous-rotation servo motor.</p>
-<p>The goal was to replace the internal control electronics of a hobby servo with a standalone, feedback-stabilized driver
-that could be powered externally and provide smoother, more accurate speed control.</p>
-<hr>
-<h2>My Contributions</h2>
-<ul>
-<li>Designed the full control circuit in KiCad, including feedback, comparator, and MOSFET driver stages.</li>
-<li>Created the PCB layout, ensuring signal integrity between the digital counting stages and the analog PI
-controller.</li>
-<li>Assembled and tested the board, debugging issues with clock timing and feedback resolution.</li>
-<li>Integrated the motor with a mechanical disk encoder to generate feedback signals.</li>
-</ul>
-<hr>
-<h2>Technical Highlights</h2>
-<ul>
-<li><strong>Speed Feedback:</strong> A slotted encoder disk generated pulses, which were counted and latched to represent motor speed
-in binary.</li>
-<li><strong>Digital-to-Analog Conversion:</strong> The binary counter output was fed into an R-2R DAC, producing an analog voltage
-proportional to measured speed.</li>
-<li><strong>Reference Comparison:</strong> A comparator compared the measured speed voltage against a reference input.</li>
-<li><strong>Control Loop:</strong> A PI (proportional–integral) controller smoothed the error signal and stabilized speed regulation.</li>
-<li><strong>Output Stage:</strong> The processed control voltage drove a MOSFET H-bridge to power the DC motor.</li>
-<li><strong>Inputs/Outputs:</strong> The system required ±5 V, ground, and a 5 Hz clock signal to operate.</li>
-</ul>
-<hr>
-<h2>GitHub</h2>
-<p><a href="https://github.com/georgesleen/continous-servo-pcb">github.com/georgesleen/continous-servo-pcb</a></p>
-<hr>
-<h2>Media</h2>
-<ul>
-<li>
-<p><em>PCB layout render</em><br>
-<img src="media/enph259-servo-front.png" alt="Board render"></p>
-</li>
-<li>
-<p><em>Assembled board with servo</em><br>
-<img src="media/final-product.jpg" alt="Assembled board"></p>
-</li>
-<li>
-<p><em>Schematic (page 1)</em><br>
-<img src="media/servo-schematic-p1.svg" alt="Servo schematic"></p>
-</li>
-<li>
-<p><em>PCB front (page 1)</em><br>
-<img src="media/servo-front-pcb-p1.svg" alt="Servo PCB front"></p>
-</li>
-<li>
-<p><em>Lab setup screenshot</em><br>
-<img src="media/servo-lab-setup.png" alt="Servo lab setup"></p>
-</li>
-</ul>
-<hr>
-<h2>Reflection</h2>
-<p>This project was my first time designing a complete closed-loop motor control system in hardware. It forced me to
-combine digital counting and DAC conversion with analog PI control, all integrated on a custom PCB.</p>
-<p>Through this build, I gained practical experience in:</p>
-<ul>
-<li>PCB layout for mixed digital/analog systems</li>
-<li>Debugging timing and feedback issues</li>
-<li>Designing a control loop that balances responsiveness with stability</li>
-</ul>
-<p>The final system successfully demonstrated that a low-cost servo can be transformed into a continuously controllable
-actuator using custom electronics.</p>
+<p>For an ENPH 259 follow-on, I tried to control a motor without hiding the loop
+inside a microcontroller. The board measures shaft motion digitally, converts
+the count back to a voltage, and closes the loop with an analog PI controller.</p>
+<p>The sensor is a slotted disk on the shaft. Its pulses feed a counter which is
+latched immediately before a periodic reset, producing a sampled measure of
+rotational speed. An R-2R ladder converts the latched binary value to a voltage.
+That voltage is compared with the reference, and the resulting error passes
+through the PI stage before driving the motor through MOSFETs.</p>
+<p>The result is half digital and half analog. Counting and latching happen in
+logic, while the R-2R conversion, error signal, and controller stay analog. I
+designed the schematic and PCB in KiCad, added a binary speed readout, and built
+the board and slotted-disk mount.</p>
+<p><img src="media/final-product.jpg" alt="Assembled board and servo"></p>
+<p>The setup expects external <code>+5 V</code>, ground, <code>-5 V</code>, and a <code>5 Hz</code> clock. That
+clock defines the counting window, so it is part of the measurement rather than
+just a convenience for the logic.</p>
+<p><img src="media/servo-lab-setup.png" alt="Lab setup"></p>
+<p>I assembled the circuit, but I didn't save a final step-response plot or any
+other closed-loop measurement. I know how the loop was supposed to work; I
+can't put an accuracy or stability number on the finished board.</p>
+<h2>Design files</h2>
+<p><em>PCB render:</em></p>
+<p><img src="media/enph259-servo-front.png" alt="Board render"></p>
+<p><em>Schematic, first page:</em></p>
+<p><img src="media/servo-schematic-p1.svg" alt="Servo schematic"></p>
+<p><em>PCB drawing, first page:</em></p>
+<p><img src="media/servo-front-pcb-p1.svg" alt="Servo PCB front"></p>
+<h2>Repository</h2>
+<p><a href="https://github.com/georgesleen/enph259-servo-pcb">github.com/georgesleen/enph259-servo-pcb</a></p>
 
   </main>
 </body>

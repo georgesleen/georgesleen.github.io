@@ -6,10 +6,10 @@
   
   <title>Photonics Lab - George Sleen</title>
   
-  <meta name="description" content="Frequency discriminator bring-up and laser linewidth measurement on a silicon photonic chip." />
+  <meta name="description" content="Bringing up a lossy silicon photonic frequency discriminator, on the way to a linewidth measurement." />
   <link rel="canonical" href="https://georgesleen.github.io/projects/photonics-lab/" />
   <meta property="og:title" content="Photonics Lab" />
-  <meta property="og:description" content="Frequency discriminator bring-up and laser linewidth measurement on a silicon photonic chip." />
+  <meta property="og:description" content="Bringing up a lossy silicon photonic frequency discriminator, on the way to a linewidth measurement." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://georgesleen.github.io/projects/photonics-lab/" />
   
@@ -33,51 +33,45 @@
   <main>
     <h1>Photonics Lab</h1>
 <p><img src="media/ref-photonic-chip-closeup.jpeg" alt="Photonic chip closeup"></p>
-<p>I work in a silicon photonics research lab at UBC through the SiEPIC program.
-The project is to bring up an integrated frequency discriminator chip and use it
-to measure laser linewidth.</p>
-<p>The chip is a Mach-Zehnder interferometer (MZI) fabricated by Advanced Micro
-Foundry (AMF) in a 220 nm silicon-on-insulator process. It converts a laser's
-frequency fluctuations into an intensity signal at a balanced photodetector
-pair. From the detected signal, the frequency-noise power spectral density
-gives the linewidth.</p>
-<h2>How the discriminator works</h2>
-<p>The discriminator is an unbalanced MZI: the input splits, one arm picks up a
-delay, and a 2x2 multimode-interference coupler recombines the two arms onto a
-balanced photodiode pair. The operating point is the zero-difference fringe,
-where intensity noise drops out and phase sensitivity is maximal.</p>
-<p>A PIN junction variable optical attenuator (VOA) on the short arm equalizes the
-two arms. A heater tunes the interferometer phase to hold quadrature. The
-balanced differential photocurrent is then proportional to the laser's frequency
-fluctuations.</p>
-<p><img src="media/measurement-setup-block-diagram.png" alt="Measurement setup block diagram"></p>
-<h2>My work</h2>
-<p>I wrote the experimental proposal for the bring-up, covering the full
-measurement chain: reference laser characterization (benchtop tunable source at
-1550 nm and a telecom DFB in a butterfly package, through the OEwaves OE4000
-and a delayed self-heterodyne setup), TIA board bring-up (OPA858 decompensated
-op-amp), PD-bias board, optical I/O through edge couplers, loss matching by
-biasing the PIN attenuator, MZI interference and quadrature lock via the heater,
-discriminator calibration with a known frequency-modulation tone from an AWG,
-and linewidth extraction from the frequency-noise PSD using the
-beta-separation line.</p>
-<h2>VOA simulation</h2>
-<p>As a supporting piece, I ported the lab's Lumerical CHARGE and MODE simulation
-pipeline to open-source Python tools (DEVSIM for drift-diffusion, femwell for
-the eigenmode solve). The simulation models the PIN VOA's cross-section: a
-220 nm SOI rib waveguide with lateral p++ and n++ implants, sweeping forward
-bias from 0 to 4 V and computing the effective index change from injected free
-carriers.</p>
-<p><em>Carrier density maps at four bias points:</em></p>
-<p><img src="media/carrier_maps.png" alt="Carrier maps"></p>
-<p><em>Effective index vs. voltage (Python pipeline vs. Lumerical reference):</em></p>
-<p><img src="media/neff_vs_V.png" alt="neff vs voltage"></p>
-<h2>Equipment</h2>
-<p>The lab bench includes a Keysight B2902A source-measure unit pair, an OEwaves
-OE4000 linewidth analyzer, a Rigol DG1022 AWG, and an ILX LDM4980 laser diode
-mount with temperature control.</p>
+<p>I joined a UBC photonics lab to bring up an existing silicon-photonic frequency
+discriminator. Pegah Tekieh designed the chip, AMF fabricated it in a
+PSiN-on-SOI C-band process, and Jamal packaged it with a fiber array. I have been
+working on the bench setup, measurement software, and debugging.</p>
+<p>The discriminator is an unbalanced Mach-Zehnder interferometer. One arm contains
+a long delay spiral; the other has a PIN attenuator for balancing the loss. The
+two arms recombine on a balanced photodiode pair. At quadrature, laser frequency
+noise becomes differential photocurrent. The chip's designed delay is <code>1.90 ns</code>,
+which sets the conversion from phase noise to frequency noise.</p>
+<p><img src="media/measurement-setup-block-diagram.png" alt="Measurement setup"></p>
+<h2>It makes fringes, but the light level is bad</h2>
+<p>We got fringes through the first interferometer, but the path has about
+<code>35.5 dB</code> of loss and only <code>11.1 dB</code> of fringe extinction. My first logbook
+entry said <code>5.5 dB</code> and <code>41 dB</code>. I had misread a microamp-scale current by a
+factor of 1000, so I went back through the recorded instrument display and
+corrected it.</p>
+<p>That loss is now the main problem. There is enough signal to prove the chip
+interferes, but not enough to treat every noise trace as laser noise. More recent
+work brought up the balanced readout and an Analog Discovery 3 acquisition path
+at <code>200 kS/s</code>, giving a <code>100 kHz</code> measurement band. The electronics can see that
+band. The optical signal reaching them is the bottleneck.</p>
+<p>I do have a first frequency-noise spectrum, but it isn't a linewidth
+measurement. It was taken at low light, the calibration came from a
+transduction figure measured at a different optical power, and the band stops
+well below where the beta line matters for this laser. Reading a linewidth off
+that plot would be wrong.</p>
+<h2>Simulation work</h2>
+<p>I also ported the PIN attenuator simulation from the lab's Lumerical flow to
+open-source tools: DEVSIM for the carrier transport and femwell for the optical
+mode solve. The model sweeps the lateral PIN junction bias in a 220 nm SOI rib
+waveguide and converts the injected carrier distribution into effective-index
+change.</p>
+<p><img src="media/carrier_maps.png" alt="Carrier density maps"></p>
+<p><img src="media/neff_vs_V.png" alt="Effective index versus voltage"></p>
+<p>Before I can measure linewidth, I need to recover and hold enough optical power
+through the packaged input path. Then I can repeat the calibrated spectrum with
+the full readout bandwidth.</p>
 <h2>Repository</h2>
-<p>VOA simulation: <a href="https://github.com/georgesleen/frequency-discriminator-voa-simulation">github.com/georgesleen/frequency-discriminator-voa-simulation</a></p>
+<p><a href="https://github.com/georgesleen/frequency-discriminator-voa-simulation">VOA simulation</a></p>
 
   </main>
 </body>

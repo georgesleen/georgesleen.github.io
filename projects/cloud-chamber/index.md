@@ -1,5 +1,6 @@
 ---
 title: "Cloud Chamber"
+author: "George Sleen"
 layout: base.njk
 description: "Visualizing ionizing radiation at home."
 thumbnail: "media/thumbnail.jpg"

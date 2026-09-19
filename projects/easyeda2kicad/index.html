@@ -6,10 +6,10 @@
   
   <title>EasyEDA to KiCad Converter - George Sleen</title>
   
-  <meta name="description" content="Fork of easyeda2kicad.py with fixes for API reliability, used to populate my personal KiCad library." />
+  <meta name="description" content="How I use the upstream easyeda2kicad converter to keep my KiCad library filled." />
   <link rel="canonical" href="https://georgesleen.github.io/projects/easyeda2kicad/" />
   <meta property="og:title" content="EasyEDA to KiCad Converter" />
-  <meta property="og:description" content="Fork of easyeda2kicad.py with fixes for API reliability, used to populate my personal KiCad library." />
+  <meta property="og:description" content="How I use the upstream easyeda2kicad converter to keep my KiCad library filled." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://georgesleen.github.io/projects/easyeda2kicad/" />
   
@@ -33,26 +33,35 @@
   <main>
     <h1>EasyEDA to KiCad Converter</h1>
 <p><img src="media/demo_symbol.png" alt="Symbol conversion demo"></p>
-<p>When I design PCBs in KiCad, I source most of my components from LCSC for
-JLCPCB assembly. The problem is that LCSC hosts its component models in
-EasyEDA's proprietary format. Manually recreating symbols, footprints, and 3D
-models for every part is tedious and error-prone.</p>
-<p>easyeda2kicad.py (by uPesy Electronics) solves this. It converts any LCSC
-component into KiCad library files with a single command.</p>
-<p>I forked it after EasyEDA's API started rejecting requests made with the
-default Python user-agent string. My fork adds a browser-like <code>User-Agent</code>
-header and a <code>Referer</code> header to prevent these rejections.</p>
-<p>My personal KiCad library, <code>gs-kicad-lib</code>, calls easyeda2kicad as a CLI
-subprocess. When I need a new LCSC component:</p>
-<pre><code class="language-bash">python -m easyeda2kicad --full --lcsc_id=C2040 --output=gs-kicad-lib
-</code></pre>
-<p>That fetches the component data, parses EasyEDA's proprietary shape format, and
-exports a KiCad symbol, footprint, and 3D model into my library. Every KiCad
-project on my machine can then reference the part. The tool also supports batch
-processing for populating a full BOM at once.</p>
-<h2>Repository</h2>
-<p><a href="https://github.com/georgesleen/easyeda2kicad.py">github.com/georgesleen/easyeda2kicad.py</a></p>
-<p>Upstream: <a href="https://github.com/uPesy/easyeda2kicad.py">github.com/uPesy/easyeda2kicad.py</a></p>
+<p>Most parts I use for JLCPCB assembly come from LCSC, but I design in KiCad.
+<a href="https://github.com/uPesy/easyeda2kicad.py"><code>easyeda2kicad</code></a>, written by uPesy
+Electronics, does the annoying conversion work: it downloads EasyEDA's symbol,
+footprint, and 3D-model data and writes KiCad libraries.</p>
+<p>My fork is barely a fork. My only commit, <code>c639590</code>, changes a newline in
+<code>requirements.txt</code>. Steffen Wittemeier wrote the <code>User-Agent</code> and <code>Referer</code>
+header fix in upstream commit <code>95e3e0e</code>. An older version of this page credited
+that fix to me, which was wrong.</p>
+<p>What I actually wrote is the tooling around the converter in
+<a href="https://github.com/georgesleen/gs-kicad-lib"><code>gs-kicad-lib</code></a>. It depends on
+<code>easyeda2kicad&gt;=1.0.1</code> and adds:</p>
+<ul>
+<li>an interactive importer with fuzzy library and footprint search;</li>
+<li>a choice between generated, existing, or no footprint link;</li>
+<li>tidying of KiCad fields and the procurement metadata I care about;</li>
+<li>a check that every symbol has the required fields; and</li>
+<li>setup tooling that registers the libraries and path variables with KiCad.</li>
+</ul>
+<p>Now I can pick an LCSC part, decide where its files go, clean up the fields, and
+run the same checks as the rest of my library, instead of babysitting every
+import.</p>
+<p><em>Generated footprint:</em></p>
+<p><img src="media/demo_footprint.png" alt="Footprint conversion demo"></p>
+<h2>Repositories</h2>
+<ul>
+<li><a href="https://github.com/georgesleen/easyeda2kicad.py">My small easyeda2kicad fork</a></li>
+<li><a href="https://github.com/uPesy/easyeda2kicad.py">Upstream easyeda2kicad</a></li>
+<li><a href="https://github.com/georgesleen/gs-kicad-lib">My gs-kicad-lib tooling</a></li>
+</ul>
 
   </main>
 </body>

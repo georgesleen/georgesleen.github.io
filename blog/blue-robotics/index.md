@@ -1,5 +1,6 @@
 ---
 title: "The currents of marine electronics: A reflection on my time at Blue Robotics"
+author: "George Sleen"
 layout: base.njk
 date: 2025-05-27
 thumbnail: "thumbnail.jpg"

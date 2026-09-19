@@ -1,5 +1,6 @@
 ---
 title: "Mini Metal Foundry"
+author: "George Sleen"
 layout: base.njk
 description: "Backyard foundry to melt down aluminum cans."
 thumbnail: "media/thumbnail.jpg"

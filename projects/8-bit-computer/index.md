@@ -1,7 +1,8 @@
 ---
 title: "8-Bit Computer"
+author: "openai-codex/gpt-5.6-sol"
 layout: project.njk
-description: "A custom 8-bit computer designed from discrete components."
+description: "An 8-bit computer made of 7400-series logic, running programs in simulation."
 thumbnail: "images/thumbnail.png"
 media:
   - "images/general-register-render.png"
@@ -17,66 +18,49 @@ tags: ["computer architecture", "simulation", "pcbs", "electrical", "mechanical"
 
 # 8-Bit Computer
 
-## Overview
-This project was a ground-up implementation of a fully custom **8-bit computer**, built from discrete logic components and custom PCB modules.  
-The system is **Turing-complete**, capable of executing a minimal instruction set, and was developed as a way to explore computer architecture at the gate and register-transfer level.
+I built this after watching Ben Eater's breadboard-computer series and reading
+Malvino's *Digital Computer Electronics*. I wanted to know what actually
+happened between an instruction entering the register and a value appearing on
+the bus, so I drew the whole computer in Logisim and then split it into
+7400-series KiCad modules.
 
-The design takes inspiration from [Ben Eater’s breadboard computer](https://eater.net/), but expands it with a modular PCB-based implementation, Logisim simulations, and a structured hardware layout.
+The machine has an 8-bit shared bus, general and interface registers, a program
+counter, program memory, an instruction register, an ALU, and microcoded control
+logic. The ALU is built out of slices for the arithmetic and logic operations,
+and the control logic sequences all the bus transfers behind each fetch, decode,
+and execute step.
 
----
+The simulated computer is Turing-complete and runs programs I wrote in machine
+code and a small custom assembly language. The clip below loads `4` into a
+register, adds `13`, and sends the answer to the output register.
 
-## Contributions
-- **Architecture Definition**: Designed a simple but complete 8-bit instruction set and system architecture (registers, ALU, program counter, memory, control logic).
-- **Schematic & PCB Design**: Created KiCad schematics and PCB layouts for the computer’s core subsystems (general registers, ALU, program memory).
-- **Simulation & Verification**: Validated the instruction set and control logic in Logisim before committing to hardware.
-- **System Integration**: Built and tested each module in isolation, then integrated them onto a shared bus.
-- **Demonstration**: Successfully ran small programs demonstrating arithmetic operations and data output.
+![Full simulated computer](images/full-computer.png)
 
----
+<video src="videos/simple-program.mp4" controls style="width:100%; height:auto; display:block;"></video>
 
-## Technical Highlights
-- **Registers**: Designed custom register boards with tri-state buffer outputs and synchronous load.
-- **ALU**: Implemented addition, subtraction, and bitwise logic operations with discrete logic gates.
-- **Memory**: Designed a program ROM PCB and accompanying RAM for instruction storage.
-- **Control Logic**: Implemented fetch–decode–execute sequencing via microcoded control signals.
-- **Bus Design**: Shared system bus with tri-state management across modules.
+## From simulation to boards
 
----
+Working it out in simulation first meant I could settle the instruction path and
+control timing before drawing any boards. The repo has KiCad schematics and PCB
+layouts for the ALU, registers, program counter, program memory, instruction
+register, and control logic.
 
-## Media
+_General-register PCB render:_
 
-### Repository
-[GitHub – 8-Bit Computer](https://github.com/georgesleen/8-BitComputer)
+![General register render](images/general-register-render.png)
 
-### Hardware & Schematics
-- *General Register*  
-  ![General register render](images/general-register-render.png)
+_Program-memory PCB:_
 
-- *Program Memory PCB*  
-  ![Program memory pcb](images/program-memory-pcb.png)
+![Program memory PCB](images/program-memory-pcb.png)
 
-- *ALU Schematic*  
-  ![ALU schematic](images/alu-schematic.png)
+_ALU schematic:_
 
-### Simulation
-- *Full simulated computer*  
-  ![Full Simulated Computer](images/full-computer.png)
+![ALU schematic](images/alu-schematic.png)
 
-- *Simple program execution:*
+I never finished assembling all of these boards into one computer. The programs
+ran in Logisim; the KiCad files show how I planned to turn each simulated block
+into hardware.
 
-    1. Load `4` into Register A
-    2. Add `13` to Register A
-    3. Output result to output register
+## Repository
 
-  <video src="videos/simple-program.mp4" controls style="width:100%; height:auto; display:block;"></video>
-
----
-
-## Reflection
-This project provided a first-principles understanding of how digital computers operate at the logic level.  
-Key takeaways included:
-- How simple bit manipulation and storage gives rise to the complex programs run by computers.
-- Using simulation to de-risk hardware design.
-- Appreciating the tradeoffs between simplicity, expandability, and physical wiring complexity.
-
-If extended further, this design could support conditional branching, subroutines, or pipelining.
+[github.com/georgesleen/8-BitComputer](https://github.com/georgesleen/8-BitComputer)

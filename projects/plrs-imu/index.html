@@ -6,10 +6,10 @@
   
   <title>PLRS-IMU - George Sleen</title>
   
-  <meta name="description" content="7-state EKF sensor fusion firmware, PCB, and simulation for UBC Sailbot&#39;s heading system. C++23, FreeRTOS, RP2040." />
+  <meta name="description" content="Heading fusion for UBC Sailbot: a BNO085, dual-antenna GNSS, a 7-state EKF, and a lot of debugging." />
   <link rel="canonical" href="https://georgesleen.github.io/projects/plrs-imu/" />
   <meta property="og:title" content="PLRS-IMU" />
-  <meta property="og:description" content="7-state EKF sensor fusion firmware, PCB, and simulation for UBC Sailbot&#39;s heading system. C++23, FreeRTOS, RP2040." />
+  <meta property="og:description" content="Heading fusion for UBC Sailbot: a BNO085, dual-antenna GNSS, a 7-state EKF, and a lot of debugging." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://georgesleen.github.io/projects/plrs-imu/" />
   
@@ -32,122 +32,68 @@
   </nav>
   <main>
     <h1>PLRS-IMU</h1>
-<p><img src="media/polaris-imu-pcb-orthographic.png" alt="Polaris IMU PCB"></p>
-<p>This is my main project on <a href="/projects/ubc-sailbot/">UBC Sailbot</a>. I've written
-173 of the 175 commits, and the codebase is about 17,000 lines across C++
-firmware, Python simulation, and tests. The goal is heading accuracy within
-2 degrees by fusing an IMU and dual-antenna GNSS through an Extended Kalman
-Filter.</p>
-<h2>The hardware</h2>
-<p>The MCU is a Raspberry Pi RP2040 (Pico), with RP2350 support for the newer
-boards. For GNSS I use a Septentrio mosaic-go H, the dual-antenna variant
-that gives heading from the baseline between two antennas.</p>
-<p>The IMU was originally an Xsens MTi-3. That sensor died, and I replaced it
-with a BNO085. I wrote a complete SHTP/SH-2 protocol layer from scratch for it
-(the Xbus protocol layer for the Xsens was already done). Here is a
-magnetometer calibration capture from the BNO085, showing the heading sweeping
-through all directions and the coverage rose filling out:</p>
-<p><img src="media/mag-cal-spin.png" alt="Mag cal spin test"></p>
-<p>The PCB is my own design in KiCad. It carries the RP2040 (or RP2354), the IMU,
-a debug probe header, and overvoltage protection.</p>
-<h2>The filter</h2>
-<p>The firmware runs FreeRTOS on the RP2040. I wrote it in C++23, and all the
-protocol layers (Xbus, SHTP/SH-2, SBF/NMEA) compile and run tests under
-plain <code>g++ -std=c++23</code> on the host. That makes iteration much faster than
-flashing to hardware every time.</p>
-<p>The EKF started as a 2-state filter (heading + gyro-Z bias) and grew to 7
-states: heading, roll, pitch, 3-axis gyro bias, and magnetometer offset. Each
-expansion was driven by a concrete problem.</p>
-<p><strong>Heel coupling.</strong> The original filter integrated body-Z gyro directly into
-heading. That works when the boat is level, but the moment it heels, body-Z
-gyro is not pure yaw rate anymore. A boat at 30 degrees of heel, sailing
-straight, shows a non-trivial gyro-Z reading from pitch-rate coupling. The
-filter integrates that into heading, and the drift looks like a slow yaw bias.
-GNSS keeps pulling it back, so it does not catastrophically fail; it just
-quietly degrades. This was the bug the previous sailbot IMU had. I fixed it by
-promoting roll and pitch into the EKF state and projecting the body gyro
-through the ZYX Euler kinematic matrix before integrating.</p>
-<p><strong>Gimbal singularity.</strong> Near 90 degree pitch the heading kinematics blow up
-(sec(pitch) goes to infinity). A boat never trims there, but bench handling and
-knockdowns can. Without a guard, the covariance goes to NaN and never recovers.
-I clamped the pitch feeding the rate maps and added a <code>heading_trustworthy</code>
-flag that the rudder controller checks before steering.</p>
-<p><strong>Float32 P degradation.</strong> On the RP2040 everything is single-precision. I
-found that during long GNSS outages the covariance matrix diagonal could grow
-large enough that the heading and mag-offset sigma estimates lost precision.
-The fix is a sigma cap that prevents the covariance from drifting into the
-range where float32 arithmetic stops being meaningful.</p>
-<p><strong>P symmetry.</strong> After each measurement update the covariance matrix can pick up
-small asymmetries from floating-point rounding. Over many updates these
-accumulate and the filter diverges. I added a re-symmetrize step after every
-update.</p>
-<h2>GNSS bring-up</h2>
-<p>Getting the Septentrio mosaic-go H to produce heading turned into a multi-week
-debugging effort. The first unit tracked satellites on the main antenna but
-reported zero on the aux, even in clear sky. I wrote a diagnostic script
-(<code>mosaic_diag.py</code>) to parse MeasEpoch, AuxAntPositions, AttEuler, and RxError
-blocks. The script showed AUX1 tracking 0 to 1 satellites while MAIN tracked
-27 to 28. The unit went back as an RMA.</p>
-<p>The replacement unit was different but still broken. It tracked satellites on
-both antennas (3 to 6 on aux, 14 to 18 on main), but the attitude solve still
-failed. I dug into the MeasEpoch data and found the real problem: zero common
-satellites between the two antennas. Attitude needs double-differenced
-observations, which need the same satellites visible on both antennas at the
-same time. My diagnostic script had been counting only Type1 sub-blocks and
-missing the Type2 sub-blocks where the aux antenna reports most of its
-measurements. Once I fixed the parser, the common count jumped to 26, and
-heading locked at 241 degrees with 0.15 degree stability.</p>
-<p>The Septentrio hardware manual is explicit that ANT_2 is AC-coupled and
-unprotected, unlike ANT_1. I suspect the first unit was damaged by hot-plugging
-the SMA while the 5V bias was live. I added a procedure: power the receiver
-down before connecting antennas, discharge each coax before mating.</p>
-<h2>GNSS outage handling</h2>
-<p>The question that started a whole investigation: what happens when GNSS drops
-out? The magnetometer should hold heading, but how well?</p>
-<p>I ran a full audit. The filter already fails safe: the rudder gates steering
-on <code>heading_valid</code> (sigma under 5 degrees, pitch under 80 degrees). In
-simulation, a GNSS outage pushes heading sigma past 5 degrees within about
-16 seconds, so the rudder stops trusting the heading before any large error
-builds. The large drift that happens during a long outage (tens of degrees)
-occurs entirely after heading is already flagged invalid.</p>
-<p>The real lever is usable coast time. The loose <code>q_offset</code> that correctly
-absorbs magnetometer wander during normal operation is the same parameter that
-lets confidence decay in 16 seconds. I added an opt-in <code>q_offset_outage</code> that
-pins the mag offset during a GNSS gap: with a clean magnetometer, heading holds
-under 1 degree for a full 5-minute outage and stays valid. With a dirty
-magnetometer, pinning makes the filter confidently wrong, so the knob defaults
-to off and gates on a characterized mag.</p>
-<p><em>EKF holding heading through a GNSS outage:</em></p>
+<p><img src="media/polaris-imu-pcb-orthographic.png" alt="Polaris IMU PCB render"></p>
+<p>PLRS-IMU is the heading system I work on for UBC Sailbot's autonomous boat,
+Polaris. I expected the EKF to be the hard part. In practice, most of my time has
+gone into dead sensors, GNSS bring-up, misleading diagnostics, and deciding when
+the rudder should stop trusting the answer.</p>
+<p>The firmware runs FreeRTOS and currently reads a BNO085 over I2C. The boat uses
+an RP2040 Pico with <code>i2c0</code> on GP16/17. My bench Feather uses <code>i2c1</code> on GP26/27.
+Keeping both mappings in <code>hardware_config.h</code> has saved me from debugging the
+wrong pins more than once.</p>
+<p>The BNO085 replaced an Xsens MTi-3 after that sensor died. I wrote the SHTP/SH-2
+path and fitted it into the existing IMU, GNSS, fusion, rudder, and persistence
+tasks. Once GNSS has pinned down the magnetic heading offset, a low-priority task
+saves it to flash for the next boot.</p>
+<p><img src="media/mag-cal-spin.png" alt="BNO085 calibration spin"></p>
+<h2>Why the filter has seven states</h2>
+<p>The EKF carries heading, roll, pitch, three body-frame gyro biases, and one
+magnetic heading offset. Roll and pitch are in there because a heeled boat
+doesn't measure yaw as pure body-Z rotation. The filter maps the gyro axes
+through the current attitude before integrating heading, then uses GNSS for
+absolute heading and the BNO085's magnetic yaw as a heading-plus-offset
+measurement.</p>
+<p>The rudder link sends heading, roll, pitch, yaw rate, and <code>heading_valid</code>. That
+flag checks heading variance, the pitch limit around the Euler singularity, and
+the BNO085 calibration status. Heading sigma and pitch are also available
+separately in telemetry.</p>
+<h2>The GNSS failure that was partly my diagnostic</h2>
+<p>The first Septentrio mosaic-go H tracked almost nothing on its auxiliary antenna
+and went back as an RMA. The team's second unit initially looked broken in a
+different way: my diagnostic printed zero common satellites and I treated that
+as the receiver's failure.</p>
+<p>The diagnosis was wrong. My parser counted only MeasEpoch Type1 sub-blocks, but
+the auxiliary antenna put most observations in nested Type2 blocks. The same
+capture actually had 26 common satellites. A direct hardware check then gave 26
+valid heading epochs around <code>241°</code>, with about <code>0.15°</code> peak-to-peak variation
+while stationary.</p>
+<h2>GNSS outages</h2>
+<p>My first outage result needed a correction too. In simulation the filter drops
+<code>heading_valid</code> after about 16 seconds, because heading sigma crosses the
+rudder's 5° limit. That is when the rudder stops trusting the heading; it says
+nothing about how accurate the heading was during those 16 seconds.</p>
+<p>I added an opt-in outage setting that pins the learned magnetic offset after
+GNSS has been absent for a short grace period. With clean simulated magnetic
+data, that held heading within <code>1°</code> for a 300-second outage and stayed valid.
+With moderate or indoor magnetic errors, the same setting remained confident
+while being wrong by about 10–13°. It therefore defaults off until the boat's
+magnetic environment has been measured.</p>
 <p><img src="media/sim-outage-hold.png" alt="GNSS outage heading hold"></p>
-<p><em>Same scenario at 20 degree heel with a body-Y gyro bias:</em></p>
 <p><img src="media/sim-heel-outage.png" alt="Heeled outage heading hold"></p>
-<p><em>Peak heading error across the full attitude envelope during a 30 s outage:</em></p>
-<p><img src="media/sim-drift-sweep.png" alt="Drift sweep heatmap"></p>
-<h2>The simulation</h2>
-<p>The same C++ EKF code that ships on the RP2040 is bound into Python via
-nanobind. I can run the filter offline against synthetic sensor data, and the
-tuning values transfer faithfully because it is literally the same compiled
-filter running in both environments. The decision to use FFI instead of
-reimplementing the filter in Python was the first important call. If the Python
-filter differs from the C++ filter by a single ULP per step (different float
-promotion, a numpy summation in a different order), Q values picked offline do
-not transfer.</p>
-<p>The sim has timeseries plots (truth vs. estimate with 1-sigma bands), a 3D boat
-visualization with truth and EKF-estimate hulls overlaid, and the drift sweep
-heatmap above. A live telemetry monitor reads real-time UART output from the
-board and plots attitude, heading, and GNSS status.</p>
-<h2>The PCB</h2>
-<p><em>PCB front:</em></p>
+<p><img src="media/sim-drift-sweep.png" alt="Outage drift sweep"></p>
+<p>The Python simulator calls the firmware's C++ EKF through nanobind, so there is
+no second filter slowly drifting away from the embedded one. The clean-mag
+300-second hold is still a simulation. I haven't reproduced it on Polaris.</p>
+<h2>Hardware files</h2>
+<p>These are renders of the IMU board design:</p>
 <p><img src="media/polaris-imu-pcb-front.png" alt="PCB front"></p>
-<p><em>PCB back:</em></p>
 <p><img src="media/polaris-imu-pcb-back.png" alt="PCB back"></p>
-<p>The board connects to the Septentrio GNSS module and talks to the rudder
-controller over a COBS-framed serial link that I designed for the
-<a href="/projects/ubc-sailbot/">com-module-firmware</a>.</p>
+<p>I have no PCB files showing an RP2354 production board. The hardware I can
+confirm from the firmware is the Pico on the boat and the Feather on my bench.</p>
 <h2>Repositories</h2>
 <ul>
-<li>Firmware and simulation: <a href="https://github.com/UBCSailbot/PLRS-IMU">github.com/UBCSailbot/PLRS-IMU</a></li>
-<li>PCB: <a href="https://github.com/georgesleen/polaris-imu-pcb">github.com/georgesleen/polaris-imu-pcb</a></li>
+<li><a href="https://github.com/UBCSailbot/PLRS-IMU">Firmware and simulation</a></li>
+<li><a href="https://github.com/georgesleen/polaris-imu-pcb">PCB design</a></li>
 </ul>
 
   </main>

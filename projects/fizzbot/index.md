@@ -1,119 +1,64 @@
 ---
 title: "Fizzbot"
+author: "openai-codex/gpt-5.6-sol"
 layout: project.njk
-description: "Trained a custom LLM and integrated it as a discord bot."
+description: "Fine-tuning a chat model on my cohort's Discord server and wiring it up as a bot."
 thumbnail: "media/thumbnail.png"
 date: 2026-01-04
 status: "complete"
 featured: false
 tags: ["ml"]
 media:
-  - "media/placeholder-1.png"
-  - "media/placeholder-2.png"
+  - "media/example-text.png"
+  - "media/discord-profile.png"
 ---
 
 # Fizzbot
 
 ![Fizzbot](media/thumbnail.png)
 
-## Overview
+I wanted to see if a model could sound like one particular Discord server
+instead of a generic chatbot. That meant I needed the whole path: exporting the
+chat history, preserving who said what, training the model, decoding its output,
+and finally putting it back into Discord.
 
-Fizzbot is a Discord-style chat model trained on the third-year Discord server for my Engineering Physics cohort. The
-project started after a proof-of-concept at a Fizz talent show, where my friend Bram Banik demoed a simple test version.
-I wanted to see how far I could take the idea if I built the whole pipeline end-to-end: data prep, training, inference
-tooling, and an actual Discord bot.
+## Turning Discord history into training data
 
-Training runs on my friend Ronny Cravioto-Ross' DGX Spark, and everything else is designed so I can iterate locally
-without too much friction.
+The input is a pile of Discrub channel exports. My generator normalizes every
+message down to a username, content, and timestamp, sorts them within their
+channel, throws out the empty, URL-only, and mention-only ones, and writes
+context/target pairs as JSONL.
 
-Under the hood, Fizzbot is a retraining effort on top of an existing base model rather than training from scratch.
-I chose Mistral-7B (v0.1) as the base because it gives a strong quality/size tradeoff and works well with QLoRA for
-faster iteration.
+Speaker identity has to survive that. Usernames become tokens like `<S0>` and
+`<S1>`, every message ends with `<EOT>`, and a separate speaker map turns those
+tokens back into `username: message` at inference time. Context never crosses
+channels.
 
----
+## Training and inference
 
-## Project Overview
+The main config fine-tunes Mistral-7B v0.1 with 4-bit QLoRA instead of training
+anything from scratch. LoRA adapters keep the runs small enough to iterate on,
+and there is a tiny CPU config for checking the pipeline still works. The
+inference CLI can load the latest run or a specific checkpoint, generate a few
+turns, and decode the speaker tokens back into chat.
 
-The basic loop looks like this:
+![Example generated text](media/example-text.png)
 
-1. Export Discord logs (Discrub JSON).
-2. Clean and normalize messages into a consistent schema.
-3. Build training examples that preserve speaker identity using tokens like `<S0> ... <EOT>`.
-4. Train a causal language model (GPU/QLoRA when available, CPU smoke tests when not).
-5. Run inference either in a CLI for quick testing, or behind a Discord bot that replies when pinged.
+## Putting it in Discord
 
----
+The bot wrapper is written in Rust with Serenity. It starts the model command as
+a child process, maps Discord users to the saved speaker tokens, and exchanges
+prompts and responses over standard input and output. It replies when mentioned,
+removes the triggering mention from the prompt, and sanitizes its response so
+generated text can't ping people.
 
-## My Contributions
+![Fizzbot Discord profile](media/discord-profile.png)
 
-This project has two halves (Python ML + Rust bot), and I worked across both.
-
-- Built the data pipeline from raw Discrub exports to JSONL training examples.
-- Added multi-speaker formatting with `<S#>` tokens and `<EOT>` message boundaries.
-- Set up training scripts and YAML configs for both GPU/QLoRA runs and CPU smoke tests.
-- Wrote an inference CLI with decoding so model output turns back into readable chat.
-- Implemented the Rust Discord bot wrapper that spawns the model process and streams prompts/responses over
-  stdin/stdout.
-- Added Makefile + Docker helpers so it's easy to run locally or in a container.
-
----
-
-## Challenges
-
-Some of the tricky parts were not the "train a model" step, but everything around it:
-
-1. Cleaning Discord data without deleting the personality.
-2. Preserving speaker identity across long contexts (and making the output decodable again).
-3. Keeping the bot integration reliable when the model process is slow, chatty, or crashes.
-
----
-
-## Technical Highlights
-
-### Data Pipeline
-
-The generator converts Discrub exports into JSONL training examples:
-
-- Normalizes messages into `{username, content, timestamp}`.
-- Sorts by timestamp per channel.
-- Builds `(context -> target)` examples with randomized context windows.
-- Replaces usernames with speaker tokens `<S0>`, `<S1>`, ...
-- Appends `<EOT>` end markers to each message.
-- Outputs `train_data/training_examples.jsonl` and `train_data/speaker_map.json`.
-
-### Training
-
-Training is driven by YAML configs:
-
-- GPU/QLoRA defaults in `llm/train_config.yaml` (Mistral-7B, 4-bit).
-- Retraining uses LoRA adapters instead of a full fine-tune.
-- CPU-friendly config in `llm/train_config_cpu.yaml` for fast smoke tests.
-- Outputs are stored under `llm/runs/<run_name>/<timestamp>/`.
-
-### Inference CLI
-
-The inference tool supports:
-
-- Running the latest model or a specific checkpoint.
-- Decoding `<S#>` tokens back into `username: message` format.
-- Interactive prompts for quick testing.
-
-### Discord Bot (Rust)
-
-The Discord bot is built in Rust with Serenity and launches the LLM process as a child task:
-
-- Spawns `make fizzbot` and streams prompts/responses through stdin/stdout.
-- Maps Discord users to speaker tokens using `speaker_map.json`.
-- Responds when mentioned, strips the mention, and prevents pings.
-
----
+The repository has Make and Docker commands for each step, from generating the
+dataset to launching the bot. Training the model was only one piece. Most of the
+work was making sure the same speaker mapping survived every step from the raw
+Discord export to the bot's reply.
 
 ## Repository
 
 [github.com/georgesleen/fizzbot-2](https://github.com/georgesleen/fizzbot-2)
-
----
-
-## Other Media
-
-![Example text](media/example-text.png)

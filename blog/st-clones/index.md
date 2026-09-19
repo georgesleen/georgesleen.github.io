@@ -1,5 +1,6 @@
 ---
 title: "ST-link, blue pills, and compiling for clones"
+author: "George Sleen"
 layout: base.njk
 date: 2025-04-12T12:00:00+08:00
 thumbnail: "images/blue-pill-stock.jpg"

@@ -1,5 +1,6 @@
 ---
 title: "GenQ Hackathon in Geneva"
+author: "George Sleen"
 layout: base.njk
 date: 2025-11-14
 thumbnail: "thumbnail.jpeg"

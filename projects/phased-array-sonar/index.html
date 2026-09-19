@@ -6,10 +6,10 @@
   
   <title>Phased Array Sonar - George Sleen</title>
   
-  <meta name="description" content="Ultrasonic phased-array transducer board with custom power tree, H-bridge driver, and RX amplifier chain." />
+  <meta name="description" content="Power, transmit, and receive electronics for an ultrasonic array, still in design." />
   <link rel="canonical" href="https://georgesleen.github.io/projects/phased-array-sonar/" />
   <meta property="og:title" content="Phased Array Sonar" />
-  <meta property="og:description" content="Ultrasonic phased-array transducer board with custom power tree, H-bridge driver, and RX amplifier chain." />
+  <meta property="og:description" content="Power, transmit, and receive electronics for an ultrasonic array, still in design." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://georgesleen.github.io/projects/phased-array-sonar/" />
   
@@ -33,55 +33,35 @@
   <main>
     <h1>Phased Array Sonar</h1>
 <p><img src="media/schematic-toplevel.png" alt="Top-level schematic"></p>
-<p>This is a custom ultrasonic sonar system that Josh Himmens and I are designing
-from scratch in KiCad. The board transmits and receives ultrasonic pulses
-through a phased array of piezoelectric transducers for object detection and
-distance measurement.</p>
-<p>The project lives in a monorepo with the main board, a dev board for prototyping
-TX/RX circuitry, a shared KiCad component library, and a standalone SPICE
-simulation for the receive amplifier.</p>
-<h2>Transmit</h2>
-<p>I built the H-bridge driver circuit that generates the 20 kHz drive signals for
-the transducer array. The array uses Murata MA40S4S piezoelectric ultrasonic
-transducers (40 kHz, 10 mm diameter, 20 Vp-p max input). The top-level
-schematic instantiates the 8-element array three times, for 24 elements total.</p>
-<h2>Receive</h2>
-<p>Josh designed the RX chain. SPV0142LR5H-1 MEMS microphones (Knowles, analog
-omnidirectional) feed into a multi-stage amplifier. Each group of four MEMS mics
-connects to a quad pre-amplifier, and each element has its own RX amplifier
-channel. The pre-amp runs at a gain of 21 with a 120 MHz GBP op-amp.</p>
-<p>A standalone SPICE simulation project (<code>rx_amp_sim/</code>) lets us iterate on the RX
-amplifier design without dragging the full schematic into simulation.</p>
-<h2>Power tree</h2>
-<p><em>Power supply hierarchy:</em></p>
-<p><img src="media/power-supply-hierarchy.png" alt="Power supply hierarchy"></p>
-<p>I designed the full power tree. It supports two input sources through a power
-mux with ideal diode ORing:</p>
-<ul>
-<li>USB-C (5 V / 900 mA)</li>
-<li>XT60 connector (battery or bench supply)</li>
-</ul>
-<p>From the input, the tree generates every rail the system needs: 5 V to 12 V
-boost (TPS55340), inverting buck-boost for a negative rail (TPS63700), 3.3 V
-adjustable buck for digital logic, negative 10 V LDO (LM337), 12 V to 10 V
-LDO, and a 2.75 V LDO.</p>
-<p>The inverting buck-boost was the hardest part. The component calculations for
-the inductor and feedback resistors took multiple iterations. I kept the old
-revision (<code>inverting_buck_boost_OLD.kicad_sch</code>) alongside the current one
-because my commit message at the time was &quot;Do some more questionable math for
-the inverting buck boost&quot; and I wanted the reference.</p>
-<h2>Shared library and tooling</h2>
-<p>The <code>sonar-library/</code> directory has over 40 symbols, 19 custom footprints, STEP
-models for the connectors, and SPICE models for the TVS diode and boost
-converter. I wrote a Python setup script (<code>setup-kicad.py</code>, PEP 723 inline
-metadata) that registers the library with KiCad's global tables and sets path
-variables. It refuses to run while KiCad is open to avoid config clobbering.</p>
-<p>Getting library resolution to work across machines was its own problem. KiCad
-has two layers of resolution: global (via <code>kicad_common.json</code> path variables)
-and project-local (via per-project <code>sym-lib-table</code>). The setup script and
-careful use of <code>${KIPRJMOD}</code> relative paths keep them from fighting.</p>
-<p>I also merged the previously separate sonar-v1-pcb and tx-rx-dev-board
-repositories into the monorepo.</p>
+<p>Joshua Himmens and I are working on the electronics for an ultrasonic array. We
+have a main-board design, a TX/RX development board, some SPICE work, and a
+shared KiCad library. We haven't built and tested the full sonar system.</p>
+<p>I designed most of the power tree and the transmit H-bridge. Josh designed most
+of the receive path, including the MEMS microphone preamplifier and the
+individual receive channels.</p>
+<h2>Power and transmit work</h2>
+<p>The board can accept USB-C or an XT60-connected source through a power mux and
+ideal-diode path. From there, separate converter and regulator sheets generate
+the positive, negative, digital, and analog rails needed by the transmit and
+receive sections.</p>
+<p><img src="media/power-supply-hierarchy.png" alt="Power-supply hierarchy"></p>
+<p>I designed that tree and spent the most time on the inverting buck-boost stage.
+I also designed the H-bridge sheet for the transmit elements. There is still a
+fairly obvious mismatch in the files: the H-bridge sheet says <code>20 kHz</code>, but the
+selected Murata MA40S4S transducer is a <code>40 kHz</code> part. We need to fix that
+before either frequency means anything on the bench.</p>
+<h2>Receive path and tooling</h2>
+<p>Josh's receive design uses analog MEMS microphones, grouped preamplifiers, and
+individual receive channels. The separate <code>rx_amp_sim</code> KiCad project lets him
+work on the amplifier in SPICE; the real receive chain hasn't been built or
+measured.</p>
+<p>I combined the old main-board and TX/RX-development-board repositories into this
+monorepo and worked on the shared KiCad setup. The script is now at
+<code>sonar-library/setup-kicad.py</code>. It registers the shared symbols and footprints,
+sets the path variables, and refuses to rewrite the config while KiCad is open.</p>
+<p><img src="media/pcb-top.png" alt="PCB layout"></p>
+<p>Next we need to check every rail and get one transmit/receive channel working.
+There is no array-control software or end-to-end ranging result yet.</p>
 <h2>Repository</h2>
 <p><a href="https://github.com/fizzy-sonar/sonar-hardware">github.com/fizzy-sonar/sonar-hardware</a></p>
 

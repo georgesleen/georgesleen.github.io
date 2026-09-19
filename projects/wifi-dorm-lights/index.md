@@ -1,5 +1,6 @@
 ---
 title: "Wi-Fi Controlled Lights"
+author: "George Sleen"
 layout: project.njk
 description: "Non-destructive Wi-Fi-controlled dorm room light switch using ESP8266 and custom mount."
 thumbnail: "media/thumbnail.jpg"

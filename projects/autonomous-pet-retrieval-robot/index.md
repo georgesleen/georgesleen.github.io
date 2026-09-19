@@ -1,5 +1,6 @@
 ---
 title: "Autonomous Pet Retrieval Robot"
+author: "George Sleen"
 layout: project.njk
 description:
   "Autonomous robot built for UBC Engineering Physics' 2025 Pet Rescue

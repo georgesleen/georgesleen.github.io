@@ -1,7 +1,8 @@
 ---
 title: "UBC Sailbot"
+author: "openai-codex/gpt-5.6-sol"
 layout: project.njk
-description: "Communication firmware and embedded systems work for UBC Sailbot's autonomous sailboat Polaris."
+description: "Shared STM32 firmware, protocol work, and a rudder-controller investigation on Polaris."
 thumbnail: "media/polaris-imu-pcb-orthographic.png"
 date: 2026-08-16
 status: "design-teams"
@@ -16,51 +17,54 @@ media:
 
 # UBC Sailbot
 
-UBC Sailbot builds an autonomous sailboat called Polaris. I joined the team in
-September 2025 and work on the embedded side: the shared communication firmware
-that ties the subsystems together, and the [PLRS-IMU](/projects/plrs-imu/)
-heading sensor fusion system (covered on its own page).
+I joined UBC Sailbot in September 2025 and started on the shared communication
+firmware. Every controller on the boat runs the same STM32U575 codebase, so a
+change to a sensor parser or a protocol touches the rudder, the wingsail, the
+power distribution board, and the sensor module all at once.
 
----
-
-## Communication module firmware
-
-The boat's subsystems (rudder controller, wingsail controller, sensor module,
-power distribution) each run on STM32U575 Nucleo boards. The communication
-module firmware is the shared codebase for all of them.
-
-I started on this codebase in October 2025, learning the team's STM32CubeIDE
-workflow and the Nucleo hardware. My early work sessions were spent getting UART
-printing to work and debugging I2C and NMEA protocol issues with an Analog
-Discovery 3.
-
-_UART loopback test on the Analog Discovery 3 protocol analyzer:_
+My first few weeks were mostly spent getting boards to talk. Lots of UART
+loopback and I2C poking with an Analog Discovery 3, and GDB on the wind-sensor
+driver.
 
 ![UART loopback test](media/uart-loopback-test.png)
 
-_Debugging the wind sensor driver with GDB on the STM32:_
-
 ![GDB debugging session](media/gdb-debugging.png)
 
-Here is what I have contributed:
+## Communication firmware
 
-- **NMEA0183 parsing** for the LCJ CV7 wind sensor. I wrote typed parsers with
-  structs so the data self-documents, instead of raw fixed-point integers with
-  comments explaining how to decode them.
-- **Rudder link protocol.** I designed a COBS-framed serial protocol that feeds
-  the fused heading from the IMU to the rudder controller.
-- **Rudder equivalence analysis.** When a teammate refactored the rudder control
-  model, I did a forensic comparison and found two real bugs: a doubled integral
-  increment and uninitialized state.
-- **Integration and branch management.** I merged the wingsail, rudder, PDB,
-  and sensor module branches into one coherent state, documented all branch
-  tips, and wrote the git flow and testing workflow for the team.
-- **CI pipeline.** I set up GitHub Actions for `.ioc` peripheral checking and
-  host unit tests.
+The LCJ CV7 wind sensor talks NMEA0183, and I worked on the typed parser for it.
+Instead of raw fixed-point integers with a comment explaining how to decode
+them, the messages come out as structs that say what they are.
 
----
+One bug I chased down there: the scheduler was publishing CAN message
+`0x040 SAIL_WIND` after both the MWV and XDR sentences. XDR only carries
+temperature, so every second message shipped stale wind data. Commit `f841995`
+publishes it on MWV only.
+
+![NMEA messages during bring-up](media/nmea-messages-printing.png)
+
+I also worked on the COBS-framed link between PLRS-IMU and the rudder
+controller, the protocol documentation, branch integration, and CI checks for
+host tests and STM32 peripheral configuration. My larger heading-sensor work is
+documented on the [PLRS-IMU page](/projects/plrs-imu/).
+
+## Checking the rudder refactor
+
+After four months of rudder tuning and refactoring landed from two parallel
+branches, nobody could say whether the merged controller still behaved like the
+one that had been flying. I built a differential harness and pushed the same 200
+randomized trajectories, 10,000 samples, through both builds.
+
+The shipped firmware defines `STRAIGHT_ONLY`. On that path the refactor matched
+the old controller after two bug fixes. A tuning branch had accidentally added
+the integral twice, so the integral term ran too fast. Some controller and
+maneuver state was also uninitialized; that bug was already in the older code.
+
+The other state-machine paths had changed on purpose and still had open bugs.
+My conclusion was limited to the code we actually ship: `STRAIGHT_ONLY` stayed
+equivalent apart from those two fixes.
 
 ## Repositories
 
-- PLRS-IMU (separate page): [PLRS-IMU project](/projects/plrs-imu/)
-- Communication firmware: [github.com/UBCSailbot/com-module-firmware](https://github.com/UBCSailbot/com-module-firmware)
+- [Communication firmware](https://github.com/UBCSailbot/com-module-firmware)
+- [PLRS-IMU](/projects/plrs-imu/)

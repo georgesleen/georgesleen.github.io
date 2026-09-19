@@ -6,10 +6,10 @@
   
   <title>Verilog CPU - George Sleen</title>
   
-  <meta name="description" content="RISC-V CPU designed with Verilog. The successor to my 8-bit computer." />
+  <meta name="description" content="An early RV32I subset in SystemVerilog. JAL, stores, ADDI, and a lot still missing." />
   <link rel="canonical" href="https://georgesleen.github.io/projects/verilog-cpu/" />
   <meta property="og:title" content="Verilog CPU" />
-  <meta property="og:description" content="RISC-V CPU designed with Verilog. The successor to my 8-bit computer." />
+  <meta property="og:description" content="An early RV32I subset in SystemVerilog. JAL, stores, ADDI, and a lot still missing." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://georgesleen.github.io/projects/verilog-cpu/" />
   
@@ -32,11 +32,18 @@
   </nav>
   <main>
     <h1>Verilog CPU</h1>
-<h1>IN ACTIVE DEVELOPMENT</h1>
-<h2>Goal</h2>
-<p>Build a RISC-V CPU with verilog</p>
-<h2>Media</h2>
-<h3>GitHub repository</h3>
+<p>The 8-bit computer taught me what the pieces of a CPU do. Now I am trying the
+same problem in SystemVerilog with RISC-V instead of my own instruction set. It
+is nowhere near a complete RV32I core yet.</p>
+<p><code>JAL</code> and stores have execute paths. <code>OP-IMM</code> doesn't decode the ALU function
+yet, so everything in that class behaves like <code>ADDI</code>. The branch immediate is
+still a sign bit followed by zeros, so there is no working conditional branch.</p>
+<p>The register file has a proper testbench for reset, the hard-wired <code>x0</code>, both
+read ports, writes, and same-cycle read/write behavior. The full-system
+testbench can load a hex program, dump waveforms, and watch memory-mapped print
+and completion writes. It is a convenient way to run the few instructions that
+exist, not broad CPU verification.</p>
+<p>The next job is finishing the branch immediate and execute path.</p>
 <p><a href="https://github.com/georgesleen/verilog-cpu">github.com/georgesleen/verilog-cpu</a></p>
 
   </main>

@@ -1,7 +1,8 @@
 ---
 title: "SUBC"
+author: "openai-codex/gpt-5.6-sol"
 layout: project.njk
-description: "UBC Submarine Design Team builds a human-powered submarine for international races."
+description: "Drivetrain and propeller work on UBC's human-powered submarine, then leading the team."
 thumbnail: "media/subc-2023.jpg"
 date: 2024-05-01
 status: "design-teams"
@@ -16,49 +17,36 @@ media:
 
 ![SUBC testing](media/subc-title.webp)
 
-## Overview
+I joined SUBC's drivetrain and propulsion group in September 2023. The team
+builds a human-powered submarine for international racing, where the pilot is
+the entire engine, so anything that wastes power in the drivetrain is felt
+immediately.
 
-SUBC (UBC Submarine Design Team) designs and builds a human-powered submarine to compete in international races. In my
-first year, I joined the drivetrain and propulsion team. One of my main projects was helping design a toroidal
-propeller. I focused on evaluating candidate geometries with CFD, selecting a promising design, and supporting
-manufacturing using 3D printing and epoxy resin.
+The first thing I worked on was the chain skipping under load. We swapped the
+chain drive for gears, which got rid of the problem instead of us re-tensioning
+a chain forever. I also built a jig so we could test propellers on their own
+rather than bolting each one into the sub.
 
----
+The bigger project was a toroidal propeller. I compared candidate geometries in
+SolidWorks and Ansys CFD and picked the one we would build. We 3D printed the
+blades and finished them with epoxy resin, which let us make a shape that would
+have been miserable to mould.
 
-## My Contributions
+![CFD comparison](media/cfd-analysis.jpeg)
 
-- Performed CFD analysis to compare propeller candidates and select the best design.
-- Supported manufacturing by preparing the 3D-printed parts and epoxy finishing process.
-- Worked on drivetrain reliability, including replacing a chain drive with a gear drive to eliminate skipping.
-- Built a test jig to measure propeller characteristics outside the submarine.
+I became propulsion lead in August 2024, running the group that handled the
+propeller and its mounts, and I was team captain over the same year. Most of
+that year went into keeping a 60-person team and its budget moving rather than
+doing my own analysis. The propeller, the drivetrain, the jig, and the
+manufacturing were all team efforts; the CFD comparisons and the toroidal design
+are the parts that were mine.
 
----
+![SUBC team](media/subc-2023.jpg)
 
-## Positions
+## Roles
 
-- Drivetrain and propulsion member (2023–2024)
-- Propulsion lead (2024–2025)
-- Team captain (2024–2025)
-
----
-
-## Technical Highlights
-
-- **Analysis:** CFD-driven selection of the propeller geometry.
-- **Manufacturing:** 3D-printed core with epoxy resin finishing.
-
----
-
-## Media
-
-- *SUBC team photo*  
-  ![SUBC team](media/subc-2023.jpg)
-
-- *CFD analysis*  
-  ![CFD analysis](media/cfd-analysis.jpeg)
-
----
-
-## Project Website
+- Drivetrain and propulsion member, September 2023 to August 2024
+- Propulsion lead, August 2024 to August 2025
+- Team captain, August 2024 to August 2025
 
 [subc.ca](https://subc.ca)

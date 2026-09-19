@@ -1,5 +1,6 @@
 ---
 title: "Smart dorm room lights"
+author: "George Sleen"
 layout: base.njk
 date: 2023-10-01T12:00:00+08:00
 thumbnail: "images/wifi-light-1.jpg"

@@ -6,10 +6,10 @@
   
   <title>8-Bit Computer - George Sleen</title>
   
-  <meta name="description" content="A custom 8-bit computer designed from discrete components." />
+  <meta name="description" content="An 8-bit computer made of 7400-series logic, running programs in simulation." />
   <link rel="canonical" href="https://georgesleen.github.io/projects/8-bit-computer/" />
   <meta property="og:title" content="8-Bit Computer" />
-  <meta property="og:description" content="A custom 8-bit computer designed from discrete components." />
+  <meta property="og:description" content="An 8-bit computer made of 7400-series logic, running programs in simulation." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://georgesleen.github.io/projects/8-bit-computer/" />
   
@@ -32,73 +32,37 @@
   </nav>
   <main>
     <h1>8-Bit Computer</h1>
-<h2>Overview</h2>
-<p>This project was a ground-up implementation of a fully custom <strong>8-bit computer</strong>, built from discrete logic components and custom PCB modules.<br>
-The system is <strong>Turing-complete</strong>, capable of executing a minimal instruction set, and was developed as a way to explore computer architecture at the gate and register-transfer level.</p>
-<p>The design takes inspiration from <a href="https://eater.net/">Ben Eater’s breadboard computer</a>, but expands it with a modular PCB-based implementation, Logisim simulations, and a structured hardware layout.</p>
-<hr>
-<h2>Contributions</h2>
-<ul>
-<li><strong>Architecture Definition</strong>: Designed a simple but complete 8-bit instruction set and system architecture (registers, ALU, program counter, memory, control logic).</li>
-<li><strong>Schematic &amp; PCB Design</strong>: Created KiCad schematics and PCB layouts for the computer’s core subsystems (general registers, ALU, program memory).</li>
-<li><strong>Simulation &amp; Verification</strong>: Validated the instruction set and control logic in Logisim before committing to hardware.</li>
-<li><strong>System Integration</strong>: Built and tested each module in isolation, then integrated them onto a shared bus.</li>
-<li><strong>Demonstration</strong>: Successfully ran small programs demonstrating arithmetic operations and data output.</li>
-</ul>
-<hr>
-<h2>Technical Highlights</h2>
-<ul>
-<li><strong>Registers</strong>: Designed custom register boards with tri-state buffer outputs and synchronous load.</li>
-<li><strong>ALU</strong>: Implemented addition, subtraction, and bitwise logic operations with discrete logic gates.</li>
-<li><strong>Memory</strong>: Designed a program ROM PCB and accompanying RAM for instruction storage.</li>
-<li><strong>Control Logic</strong>: Implemented fetch–decode–execute sequencing via microcoded control signals.</li>
-<li><strong>Bus Design</strong>: Shared system bus with tri-state management across modules.</li>
-</ul>
-<hr>
-<h2>Media</h2>
-<h3>Repository</h3>
-<p><a href="https://github.com/georgesleen/8-BitComputer">GitHub – 8-Bit Computer</a></p>
-<h3>Hardware &amp; Schematics</h3>
-<ul>
-<li>
-<p><em>General Register</em><br>
-<img src="images/general-register-render.png" alt="General register render"></p>
-</li>
-<li>
-<p><em>Program Memory PCB</em><br>
-<img src="images/program-memory-pcb.png" alt="Program memory pcb"></p>
-</li>
-<li>
-<p><em>ALU Schematic</em><br>
-<img src="images/alu-schematic.png" alt="ALU schematic"></p>
-</li>
-</ul>
-<h3>Simulation</h3>
-<ul>
-<li>
-<p><em>Full simulated computer</em><br>
-<img src="images/full-computer.png" alt="Full Simulated Computer"></p>
-</li>
-<li>
-<p><em>Simple program execution:</em></p>
-<ol>
-<li>Load <code>4</code> into Register A</li>
-<li>Add <code>13</code> to Register A</li>
-<li>Output result to output register</li>
-</ol>
+<p>I built this after watching Ben Eater's breadboard-computer series and reading
+Malvino's <em>Digital Computer Electronics</em>. I wanted to know what actually
+happened between an instruction entering the register and a value appearing on
+the bus, so I drew the whole computer in Logisim and then split it into
+7400-series KiCad modules.</p>
+<p>The machine has an 8-bit shared bus, general and interface registers, a program
+counter, program memory, an instruction register, an ALU, and microcoded control
+logic. The ALU is built out of slices for the arithmetic and logic operations,
+and the control logic sequences all the bus transfers behind each fetch, decode,
+and execute step.</p>
+<p>The simulated computer is Turing-complete and runs programs I wrote in machine
+code and a small custom assembly language. The clip below loads <code>4</code> into a
+register, adds <code>13</code>, and sends the answer to the output register.</p>
+<p><img src="images/full-computer.png" alt="Full simulated computer"></p>
 <p><video src="videos/simple-program.mp4" controls style="width:100%; height:auto; display:block;"></video></p>
-</li>
-</ul>
-<hr>
-<h2>Reflection</h2>
-<p>This project provided a first-principles understanding of how digital computers operate at the logic level.<br>
-Key takeaways included:</p>
-<ul>
-<li>How simple bit manipulation and storage gives rise to the complex programs run by computers.</li>
-<li>Using simulation to de-risk hardware design.</li>
-<li>Appreciating the tradeoffs between simplicity, expandability, and physical wiring complexity.</li>
-</ul>
-<p>If extended further, this design could support conditional branching, subroutines, or pipelining.</p>
+<h2>From simulation to boards</h2>
+<p>Working it out in simulation first meant I could settle the instruction path and
+control timing before drawing any boards. The repo has KiCad schematics and PCB
+layouts for the ALU, registers, program counter, program memory, instruction
+register, and control logic.</p>
+<p><em>General-register PCB render:</em></p>
+<p><img src="images/general-register-render.png" alt="General register render"></p>
+<p><em>Program-memory PCB:</em></p>
+<p><img src="images/program-memory-pcb.png" alt="Program memory PCB"></p>
+<p><em>ALU schematic:</em></p>
+<p><img src="images/alu-schematic.png" alt="ALU schematic"></p>
+<p>I never finished assembling all of these boards into one computer. The programs
+ran in Logisim; the KiCad files show how I planned to turn each simulated block
+into hardware.</p>
+<h2>Repository</h2>
+<p><a href="https://github.com/georgesleen/8-BitComputer">github.com/georgesleen/8-BitComputer</a></p>
 
   </main>
 </body>

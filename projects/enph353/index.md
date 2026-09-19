@@ -1,7 +1,8 @@
 ---
 title: "ML Based Robot Detective"
+author: "openai-codex/gpt-5.6-sol"
 layout: project.njk
-description: "A robot trained to read signs with OCR and drive an obstacle course with IL and other ML techniques."
+description: "Our ENPH 353 competition robot: imitation learning for driving, YOLO for reading the clue boards."
 thumbnail: "media/map.png"
 date: 2025-12-06
 status: "complete"
@@ -18,101 +19,77 @@ media:
   - media/main.pdf
 ---
 
-# ENPH 353 - HTTP 418 Autonomous Robot
+# ENPH 353 - HTTP 418
 
 ![Simulated world map](media/map.png)
 
-## Overview
-This project was our final competition entry for ENPH 353. The goal was to build a fully autonomous robot in simulation
-that could drive around a city map, read clue boards, and avoid pedestrians and vehicles using only its onboard camera.
-We named our team "HTTP 418" and built the system as a set of ROS nodes that could be tested independently but run
-as one coordinated pipeline.
+For the ENPH 353 final competition, Joshua Himmens and I had to make a simulated
+robot drive a city course, read clue boards, avoid pedestrians and vehicles, and
+recover from crashes using only its camera feed. We called the team HTTP 418.
+Josh spent most of his time on driving. I spent most of mine training OCR and
+imitation-learning models. Josh also proposed using YOLO for the characters and
+designed much of the training scheme, so there was plenty of overlap.
 
-I worked with Joshua Himmens on the project. Josh focused on the driving stack, and I focused on the vision and OCR
-pipeline for clue detection.
+## What survived to competition
 
-This is a small post about the project; the majority of the work is documented in the final report below.
+We tried reinforcement learning first. Training took days per model, none of
+them drove well enough for competition, and we ran out of time to keep
+iterating. What we actually competed with was an imitation-learning model
+exported to ONNX. The export also solved a practical problem: we could train in
+a modern TensorFlow environment and still run inference inside the old Python
+that ships with ROS, fast enough to steer on every camera frame.
 
----
+The first OCR plan failed too. One YOLO model read isolated characters well but
+was bad at spotting whole clue boards in the world. In the end we found the sign
+borders with an HSV threshold on their very specific blue, cropped them, and
+sent the crop to a custom YOLO OCR model running on Modal. The clue collector
+kept a histogram of everything it read and submitted the most common answer
+instead of trusting any single frame.
 
-## Project Overview
-The core loop looked like this:
+![YOLO OCR output](media/yolo-ocr.png)
 
-1. Drive using an imitation-learning model running in an ONNX inference node.
-2. Detect crosswalk activity and pause for pedestrians and vehicles.
-3. Spot the blue clue boards, crop them, and run OCR to read letters.
-4. Aggregate clue detections over time and publish the best guess to the scoring node.
-5. Recover from crashes by detecting when the robot is stuck and resetting its pose in simulation.
+The rest of the ROS system worked around those two models. A pedestrian tracker
+waited for someone to move and then stop or leave the frame, and the same path
+caught the truck. A crash detector noticed when the image stopped changing and
+respawned the robot in Gazebo. Our PyQt GUI showed the camera, the model
+overlays, the tracker state, and the data-collection controls, so we could poke
+at one node at a time.
 
----
+![Pedestrian and vehicle detection](media/pedestrian-detection.png)
 
-## My Contributions
+## Training and integration
 
-- Built the clue-detection pipeline (sign detection + OCR) and trained the YOLO-based models.
-- Designed the data collection workflow and labeling strategy for clue boards and characters.
-- Tuned classical HSV thresholding to reliably crop blue signs before OCR.
-- Helped integrate cloud training runs and model versioning into the ROS pipeline.
-- Contributed to validation tooling and visual debugging inside the control GUI.
+I built the training data and trained the character model, both the clue-board
+and the per-character classes, and did a lot of the imitation-learning training
+too. Models went into Weights & Biases, so the robot could pull whatever was
+tagged for competition without us rebuilding anything.
 
----
+![Training dataset snapshot](media/yolo_training_data.png)
 
-## Challenges
+Training YOLO locally was painfully slow, so we rented a Runpod machine. The
+saved screenshot shows four RTX 5090s, and the report records roughly `100 GiB`
+of available GPU memory. Getting the batches and artifact uploads to behave
+across all four cards took a fair bit of the time we had hoped to save.
 
-1. OCR in the wild: characters were easy to detect in training, but full signs were much harder in context.
-2. Performance tradeoffs: we needed fast inference for driving and slower, higher-accuracy models for clue reading.
-3. Reproducibility: models, ROS, and GPU dependencies made "it works on my machine" a real risk.
+![Runpod training instance](media/runpod-quad-5090.png)
 
----
+The final report says the OCR ended up very reliable, reading every sign we
+drove past, but it was far too slow to run inline. Pushing it to an autoscaling
+endpoint meant a two-second glimpse of a sign turned into twenty or thirty
+guesses for the histogram. The driving model was cheap by comparison, but it
+needed extra data collection for the parts of the course it kept failing.
 
-## Technical Highlights
+![Control GUI and data collection](media/data-collection-gui.png)
 
-### ROS System Architecture
-We split the system into nodes for driving, pedestrian tracking, clue detection, clue collection, and crash recovery.
-This made the system easier to debug and helped keep slow perception nodes from blocking real-time control.
+![Clue aggregation](media/clue-collection.png)
 
-### Vision and OCR
-- Blue sign detection used HSV thresholding to isolate the border and crop signs before OCR.
-- A custom YOLO model handled character detection and OCR from the cropped sign image.
-- A histogram-based collector fused multiple OCR frames into a stable final clue.
+## Project record
 
-### Training and Tooling
-- Imitation learning for driving produced an ONNX model that runs at camera frame rate.
-- YOLO training was run on cloud GPUs (Runpod) to speed up iteration.
-- We used Weights and Biases for artifact tracking and quick model rollbacks.
+- [Simulation and control](https://github.com/enph353-2025-team2/ENPH353_HTTP_418)
+- [Vision training](https://github.com/enph353-2025-team2/yolo-vision)
+- [Final report](https://github.com/enph353-2025-team2/final-report)
+- [Competition music server](https://github.com/enph353-2025-team2/music-server)
 
----
+<iframe width="100%" height="450" src="https://www.youtube.com/embed/4jBRHqV6Ss8" title="Robot operating video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
-## Repository
-
-- [Simulation + Control](https://github.com/enph353-2025-team2/ENPH353_HTTP_418)
-- [Vision Training](https://github.com/enph353-2025-team2/yolo-vision)
-- [Final Report](https://github.com/enph353-2025-team2/final-report)
-- [Music Server](https://github.com/enph353-2025-team2/music-server)
-
----
-
-## Other Media
-
-- _Robot operating video_  
-  <iframe width="100%" height="450" src="https://www.youtube.com/embed/4jBRHqV6Ss8" title="Robot operating video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-
-- _Final report_  
-  <object data="media/main.pdf" type="application/pdf" width="100%" height="900px"></object>
-
-- _Control GUI and data collection_  
-  ![Control GUI](media/data-collection-gui.png)
-
-- _Pedestrian and vehicle detection_  
-  ![Pedestrian detection](media/pedestrian-detection.png)
-
-- _OCR model output_  
-  ![YOLO OCR](media/yolo-ocr.png)
-
-- _Training dataset snapshot_  
-  ![YOLO training data](media/yolo_training_data.png)
-
-- _Cloud training setup_  
-  ![Runpod quad GPU](media/runpod-quad-5090.png)
-
-- _Clue aggregation example_  
-  ![Clue collection](media/clue-collection.png)
+<object data="media/main.pdf" type="application/pdf" width="100%" height="900px"></object>

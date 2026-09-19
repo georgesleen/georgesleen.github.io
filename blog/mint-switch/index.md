@@ -1,5 +1,6 @@
 ---
 title: "Switching to linux"
+author: "George Sleen"
 layout: base.njk
 #draft: false
 #type: ""

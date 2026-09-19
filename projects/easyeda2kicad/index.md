@@ -1,7 +1,8 @@
 ---
 title: "EasyEDA to KiCad Converter"
+author: "openai-codex/gpt-5.6-sol"
 layout: project.njk
-description: "Fork of easyeda2kicad.py with fixes for API reliability, used to populate my personal KiCad library."
+description: "How I use the upstream easyeda2kicad converter to keep my KiCad library filled."
 thumbnail: "media/demo_symbol.png"
 date: 2026-04-15
 status: "complete"
@@ -16,32 +17,36 @@ media:
 
 ![Symbol conversion demo](media/demo_symbol.png)
 
-When I design PCBs in KiCad, I source most of my components from LCSC for
-JLCPCB assembly. The problem is that LCSC hosts its component models in
-EasyEDA's proprietary format. Manually recreating symbols, footprints, and 3D
-models for every part is tedious and error-prone.
+Most parts I use for JLCPCB assembly come from LCSC, but I design in KiCad.
+[`easyeda2kicad`](https://github.com/uPesy/easyeda2kicad.py), written by uPesy
+Electronics, does the annoying conversion work: it downloads EasyEDA's symbol,
+footprint, and 3D-model data and writes KiCad libraries.
 
-easyeda2kicad.py (by uPesy Electronics) solves this. It converts any LCSC
-component into KiCad library files with a single command.
+My fork is barely a fork. My only commit, `c639590`, changes a newline in
+`requirements.txt`. Steffen Wittemeier wrote the `User-Agent` and `Referer`
+header fix in upstream commit `95e3e0e`. An older version of this page credited
+that fix to me, which was wrong.
 
-I forked it after EasyEDA's API started rejecting requests made with the
-default Python user-agent string. My fork adds a browser-like `User-Agent`
-header and a `Referer` header to prevent these rejections.
+What I actually wrote is the tooling around the converter in
+[`gs-kicad-lib`](https://github.com/georgesleen/gs-kicad-lib). It depends on
+`easyeda2kicad>=1.0.1` and adds:
 
-My personal KiCad library, `gs-kicad-lib`, calls easyeda2kicad as a CLI
-subprocess. When I need a new LCSC component:
+- an interactive importer with fuzzy library and footprint search;
+- a choice between generated, existing, or no footprint link;
+- tidying of KiCad fields and the procurement metadata I care about;
+- a check that every symbol has the required fields; and
+- setup tooling that registers the libraries and path variables with KiCad.
 
-```bash
-python -m easyeda2kicad --full --lcsc_id=C2040 --output=gs-kicad-lib
-```
+Now I can pick an LCSC part, decide where its files go, clean up the fields, and
+run the same checks as the rest of my library, instead of babysitting every
+import.
 
-That fetches the component data, parses EasyEDA's proprietary shape format, and
-exports a KiCad symbol, footprint, and 3D model into my library. Every KiCad
-project on my machine can then reference the part. The tool also supports batch
-processing for populating a full BOM at once.
+_Generated footprint:_
 
-## Repository
+![Footprint conversion demo](media/demo_footprint.png)
 
-[github.com/georgesleen/easyeda2kicad.py](https://github.com/georgesleen/easyeda2kicad.py)
+## Repositories
 
-Upstream: [github.com/uPesy/easyeda2kicad.py](https://github.com/uPesy/easyeda2kicad.py)
+- [My small easyeda2kicad fork](https://github.com/georgesleen/easyeda2kicad.py)
+- [Upstream easyeda2kicad](https://github.com/uPesy/easyeda2kicad.py)
+- [My gs-kicad-lib tooling](https://github.com/georgesleen/gs-kicad-lib)
